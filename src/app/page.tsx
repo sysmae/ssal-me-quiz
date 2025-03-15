@@ -1,13 +1,63 @@
 'use client'
 
-import { createClient } from '@/utils/supabase/client'
-import LogoutBtn from '@/components/authentication/LogoutBtn'
-export default function Home() {
-  const supabase = createClient()
+import { useState } from 'react'
+import Navigation from '@/components/Navigation'
+import QuizCard from '@/components/QuizCard'
+import SearchAndSort from '@/components/SearchAndSort'
+import { useQuizzes } from '@/hooks/useQuizzes'
+
+export default function HomePage() {
+  const [sortBy, setSortBy] = useState('like_count')
+  const [searchTerm, setSearchTerm] = useState('')
+
+  const {
+    data: quizzes,
+    isLoading,
+    isError,
+    error,
+  } = useQuizzes(sortBy, searchTerm)
+
+  const handleSearch = (term: string) => {
+    setSearchTerm(term)
+  }
+
+  const handleSort = (sort: string) => {
+    setSortBy(sort)
+  }
 
   return (
-    <>
-      <LogoutBtn />
-    </>
+    <div>
+      <Navigation />
+      <div className="container mx-auto p-4">
+        <SearchAndSort onSearch={handleSearch} onSort={handleSort} />
+
+        {isLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+            {[...Array(6)].map((_, i) => (
+              <div
+                key={i}
+                className="border rounded-lg h-64 animate-pulse bg-gray-200"
+              ></div>
+            ))}
+          </div>
+        ) : isError ? (
+          <div className="text-center mt-6 text-red-500">
+            {error.message || '오류가 발생했습니다.'}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+            {quizzes?.map((quiz) => (
+              <QuizCard
+                key={quiz.id}
+                id={quiz.id}
+                title={quiz.title}
+                description={quiz.description}
+                thumbnail={quiz.thumbnail_url}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
   )
 }
