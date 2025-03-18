@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
 import { getAuthError } from '@/utils/auth-errors'
 import { useSearchParams } from 'next/navigation'
-import { createClient } from '@/utils/supabase/client'
+import { auth } from '@/utils/auth'
 
 interface Props {
   isLoading?: boolean
@@ -20,7 +20,6 @@ function OAuthButtons({ isLoading, onLoadingChange, redirectUrl }: Props) {
 
   const [internalLoading, setInternalLoading] = useState(false)
   const searchParams = useSearchParams()
-  const supabase = createClient()
 
   // Use either provided redirectUrl or next param from URL
   const nextUrl = redirectUrl || searchParams.get('next') || '/'
@@ -29,29 +28,14 @@ function OAuthButtons({ isLoading, onLoadingChange, redirectUrl }: Props) {
   const loading = isLoading ?? internalLoading
   const setLoading = onLoadingChange ?? setInternalLoading
 
-  // OAuth Sign In (Google, GitHub)
-  const signInWithOAuth = async (
-    provider: 'github' | 'google',
-    nextUrl?: string
-  ) => {
-    const { data, error } = await supabase.auth.signInWithOAuth({
-      provider,
-      options: {
-        redirectTo: `${location.origin}/auth/callback?next=${nextUrl || '/'}`,
-      },
-    })
-    if (error) throw error
-    return data
-  }
-
   const handleOAuthSignIn = async (provider: 'github' | 'google') => {
     try {
       toast.loading('로그인 중...', { id: toastId })
       setLoading(true)
-      await signInWithOAuth(provider, nextUrl)
+      await auth.signInWithOAuth(provider, nextUrl)
     } catch (error) {
       const { message } = getAuthError(error)
-      toast.error(String('로그인 중 오류가 발생했습니다.'), {
+      toast.error('로그인 중 오류가 발생했습니다.', {
         id: toastId,
       })
     } finally {

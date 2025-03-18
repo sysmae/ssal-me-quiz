@@ -1,24 +1,17 @@
-import { createClient } from './supabase/client';
-import type { User } from '@supabase/supabase-js';
+import { createClient } from './supabase/client'
+import type { User } from '@supabase/supabase-js'
 
-const supabase = createClient();
-
-export interface IUserLink {
-  id: string;
-  label: string;
-  url: string;
-}
+const supabase = createClient()
 
 export interface IUser {
-  id: string;
-  email: string;
-  name: string;
-  description: string;
-  avatar: string;
-  created_at: Date;
-  updated_at: Date;
-  links: IUserLink[];
-  provider: 'google' | 'github' | 'email';
+  id: string
+  email: string
+  name: string
+  description: string
+  avatar: string
+  created_at: Date
+  updated_at: Date
+  provider: 'google' | 'github' | 'email'
 }
 
 export const users = {
@@ -27,10 +20,10 @@ export const users = {
       .from('users')
       .select('*')
       .eq('id', id)
-      .single();
+      .single()
 
-    if (error) throw error;
-    return data as IUser | null;
+    if (error) throw error
+    return data as IUser | null
   },
 
   async createUser(user: Partial<IUser>) {
@@ -38,19 +31,19 @@ export const users = {
       .from('users')
       .insert([user])
       .select()
-      .single();
+      .single()
 
-    if (error) throw error;
-    return data as IUser;
+    if (error) throw error
+    return data as IUser
   },
 
   async captureUserDetails(authUser: User) {
     // Check if user already exists
-    const existingUser = await this.getUser(authUser.id).catch(() => null);
-    if (existingUser) return existingUser;
+    const existingUser = await this.getUser(authUser.id).catch(() => null)
+    if (existingUser) return existingUser
 
     // Extract provider
-    const provider = authUser.app_metadata.provider as IUser['provider'];
+    const provider = authUser.app_metadata.provider as IUser['provider']
 
     // Create new user
     const newUser: Partial<IUser> = {
@@ -60,10 +53,9 @@ export const users = {
       avatar: authUser.user_metadata.avatar_url || '',
       description: '',
       provider,
-      links: [],
-    };
+    }
 
-    return await this.createUser(newUser);
+    return await this.createUser(newUser)
   },
 
   async updateUser(id: string, updates: Partial<IUser>) {
@@ -72,10 +64,10 @@ export const users = {
       .update(updates)
       .eq('id', id)
       .select()
-      .single();
+      .single()
 
-    if (error) throw error;
-    return data as IUser;
+    if (error) throw error
+    return data as IUser
   },
 
   async updateProfile(
@@ -85,29 +77,29 @@ export const users = {
     const { error } = await supabase
       .from('users')
       .update(updates)
-      .eq('id', userId);
+      .eq('id', userId)
 
-    if (error) throw error;
+    if (error) throw error
 
     // Update auth user metadata if avatar or name changed
-    const metadata: { avatar_url?: string; full_name?: string } = {};
+    const metadata: { avatar_url?: string; full_name?: string } = {}
 
     if (updates.avatar !== undefined) {
-      metadata.avatar_url = updates.avatar;
+      metadata.avatar_url = updates.avatar
     }
 
     if (updates.name !== undefined) {
-      metadata.full_name = updates.name;
+      metadata.full_name = updates.name
     }
 
     if (Object.keys(metadata).length > 0) {
       const { error: authError } = await supabase.auth.updateUser({
         data: metadata,
-      });
+      })
 
       if (authError) {
-        console.error('Failed to update auth user metadata:', authError);
+        console.error('Failed to update auth user metadata:', authError)
       }
     }
   },
-};
+}

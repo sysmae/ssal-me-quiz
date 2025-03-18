@@ -20,7 +20,7 @@ import { cn } from '@/lib/utils'
 import { Loader2 } from 'lucide-react'
 import { useId, useState } from 'react'
 import { toast } from 'sonner'
-import { signup } from '@/app/actions/auth-actions'
+import { auth } from '@/utils/auth'
 
 const passwordValidationRegex = new RegExp(
   '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})'
@@ -75,26 +75,30 @@ const SignupForm = ({ className }: { className?: string }) => {
     toast.loading('회원가입 중...', { id: toastId })
     setLoading(true)
 
-    // auth-actions의 signup 으로 보내기 위해 FormData로 변환
-    const formData = new FormData()
-    formData.append('full_name', values.full_name)
-    formData.append('email', values.email)
-    formData.append('password', values.password)
+    try {
+      // auth의 signupWithFormData 함수 호출
+      const formData = new FormData()
+      formData.append('email', values.email)
+      formData.append('password', values.password)
+      formData.append('full_name', values.full_name)
 
-    // 3. Call your action.
-    const { error, success } = await signup(formData)
-    if (!success) {
+      const response = await auth.signUp(formData)
+
+      if (response) {
+        toast.success(
+          '회원가입 확인 이메일을 발송했습니다. 이메일로 이동해 확인해주세요',
+          {
+            id: toastId,
+          }
+        )
+        redirect('/login')
+      } else {
+        throw new Error('회원가입 중 오류가 발생했습니다.')
+      }
+    } catch (error) {
       toast.error(String(error), { id: toastId })
+    } finally {
       setLoading(false)
-    } else {
-      toast.success(
-        '회원가입 확인 이메일을 발송했습니다. 이메일로 이동해 확인해주세요',
-        {
-          id: toastId,
-        }
-      )
-      setLoading(false)
-      redirect('/login')
     }
   }
 

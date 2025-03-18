@@ -39,25 +39,14 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  // TODO: 로그인 하지 않은 유저도 접근 가능한 페이지나 api/webhooks 쓰이면 추가
-
-  // 로그인 하지 않은 유저가 아래 이외의 페이지에 접근하면 로그인 페이지로 이동
-  if (
-    !user &&
-    !request.nextUrl.pathname.startsWith('/login') &&
-    !request.nextUrl.pathname.startsWith('/auth')
-
-    // NOTE: 이후 회원 아니어도 공개할 페이지나 api/webhooks 쓰이면 추가
-  ) {
-    // no user, potentially respond by redirecting the user to the login page
-    const url = request.nextUrl.clone()
-    url.pathname = '/login'
-    return NextResponse.redirect(url)
-  }
-
   // 로그인 되어있는데 /login 페이지로 접근하면 홈 페이지로 이동
-
-  if (user && request.nextUrl.pathname.startsWith('/login')) {
+  if (
+    user &&
+    (request.nextUrl.pathname.startsWith('/login') ||
+      request.nextUrl.pathname.startsWith('/create-account') ||
+      request.nextUrl.pathname.startsWith('/forgot-password') ||
+      request.nextUrl.pathname.startsWith('/reset-password'))
+  ) {
     // For logged in users trying to access auth pages, redirect to the next path
     const url = request.nextUrl.clone()
     url.pathname = '/'

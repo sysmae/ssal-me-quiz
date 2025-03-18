@@ -3,8 +3,8 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import { cn } from '@/lib/utils'
 import { Toaster } from 'sonner'
-import { ThemeProvider } from '@/components/ThemeProvider'
-import QueryProvider from '@/components/QueryProvider'
+import { ThemeProvider } from '@/components/providers/ThemeProvider'
+import QueryProvider from '@/components/providers/QueryProvider'
 
 const fontSans = Inter({
   subsets: ['latin'],

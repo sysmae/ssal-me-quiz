@@ -1,3 +1,4 @@
+
 -- 퀴즈 테이블
 CREATE TABLE IF NOT EXISTS quizzes (
     id SERIAL PRIMARY KEY,
@@ -44,3 +45,25 @@ VALUES
   ('General Knowledge Quiz', 'A quiz to test your general knowledge.', 'https://via.placeholder.com/150', 100, 10),
   ('Movie Trivia', 'Test your knowledge about famous movies.', 'https://via.placeholder.com/150', 200, 20),
   ('Food Quiz', 'How much do you know about food?', 'https://via.placeholder.com/150', 150, 15);
+
+-- 유저 테이블 
+CREATE TABLE IF NOT EXISTS users (
+    id UUID PRIMARY KEY,
+    email TEXT NOT NULL UNIQUE,
+    name TEXT NOT NULL,
+    description TEXT,
+    avatar TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    provider TEXT NOT NULL CHECK (provider IN ('google', 'github', 'email'))
+);
+
+-- 퀴즈 테이블에 created_by 컬럼 추가하여 users 테이블과 연결
+ALTER TABLE quizzes 
+ADD COLUMN IF NOT EXISTS created_by UUID REFERENCES users(id);
+
+-- 퀴즈 결과 테이블의 user_id를 users 테이블의 id와 연결
+ALTER TABLE quiz_results
+DROP CONSTRAINT IF EXISTS quiz_results_user_id_fkey,
+ADD CONSTRAINT quiz_results_user_id_fkey
+FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL;
