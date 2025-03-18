@@ -8,6 +8,12 @@ export function useQuiz(id: string) {
     queryKey: ['quiz', id],
     queryFn: () => fetchQuizById(Number(id)),
     enabled: !!id,
+    // 서버에서 미리 가져온 데이터를 사용하도록 설정
+    staleTime: Infinity,
+    // 캐시된 데이터만 사용하도록 설정
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   })
 }
 

@@ -80,7 +80,23 @@ export default function QuizClient({ id }: { id: string }) {
         {quizState === 'start' && (
           <div className="bg-white shadow-md rounded-lg p-6">
             <h1 className="text-2xl font-bold">{quiz.title}</h1>
-            <p className="my-4">{quiz.description}</p>
+
+            {/* SEO를 위한 풍부한 설명 추가 */}
+            <div className="my-4">
+              {/* 추가 SEO 정보 */}
+              <div className="mt-4 text-sm text-gray-600">
+                <p>총 {quiz.questions.length}개의 문제로 구성된 퀴즈입니다.</p>
+                {/* {quiz.category && <p>카테고리: {quiz.category}</p>}
+                {quiz.difficulty && <p>난이도: {quiz.difficulty}</p>}
+                {quiz.estimatedTime && (
+                  <p>예상 소요 시간: {quiz.estimatedTime}분</p>
+                )}
+                {quiz.tags && (
+                  <p className="mt-2">관련 키워드: {quiz.tags.join(', ')}</p>
+                )} */}
+              </div>
+            </div>
+
             <button
               onClick={handleStartQuiz}
               className="bg-blue-500 text-white px-4 py-2 rounded"
@@ -89,7 +105,6 @@ export default function QuizClient({ id }: { id: string }) {
             </button>
           </div>
         )}
-
         {quizState === 'quiz' && (
           <div className="bg-white shadow-md rounded-lg p-6">
             <p className="text-sm text-gray-500 mb-4">
@@ -121,7 +136,6 @@ export default function QuizClient({ id }: { id: string }) {
             </form>
           </div>
         )}
-
         {quizState === 'feedback' && (
           <div className="bg-white shadow-md rounded-lg p-6">
             <div
@@ -147,7 +161,6 @@ export default function QuizClient({ id }: { id: string }) {
             </button>
           </div>
         )}
-
         {quizState === 'result' && (
           <div className="bg-white shadow-md rounded-lg p-6 text-center">
             <h2 className="text-2xl font-bold mb-4">퀴즈 결과</h2>
