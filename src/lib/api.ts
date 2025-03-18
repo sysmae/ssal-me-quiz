@@ -24,39 +24,55 @@ export async function fetchQuizzes(sortBy = 'like_count', searchTerm = '') {
   return data
 }
 
-// 퀴즈 상세 정보 가져오기
 export async function fetchQuizById(id: number) {
   const supabase = createClient()
 
   // 퀴즈 정보 가져오기
   const { data: quiz, error: quizError } = await supabase
     .from('quizzes')
-    .select('*')
+    .select(
+      '*, questions:questions(*, alternative_answers:alternative_answers(*))'
+    )
     .eq('id', id)
     .single()
 
   if (quizError) throw quizError
 
-  // 퀴즈 문제 가져오기
-  const { data: questions, error: questionsError } = await supabase
-    .from('questions')
-    .select('*')
-    .eq('quiz_id', id)
-    .order('order_number', { ascending: true })
-
-  if (questionsError) throw questionsError
-
-  // 각 문제의 대체 정답 가져오기
-  for (let i = 0; i < questions.length; i++) {
-    const { data: alternatives, error: alternativesError } = await supabase
-      .from('alternative_answers')
-      .select('*')
-      .eq('question_id', questions[i].id)
-
-    if (alternativesError) throw alternativesError
-
-    questions[i].alternative_answers = alternatives
-  }
-
-  return { ...quiz, questions }
+  return quiz
 }
+
+// export async function fetchQuizById(id: number) {
+//   const supabase = createClient()
+
+//   // 퀴즈 정보 가져오기
+//   const { data: quiz, error: quizError } = await supabase
+//     .from('quizzes')
+//     .select('*')
+//     .eq('id', id)
+//     .single()
+
+//   if (quizError) throw quizError
+
+//   // 퀴즈 문제 가져오기
+//   const { data: questions, error: questionsError } = await supabase
+//     .from('questions')
+//     .select('*')
+//     .eq('quiz_id', id)
+//     .order('order_number', { ascending: true })
+
+//   if (questionsError) throw questionsError
+
+//   // 각 문제의 대체 정답 가져오기
+//   for (let i = 0; i < questions.length; i++) {
+//     const { data: alternatives, error: alternativesError } = await supabase
+//       .from('alternative_answers')
+//       .select('*')
+//       .eq('question_id', questions[i].id)
+
+//     if (alternativesError) throw alternativesError
+
+//     questions[i].alternative_answers = alternatives
+//   }
+
+//   return { ...quiz, questions }
+// }

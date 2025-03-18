@@ -49,10 +49,10 @@ export default function HomePage() {
             {quizzes?.map((quiz) => (
               <QuizCard
                 key={quiz.id}
-                id={quiz.id}
+                id={quiz.id.toString()}
                 title={quiz.title}
-                description={quiz.description}
-                thumbnail={quiz.thumbnail_url}
+                description={quiz.description ?? ''}
+                thumbnail={quiz.thumbnail_url ?? ''}
               />
             ))}
           </div>

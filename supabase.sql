@@ -40,11 +40,11 @@ CREATE TABLE IF NOT EXISTS quiz_results (
 
 
 
-INSERT INTO quizzes (title, description, thumbnail_url, view_count, like_count)
-VALUES
-  ('General Knowledge Quiz', 'A quiz to test your general knowledge.', 'https://via.placeholder.com/150', 100, 10),
-  ('Movie Trivia', 'Test your knowledge about famous movies.', 'https://via.placeholder.com/150', 200, 20),
-  ('Food Quiz', 'How much do you know about food?', 'https://via.placeholder.com/150', 150, 15);
+-- INSERT INTO quizzes (title, description, thumbnail_url, view_count, like_count)
+-- VALUES
+--   ('General Knowledge Quiz', 'A quiz to test your general knowledge.', 'https://via.placeholder.com/150', 100, 10),
+--   ('Movie Trivia', 'Test your knowledge about famous movies.', 'https://via.placeholder.com/150', 200, 20),
+--   ('Food Quiz', 'How much do you know about food?', 'https://via.placeholder.com/150', 150, 15);
 
 -- 유저 테이블 
 CREATE TABLE IF NOT EXISTS users (

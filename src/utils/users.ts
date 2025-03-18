@@ -1,18 +1,13 @@
 import { createClient } from './supabase/client'
 import type { User } from '@supabase/supabase-js'
+import type { Database } from './supabase/types'
 
 const supabase = createClient()
 
-export interface IUser {
-  id: string
-  email: string
-  name: string
-  description: string
-  avatar: string
-  created_at: Date
-  updated_at: Date
-  provider: 'google' | 'github' | 'email'
-}
+// Supabase 생성 타입 사용
+type DbUser = Database['public']['Tables']['users']['Row']
+type DbUserInsert = Database['public']['Tables']['users']['Insert']
+type DbUserUpdate = Database['public']['Tables']['users']['Update']
 
 export const users = {
   async getUser(id: string) {
@@ -23,10 +18,10 @@ export const users = {
       .single()
 
     if (error) throw error
-    return data as IUser | null
+    return data as DbUser
   },
 
-  async createUser(user: Partial<IUser>) {
+  async createUser(user: DbUserInsert) {
     const { data, error } = await supabase
       .from('users')
       .insert([user])
@@ -34,7 +29,7 @@ export const users = {
       .single()
 
     if (error) throw error
-    return data as IUser
+    return data as DbUser
   },
 
   async captureUserDetails(authUser: User) {
@@ -43,10 +38,13 @@ export const users = {
     if (existingUser) return existingUser
 
     // Extract provider
-    const provider = authUser.app_metadata.provider as IUser['provider']
+    const provider = authUser.app_metadata.provider as
+      | 'google'
+      | 'github'
+      | 'email'
 
     // Create new user
-    const newUser: Partial<IUser> = {
+    const newUser: DbUserInsert = {
       id: authUser.id,
       email: authUser.email!,
       name: authUser.user_metadata.full_name || authUser.email!.split('@')[0],
@@ -58,7 +56,7 @@ export const users = {
     return await this.createUser(newUser)
   },
 
-  async updateUser(id: string, updates: Partial<IUser>) {
+  async updateUser(id: string, updates: DbUserUpdate) {
     const { data, error } = await supabase
       .from('users')
       .update(updates)
@@ -67,12 +65,12 @@ export const users = {
       .single()
 
     if (error) throw error
-    return data as IUser
+    return data as DbUser
   },
 
   async updateProfile(
     userId: string,
-    updates: Partial<Omit<IUser, 'id' | 'email' | 'provider'>>
+    updates: Partial<Omit<DbUser, 'id' | 'email' | 'provider'>>
   ) {
     const { error } = await supabase
       .from('users')
@@ -84,7 +82,7 @@ export const users = {
     // Update auth user metadata if avatar or name changed
     const metadata: { avatar_url?: string; full_name?: string } = {}
 
-    if (updates.avatar !== undefined) {
+    if (updates.avatar !== null) {
       metadata.avatar_url = updates.avatar
     }
 
