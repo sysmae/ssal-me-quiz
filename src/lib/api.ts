@@ -60,14 +60,3 @@ export async function fetchQuizById(id: number) {
 
   return { ...quiz, questions }
 }
-
-// 랜덤 퀴즈 가져오기 (추천 퀴즈용)
-export async function fetchRandomQuiz() {
-  const supabase = createClient()
-
-  // Supabase의 RPC 함수 호출 (사전에 생성 필요)
-  const { data, error } = await supabase.rpc('get_random_quiz')
-
-  if (error) throw error
-  return data[0]
-}

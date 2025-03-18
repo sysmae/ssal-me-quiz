@@ -2,8 +2,8 @@
 
 import { useState } from 'react'
 import Navigation from '@/components/Navigation'
-import QuizCard from '@/components/QuizCard'
-import SearchAndSort from '@/components/SearchAndSort'
+import QuizCard from '@/components/quiz/QuizCard'
+import SearchAndSort from '@/components/quiz/SearchAndSort'
 import { useQuizzes } from '@/hooks/useQuizzes'
 
 export default function HomePage() {

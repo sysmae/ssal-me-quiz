@@ -1,6 +1,6 @@
 // hooks/useQuizzes.ts
 import { useQuery } from '@tanstack/react-query'
-import { fetchQuizzes, fetchQuizById, fetchRandomQuiz } from '@/lib/api'
+import { fetchQuizzes, fetchQuizById } from '@/lib/api'
 
 // 퀴즈 상세 정보 가져오기 훅
 export function useQuiz(id: string) {
@@ -8,14 +8,6 @@ export function useQuiz(id: string) {
     queryKey: ['quiz', id],
     queryFn: () => fetchQuizById(Number(id)),
     enabled: !!id,
-  })
-}
-
-// 랜덤 퀴즈 가져오기 훅 (추천 퀴즈용)
-export function useRandomQuiz() {
-  return useQuery({
-    queryKey: ['randomQuiz'],
-    queryFn: fetchRandomQuiz,
   })
 }
 

@@ -18,6 +18,8 @@ const QuizDetailPage = () => {
 
   const { data: quiz, isLoading, isError } = useQuiz(id)
 
+  console.log(quiz)
+
   // 퀴즈 시작 핸들러
   const handleStartQuiz = () => {
     setQuizState('quiz')
