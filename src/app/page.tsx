@@ -1,10 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import Navigation from '@/components/Navigation'
 import QuizCard from '@/components/quiz/QuizCard'
 import SearchAndSort from '@/components/quiz/SearchAndSort'
 import { useQuizzes } from '@/hooks/useQuizzes'
+import Navigation from '@/components/Navigation'
 
 export default function HomePage() {
   const [sortBy, setSortBy] = useState('like_count')

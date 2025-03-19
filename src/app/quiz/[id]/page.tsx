@@ -3,7 +3,7 @@ import {
   HydrationBoundary,
   QueryClient,
 } from '@tanstack/react-query'
-import { fetchQuizById, fetchQuizzes } from '@/lib/api'
+import { fetchQuizById, fetchQuizzes } from '@/utils/quizzes'
 import QuizClient from './QuizClient'
 
 export async function generateMetadata({ params }: { params: { id: string } }) {

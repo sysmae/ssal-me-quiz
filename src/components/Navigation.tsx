@@ -1,14 +1,40 @@
+'use client'
 import Link from 'next/link'
-import React from 'react'
+import { useEffect, useState } from 'react'
+import { createClient } from '@/utils/supabase/client'
 
 const Navigation = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const supabase = createClient()
+
+  useEffect(() => {
+    const checkUser = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession()
+      setIsLoggedIn(!!session)
+    }
+
+    checkUser()
+  }, [])
+
   return (
     <nav className="bg-white shadow-md p-4">
       <div className="container mx-auto flex justify-between">
         <Link href={'/'} className="text-xl font-bold">
           쌀미 퀴즈
         </Link>
-        <button className="text-blue-500">로그인</button>
+        <div>
+          {isLoggedIn ? (
+            <Link href={'/quiz/create'} className="text-blue-500 mr-4">
+              퀴즈 생성
+            </Link>
+          ) : (
+            <Link href={'/login'} className="text-blue-500 mr-4">
+              로그인
+            </Link>
+          )}{' '}
+        </div>
       </div>
     </nav>
   )
