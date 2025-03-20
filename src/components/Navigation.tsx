@@ -16,7 +16,7 @@ const Navigation = () => {
     }
 
     checkUser()
-  }, [])
+  }, [supabase.auth]) // supabase.auth를 의존성 배열에 추가
 
   return (
     <nav className="bg-white shadow-md p-4">

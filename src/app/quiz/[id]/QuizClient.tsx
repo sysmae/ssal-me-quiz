@@ -1,8 +1,8 @@
 'use client'
 
-import React, { useState } from 'react'
+import { useState } from 'react'
 import Navigation from '@/components/Navigation'
-import { useQuiz } from '@/hooks/useQuizzes'
+import { useQuizQueries } from '@/hooks/useQuizQueries'
 
 export default function QuizClient({ id }: { id: string }) {
   const [quizState, setQuizState] = useState('start')
@@ -13,7 +13,13 @@ export default function QuizClient({ id }: { id: string }) {
     isCorrect: false,
   })
 
-  const { data: quiz, isLoading, isError } = useQuiz(id)
+  // useQuiz 대신 useQuizQueries 사용
+  const { quiz: data } = useQuizQueries(Number(id))
+  const quiz = data // 변수명 일관성 유지
+
+  // 로딩 및 에러 상태 확인
+  const isLoading = !quiz
+  const isError = !quiz
 
   // 퀴즈 시작 핸들러
   const handleStartQuiz = () => {
