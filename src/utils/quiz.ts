@@ -1,4 +1,5 @@
 // utils/quizzes.ts
+import { QuizCreateData } from '@/types/quiz'
 import { createClient } from '@/utils/supabase/client'
 
 const supabase = createClient()
@@ -80,40 +81,22 @@ export const quizzes = {
   },
 
   // 퀴즈 생성 기능
-  create: async (quizData: any) => {
+  create: async (quizData: QuizCreateData) => {
+    const userId = (await supabase.auth.getUser()).data.user?.id
+    if (!userId) throw new Error('User not found')
+
     // 1. 퀴즈 기본 정보 저장
     const { data: quiz, error: quizError } = await supabase
       .from('quizzes')
       .insert({
         title: quizData.title,
         description: quizData.description,
-        created_by: quizData.userId,
-        // 기타 필요한 필드들
+        created_by: userId,
       })
       .select()
       .single()
 
     if (quizError) throw quizError
-
-    // 2. 퀴즈 문제들 저장
-    if (quizData.questions && quizData.questions.length > 0) {
-      const questionsWithQuizId = quizData.questions.map((q: any) => ({
-        ...q,
-        quiz_id: quiz.id,
-      }))
-
-      const { error: questionsError } = await supabase
-        .from('questions')
-        .insert(questionsWithQuizId)
-
-      if (questionsError) throw questionsError
-    }
-
     return quiz
-  },
-
-  // 문제 관련 기능도 추가할 수 있음
-  questions: {
-    // 문제 추가, 수정, 삭제 등의 기능
   },
 }

@@ -1,3 +1,4 @@
+import { QuizUpdateData, QuizCreateData } from '@/types/quiz'
 import { quizzes } from '@/utils/quiz'
 import {
   QueryClient,
@@ -5,12 +6,6 @@ import {
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query'
-
-export interface QuizUpdateData {
-  title?: string
-  description?: string
-  // 기타 업데이트 가능한 필드들
-}
 
 export const useQuizQueries = (quizId: number) => {
   const queryClient = useQueryClient()
@@ -110,7 +105,7 @@ export const useCreateQuizMutation = () => {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (quizData: any) => quizzes.create(quizData),
+    mutationFn: (quizData: QuizCreateData) => quizzes.create(quizData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['quizzes'] })
     },

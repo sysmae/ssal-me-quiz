@@ -117,31 +117,31 @@ export type Database = {
       }
       quizzes: {
         Row: {
-          created_at: string | null
-          created_by: string | null
+          created_at: string
+          created_by: string
           description: string | null
           id: number
-          like_count: number | null
+          like_count: number
           thumbnail_url: string | null
           title: string
           view_count: number | null
         }
         Insert: {
-          created_at?: string | null
-          created_by?: string | null
+          created_at?: string
+          created_by: string
           description?: string | null
           id?: number
-          like_count?: number | null
+          like_count?: number
           thumbnail_url?: string | null
           title: string
           view_count?: number | null
         }
         Update: {
-          created_at?: string | null
-          created_by?: string | null
+          created_at?: string
+          created_by?: string
           description?: string | null
           id?: number
-          like_count?: number | null
+          like_count?: number
           thumbnail_url?: string | null
           title?: string
           view_count?: number | null

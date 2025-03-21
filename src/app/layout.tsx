@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils'
 import { Toaster } from 'sonner'
 import { ThemeProvider } from '@/components/providers/ThemeProvider'
 import QueryProvider from '@/components/providers/QueryProvider'
+import Navigation from '@/components/Navigation'
 
 const fontSans = Inter({
   subsets: ['latin'],
@@ -30,7 +31,11 @@ export default function RootLayout({
         )}
       >
         <QueryProvider>
-          <ThemeProvider>{children}</ThemeProvider>
+          <ThemeProvider>
+            <Navigation />
+
+            {children}
+          </ThemeProvider>
           <Toaster />
         </QueryProvider>
       </body>

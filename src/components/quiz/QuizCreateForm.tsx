@@ -1,57 +1,99 @@
 'use client'
-import React, { useState } from 'react'
 
-export const QuizCreateForm = () => {
-  const [title, setTitle] = useState('')
-  const [description, setDescription] = useState('')
-  const [questions, setQuestions] = useState('')
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
+import { toast } from 'sonner'
+import { Button } from '@/components/ui/button'
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import { useId } from 'react'
+import { useCreateQuizMutation } from '@/hooks/useQuizQueries'
 
-  const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault()
-    const formData = new FormData()
-    formData.append('title', title)
-    formData.append('description', description)
-    formData.append('questions', questions)
-    try {
-      console.log(formData.get('title'))
-      console.log(formData.get('description'))
-      console.log(formData.get('questions'))
-    } catch (error) {
-      console.error('퀴즈 생성 중 오류 발생:', error)
-    }
+const quizFormSchema = z.object({
+  title: z.string().min(1, {
+    message: '타이틀은 필수 입력 사항입니다.',
+  }),
+  description: z.string().optional(),
+})
+
+export function QuizCreateForm({ id }: { id: string }) {
+  const toastId = useId()
+  const form = useForm<z.infer<typeof quizFormSchema>>({
+    resolver: zodResolver(quizFormSchema),
+    defaultValues: {
+      title: '',
+      description: '',
+    },
+  })
+
+  const createQuizMutation = useCreateQuizMutation()
+
+  function onSubmit(data: z.infer<typeof quizFormSchema>) {
+    toast.loading('Submitting...', { id: toastId })
+    createQuizMutation.mutate(
+      { ...data },
+      {
+        onSuccess: () => {
+          toast.success('Quiz created successfully!', { id: toastId })
+          form.reset()
+        },
+        onError: (error) => {
+          toast.error(`Error: ${error.message}`, { id: toastId })
+        },
+      }
+    )
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div>
-        <label htmlFor="title">제목</label>
-        <input
-          type="text"
-          id="title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          required
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
+        {/* 제목 입력 */}
+        <FormField
+          control={form.control}
+          name="title"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Title</FormLabel>
+              <FormControl>
+                <Input placeholder="Quiz Title" {...field} />
+              </FormControl>
+              <FormDescription>This is the title of your quiz.</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-      </div>
-      <div>
-        <label htmlFor="description">설명</label>
-        <textarea
-          id="description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          required
+        {/* 설명 입력 */}
+        <FormField
+          control={form.control}
+          name="description"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Description</FormLabel>
+              <FormControl>
+                <Textarea placeholder="Quiz Description" {...field} />
+              </FormControl>
+              <FormDescription>
+                This is a brief description of your quiz.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-      </div>
-      <div>
-        <label htmlFor="questions">질문들 (JSON 형식)</label>
-        <textarea
-          id="questions"
-          value={questions}
-          onChange={(e) => setQuestions(e.target.value)}
-          required
-        />
-      </div>
-      <button type="submit">퀴즈 생성</button>
-    </form>
+
+        {/* TODO: 선택적으로 thumbnail_url 입력 */}
+
+        <Button type="submit">Create Quiz</Button>
+      </form>
+    </Form>
   )
 }
