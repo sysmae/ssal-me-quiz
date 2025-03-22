@@ -80,6 +80,28 @@ export const quizzes = {
     },
   },
 
+  // + 버튼 클릭 시 기본값으로 퀴즈 생성
+  createEmptyQuiz: async () => {
+    const userId = (await supabase.auth.getUser()).data.user?.id
+    if (!userId) throw new Error('User not found')
+
+    // Step 1: 기본값으로 퀴즈 생성
+    const { data: quiz, error } = await supabase
+      .from('quizzes')
+      .insert({
+        title: '새 퀴즈', // 기본 제목
+        description: '', // 초기 설명은 빈 값
+        created_by: userId,
+      })
+      .select()
+      .single()
+
+    if (error) throw error
+
+    // Step 2: 생성된 ID 반환 (페이지 이동 시 사용)
+    return quiz.id
+  },
+
   // 퀴즈 생성 기능
   create: async (quizData: QuizCreateData) => {
     const userId = (await supabase.auth.getUser()).data.user?.id

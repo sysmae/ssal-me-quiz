@@ -112,6 +112,23 @@ export const useCreateQuizMutation = () => {
   })
 }
 
+// 퀴즈 생성 관련 뮤테이션 훅 (새로운 방식 추가)
+export const useCreateEmptyQuizMutation = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async () => {
+      const quizId = await quizzes.createEmptyQuiz() // 기본값으로 퀴즈 생성
+      return quizId
+    },
+    onSuccess: (quizId) => {
+      queryClient.invalidateQueries({ queryKey: ['quizzes'] })
+      // 성공적으로 생성되면 해당 ID의 편집 페이지로 이동
+      window.location.href = `/quiz/${quizId}/edit`
+    },
+  })
+}
+
 // 퀴즈 프리페치 함수
 export const prefetchQuiz = async (
   queryClient: QueryClient,

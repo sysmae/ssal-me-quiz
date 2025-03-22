@@ -1,19 +1,16 @@
 'use client'
 import React from 'react'
 import { useRouter } from 'next/navigation'
-import { useCreateQuizMutation } from '@/hooks/useQuizQueries'
+import { useCreateEmptyQuizMutation } from '@/hooks/useQuizQueries'
 
 const Page = () => {
   const router = useRouter()
-  const createQuizMutation = useCreateQuizMutation()
+  const createQuizMutation = useCreateEmptyQuizMutation()
 
   const handleCreateQuiz = async () => {
     try {
-      const newQuiz = await createQuizMutation.mutateAsync({
-        title: '',
-        description: '',
-      })
-      router.push(`/quiz/create/${newQuiz.id}`)
+      const quizId = await createQuizMutation.mutateAsync()
+      router.push(`/quiz/create/${quizId}`)
     } catch (error) {
       console.error('퀴즈 생성 중 오류:', error)
     }
