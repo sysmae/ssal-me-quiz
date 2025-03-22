@@ -8,7 +8,10 @@ export const quizzes = {
   // 퀴즈 목록 관련 기능
   list: {
     getAll: async (sortBy = 'like_count', searchTerm = '') => {
-      let query = supabase.from('quizzes').select('*')
+      let query = supabase
+        .from('quizzes')
+        .select('*')
+        .filter('published', 'eq', true) // 공개된 퀴즈만 가져오기
 
       // 검색어가 있으면 필터링
       if (searchTerm) {

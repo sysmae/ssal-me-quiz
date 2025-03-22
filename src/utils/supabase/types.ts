@@ -23,7 +23,7 @@ export type Database = {
           id?: number
           question_image_url?: string | null
           question_text: string
-          question_type: string
+          question_type?: string
           quiz_id?: number | null
         }
         Update: {
@@ -93,10 +93,11 @@ export type Database = {
           description: string | null
           id: number
           like_count: number
+          published: boolean
           thumbnail_url: string | null
           title: string
-          updated_at: string | null
-          view_count: number | null
+          updated_at: string
+          view_count: number
         }
         Insert: {
           created_at?: string
@@ -104,10 +105,11 @@ export type Database = {
           description?: string | null
           id?: number
           like_count?: number
+          published?: boolean
           thumbnail_url?: string | null
           title?: string
-          updated_at?: string | null
-          view_count?: number | null
+          updated_at?: string
+          view_count?: number
         }
         Update: {
           created_at?: string
@@ -115,10 +117,11 @@ export type Database = {
           description?: string | null
           id?: number
           like_count?: number
+          published?: boolean
           thumbnail_url?: string | null
           title?: string
-          updated_at?: string | null
-          view_count?: number | null
+          updated_at?: string
+          view_count?: number
         }
         Relationships: [
           {

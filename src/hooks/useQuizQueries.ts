@@ -34,6 +34,8 @@ export const useQuizQueries = (quizId: number) => {
   // 퀴즈 설명 업데이트 - updateQuiz를 활용하여 중복 제거
   const updateDescription = (description: string) => updateQuiz({ description })
 
+  const updatePublished = (published: boolean) => updateQuiz({ published })
+
   // 퀴즈 삭제
   const { mutate: deleteQuiz } = useMutation({
     mutationFn: () => quizzes.details.delete(quizId),
@@ -47,6 +49,7 @@ export const useQuizQueries = (quizId: number) => {
     updateQuiz,
     updateTitle,
     updateDescription,
+    updatePublished,
     deleteQuiz,
   }
 }
