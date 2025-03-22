@@ -26,8 +26,8 @@ const Navigation = () => {
         </Link>
         <div>
           {isLoggedIn ? (
-            <Link href={'/quiz/create'} className="text-blue-500 mr-4">
-              퀴즈 생성
+            <Link href={'/quiz/my'} className="text-blue-500 mr-4">
+              내 퀴즈
             </Link>
           ) : (
             <Link href={'/login'} className="text-blue-500 mr-4">

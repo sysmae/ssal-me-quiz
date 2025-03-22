@@ -1,5 +1,4 @@
 // utils/quizzes.ts
-import { QuizCreateData } from '@/types/quiz'
 import { createClient } from '@/utils/supabase/client'
 
 const supabase = createClient()
@@ -45,8 +44,20 @@ export const quizzes = {
       if (error) throw error
       return data
     },
-  },
 
+    getMyQuizzes: async () => {
+      const userId = (await supabase.auth.getUser()).data.user?.id
+      if (!userId) throw new Error('User not found')
+
+      const { data, error } = await supabase
+        .from('quizzes')
+        .select('*')
+        .eq('created_by', userId)
+
+      if (error) throw error
+      return data
+    },
+  },
   // 퀴즈 상세 관련 기능
   details: {
     get: async (id: number) => {
@@ -100,25 +111,5 @@ export const quizzes = {
 
     // Step 2: 생성된 ID 반환 (페이지 이동 시 사용)
     return quiz.id
-  },
-
-  // 퀴즈 생성 기능
-  create: async (quizData: QuizCreateData) => {
-    const userId = (await supabase.auth.getUser()).data.user?.id
-    if (!userId) throw new Error('User not found')
-
-    // 1. 퀴즈 기본 정보 저장
-    const { data: quiz, error: quizError } = await supabase
-      .from('quizzes')
-      .insert({
-        title: quizData.title,
-        description: quizData.description,
-        created_by: userId,
-      })
-      .select()
-      .single()
-
-    if (quizError) throw quizError
-    return quiz
   },
 }

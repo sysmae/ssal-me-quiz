@@ -3,20 +3,19 @@
 import { useState } from 'react'
 import QuizCard from '@/components/quiz/QuizCard'
 import SearchAndSort from '@/components/quiz/SearchAndSort'
-import { useQuizListQueries } from '@/hooks/useQuizQueries'
+import { useGetQuizzes } from '@/hooks/useQuizQueries'
 
 export default function HomePage() {
   const [sortBy, setSortBy] = useState('like_count')
   const [searchTerm, setSearchTerm] = useState('')
 
   // useQuizzes 대신 useQuizListQueries().getQuizzes 사용
-  const quizListQueries = useQuizListQueries()
   const {
     data: quizzes,
     isLoading,
     isError,
     error,
-  } = quizListQueries.useGetQuizzes(sortBy, searchTerm)
+  } = useGetQuizzes(sortBy, searchTerm)
 
   const handleSearch = (term: string) => {
     setSearchTerm(term)

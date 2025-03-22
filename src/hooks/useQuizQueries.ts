@@ -1,4 +1,4 @@
-import { QuizUpdateData, QuizCreateData } from '@/types/quiz'
+import { QuizUpdateData } from '@/types/quiz'
 import { quizzes } from '@/utils/quiz'
 import {
   QueryClient,
@@ -28,22 +28,11 @@ export const useQuizQueries = (quizId: number) => {
     },
   })
 
-  // 퀴즈 제목 업데이트
-  const { mutate: updateTitle } = useMutation({
-    mutationFn: (title: string) => quizzes.details.update(quizId, { title }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['quiz', quizId] })
-    },
-  })
+  // 퀴즈 제목 업데이트 - updateQuiz를 활용하여 중복 제거
+  const updateTitle = (title: string) => updateQuiz({ title })
 
-  // 퀴즈 설명 업데이트
-  const { mutate: updateDescription } = useMutation({
-    mutationFn: (description: string) =>
-      quizzes.details.update(quizId, { description }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['quiz', quizId] })
-    },
-  })
+  // 퀴즈 설명 업데이트 - updateQuiz를 활용하여 중복 제거
+  const updateDescription = (description: string) => updateQuiz({ description })
 
   // 퀴즈 삭제
   const { mutate: deleteQuiz } = useMutation({
@@ -62,57 +51,45 @@ export const useQuizQueries = (quizId: number) => {
   }
 }
 
-// 퀴즈 목록 관련 쿼리 훅
-export const useQuizListQueries = () => {
-  // 모든 퀴즈 가져오기
-  const useGetQuizzes = (sortBy = 'like_count', searchTerm = '') => {
-    return useQuery({
-      queryKey: ['quizzes', sortBy, searchTerm],
-      queryFn: () => quizzes.list.getAll(sortBy, searchTerm),
-      staleTime: 60 * 60 * 1000, // 1시간 동안 신선한 상태 유지
-    })
-  }
-
-  // 인기 퀴즈 가져오기
-  const useGetPopularQuizzes = (limit = 10) => {
-    return useQuery({
-      queryKey: ['quizzes', 'popular', limit],
-      queryFn: () => quizzes.list.getPopular(limit),
-      staleTime: 24 * 60 * 60 * 1000, // 24시간 동안 신선한 상태 유지
-      gcTime: 7 * 24 * 60 * 60 * 1000, // 7일 동안 캐시 유지
-    })
-  }
-
-  // ID 목록으로 퀴즈 가져오기
-  const useGetQuizzesByIds = (ids: number[]) => {
-    return useQuery({
-      queryKey: ['quizzes', 'byIds', ids],
-      queryFn: () => quizzes.list.getByIds(ids),
-      enabled: ids.length > 0,
-      staleTime: 60 * 60 * 1000, // 1시간 동안 신선한 상태 유지
-    })
-  }
-
-  return {
-    useGetQuizzes,
-    useGetPopularQuizzes,
-    useGetQuizzesByIds,
-  }
-}
-
-// 퀴즈 생성 관련 뮤테이션 훅
-export const useCreateQuizMutation = () => {
-  const queryClient = useQueryClient()
-
-  return useMutation({
-    mutationFn: (quizData: QuizCreateData) => quizzes.create(quizData),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['quizzes'] })
-    },
+// 모든 퀴즈 가져오기 - 개별 훅으로 분리
+export const useGetQuizzes = (sortBy = 'like_count', searchTerm = '') => {
+  return useQuery({
+    queryKey: ['quizzes', sortBy, searchTerm],
+    queryFn: () => quizzes.list.getAll(sortBy, searchTerm),
+    staleTime: 60 * 60 * 1000, // 1시간 동안 신선한 상태 유지
   })
 }
 
-// 퀴즈 생성 관련 뮤테이션 훅 (새로운 방식 추가)
+// 인기 퀴즈 가져오기 - 개별 훅으로 분리
+export const useGetPopularQuizzes = (limit = 10) => {
+  return useQuery({
+    queryKey: ['quizzes', 'popular', limit],
+    queryFn: () => quizzes.list.getPopular(limit),
+    staleTime: 24 * 60 * 60 * 1000, // 24시간 동안 신선한 상태 유지
+    gcTime: 7 * 24 * 60 * 60 * 1000, // 7일 동안 캐시 유지
+  })
+}
+
+// ID 목록으로 퀴즈 가져오기 - 개별 훅으로 분리
+export const useGetQuizzesByIds = (ids: number[]) => {
+  return useQuery({
+    queryKey: ['quizzes', 'byIds', ids],
+    queryFn: () => quizzes.list.getByIds(ids),
+    enabled: ids.length > 0,
+    staleTime: 60 * 60 * 1000, // 1시간 동안 신선한 상태 유지
+  })
+}
+
+// 사용자의 퀴즈 가져오기 - 개별 훅으로 분리
+export const useGetUserQuizzes = () => {
+  return useQuery({
+    queryKey: ['quizzes', 'user'],
+    queryFn: () => quizzes.list.getMyQuizzes(),
+    staleTime: 60 * 60 * 1000, // 1시간 동안 신선한 상태 유지
+  })
+}
+
+// 퀴즈 생성 관련 뮤테이션 훅 (React Router 사용)
 export const useCreateEmptyQuizMutation = () => {
   const queryClient = useQueryClient()
 
@@ -123,7 +100,7 @@ export const useCreateEmptyQuizMutation = () => {
     },
     onSuccess: (quizId) => {
       queryClient.invalidateQueries({ queryKey: ['quizzes'] })
-      // 성공적으로 생성되면 해당 ID의 편집 페이지로 이동
+      // router 대신 window.location.href 사용
       window.location.href = `/quiz/${quizId}/edit`
     },
   })

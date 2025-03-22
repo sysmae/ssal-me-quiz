@@ -3,12 +3,14 @@ export interface QuizUpdateData {
   description?: string
   // 기타 업데이트 가능한 필드들
 }
-
-export interface QuizCreateData {
-  title: string
-  description?: string
+export interface QuestionUpdateData {
+  question_text?: string
+  correct_answer?: string
+  alternative_answers?: string[]
+  question_type?: string
+  question_image_url?: string
+  order_number?: number
 }
-
 // types/quiz.ts
 export interface QuizData {
   title: string
