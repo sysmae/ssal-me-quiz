@@ -21,10 +21,17 @@ export const useQuestionQueries = (quizId: number) => {
 
   // 문제 정보 업데이트
   const { mutate: updateQuestion } = useMutation({
-    mutationFn: (updates: QuestionUpdateData) =>
-      questions.details.update(quizId, updates),
+    mutationFn: ({
+      questionId,
+      updates,
+    }: {
+      questionId: number
+      updates: QuestionUpdateData
+    }) => questions.details.update(questionId, updates),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['questions', quizId] })
+      queryClient.invalidateQueries({
+        queryKey: ['questions', quizId],
+      })
     },
   })
 

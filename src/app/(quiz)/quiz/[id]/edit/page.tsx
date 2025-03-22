@@ -29,7 +29,7 @@ const QuizEditPage: React.FC<QuizEditPageProps> = ({ params }) => {
 
   const { quiz, updateQuiz, deleteQuiz } = useQuizQueries(quizId ?? 0)
   const { questionsData, updateQuestion, deleteQuestion } = useQuestionQueries(
-    quizId ?? 0
+    quizId!
   )
 
   const handleDeleteQuiz = () => {
@@ -50,9 +50,12 @@ const QuizEditPage: React.FC<QuizEditPageProps> = ({ params }) => {
     }
   }
 
-  const handleUpdateQuestion = (questionData: QuestionUpdateData) => {
+  const handleUpdateQuestion = (
+    questionId: number,
+    questionData: QuestionUpdateData
+  ) => {
     try {
-      updateQuestion(questionData)
+      updateQuestion({ questionId, updates: questionData })
       setEditingQuestion(null)
     } catch (error) {
       console.error('질문 업데이트 오류:', error)

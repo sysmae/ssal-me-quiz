@@ -13,7 +13,6 @@ export type Database = {
         Row: {
           correct_answer: string
           id: number
-          order_number: number
           question_image_url: string | null
           question_text: string
           question_type: string
@@ -22,7 +21,6 @@ export type Database = {
         Insert: {
           correct_answer: string
           id?: number
-          order_number: number
           question_image_url?: string | null
           question_text: string
           question_type: string
@@ -31,7 +29,6 @@ export type Database = {
         Update: {
           correct_answer?: string
           id?: number
-          order_number?: number
           question_image_url?: string | null
           question_text?: string
           question_type?: string
