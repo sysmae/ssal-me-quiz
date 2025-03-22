@@ -1,5 +1,10 @@
 // utils/question.ts
 import { createClient } from '@/utils/supabase/client'
+import {
+  QuestionData,
+  QuestionInsertData,
+  QuestionUpdateData,
+} from '@/types/quiz'
 
 const supabase = createClient()
 
@@ -28,7 +33,7 @@ export const questions = {
       if (error) throw error
       return data
     },
-    update: async (id: number, updates: any) => {
+    update: async (id: number, updates: QuestionUpdateData) => {
       const { data, error } = await supabase
         .from('questions')
         .update(updates)

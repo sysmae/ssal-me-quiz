@@ -28,7 +28,7 @@ export default function QuizClient({ id }: { id: string }) {
   }
 
   // 답변 제출 핸들러
-  const handleAnswer = (userAnswer: any) => {
+  const handleAnswer = (userAnswer: string) => {
     if (!quiz) return
 
     const currentQuestion = quiz.questions[currentQuestionIndex]
@@ -39,14 +39,15 @@ export default function QuizClient({ id }: { id: string }) {
     const normalizedCorrectAnswer = currentQuestion.correct_answer
       .trim()
       .toLowerCase()
-    const alternativeAnswers =
-      currentQuestion.alternative_answers?.map((alt: any) =>
-        alt.alternative_answer.trim().toLowerCase()
-      ) || []
+    // const alternativeAnswers =
+    //   currentQuestion.alternative_answers?.map((alt: any) =>
+    //     alt.alternative_answer.trim().toLowerCase()
+    //   ) || []
 
-    isCorrect =
-      normalizedUserAnswer === normalizedCorrectAnswer ||
-      alternativeAnswers.includes(normalizedUserAnswer)
+    // isCorrect =
+    //   normalizedUserAnswer === normalizedCorrectAnswer ||
+    //   alternativeAnswers.includes(normalizedUserAnswer)
+    isCorrect = normalizedUserAnswer === normalizedCorrectAnswer
 
     if (isCorrect) setScore((prev) => prev + 1)
 
@@ -113,7 +114,10 @@ export default function QuizClient({ id }: { id: string }) {
               onSubmit={(e) => {
                 e.preventDefault()
                 const formData = new FormData(e.currentTarget)
-                handleAnswer(formData.get('answer'))
+                const answer = formData.get('answer') as string | null
+                if (answer !== null) {
+                  handleAnswer(answer)
+                }
               }}
             >
               <input

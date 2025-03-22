@@ -1,9 +1,12 @@
 'use client'
 import { useQuizQueries } from '@/hooks/useQuizQueries'
+import { useQuestionQueries } from '@/hooks/useQuestionQueries'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { QuestionUpdateData } from '@/types/quiz'
 
 import QuizBasicInfo from './_components/QuizBasicInfo'
+import QuestionList from './_components/QuestionList'
 
 type Params = {
   id: string
@@ -16,6 +19,7 @@ interface QuizEditPageProps {
 const QuizEditPage: React.FC<QuizEditPageProps> = ({ params }) => {
   const router = useRouter()
   const [quizId, setQuizId] = useState<number | null>(null)
+  const [editingQuestion, setEditingQuestion] = useState<number | null>(null)
 
   useEffect(() => {
     if (params.id) {
@@ -24,6 +28,9 @@ const QuizEditPage: React.FC<QuizEditPageProps> = ({ params }) => {
   }, [params])
 
   const { quiz, updateQuiz, deleteQuiz } = useQuizQueries(quizId ?? 0)
+  const { questionsData, updateQuestion, deleteQuestion } = useQuestionQueries(
+    quizId ?? 0
+  )
 
   const handleDeleteQuiz = () => {
     if (!quizId) return
@@ -39,6 +46,31 @@ const QuizEditPage: React.FC<QuizEditPageProps> = ({ params }) => {
       } catch (error) {
         console.error('퀴즈 삭제 오류:', error)
         alert('퀴즈 삭제 중 오류가 발생했습니다.')
+      }
+    }
+  }
+
+  const handleUpdateQuestion = (questionData: QuestionUpdateData) => {
+    try {
+      updateQuestion(questionData)
+      setEditingQuestion(null)
+    } catch (error) {
+      console.error('질문 업데이트 오류:', error)
+      alert('질문 업데이트 중 오류가 발생했습니다.')
+    }
+  }
+
+  const handleDeleteQuestion = (questionId: number) => {
+    if (
+      window.confirm(
+        '정말로 이 질문을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.'
+      )
+    ) {
+      try {
+        deleteQuestion(questionId)
+      } catch (error) {
+        console.error('질문 삭제 오류:', error)
+        alert('질문 삭제 중 오류가 발생했습니다.')
       }
     }
   }
@@ -60,6 +92,21 @@ const QuizEditPage: React.FC<QuizEditPageProps> = ({ params }) => {
         </div>
       </div>
       <QuizBasicInfo quizId={quizId} quiz={quiz} />
+
+      <div className="questions-section">
+        <h2>퀴즈 질문 관리</h2>
+        {questionsData ? (
+          <QuestionList
+            questions={questionsData}
+            editingQuestionId={editingQuestion}
+            onEditQuestion={setEditingQuestion}
+            onUpdateQuestion={handleUpdateQuestion}
+            onDeleteQuestion={handleDeleteQuestion}
+          />
+        ) : (
+          <p>질문을 불러오는 중...</p>
+        )}
+      </div>
     </div>
   )
 }

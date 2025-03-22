@@ -1,5 +1,6 @@
 // utils/quiz.ts
 import { createClient } from '@/utils/supabase/client'
+import { QuizData, QuizInsertData, QuizUpdateData } from '@/types/quiz'
 
 const supabase = createClient()
 
@@ -61,10 +62,10 @@ export const quizzes = {
       return data
     },
 
-    update: async (id: number, updates: any) => {
+    update: async (id: number, updates: QuizUpdateData) => {
       const { data, error } = await supabase
         .from('quizzes')
-        .update({ ...updates, updated_at: new Date() })
+        .update({ ...updates, updated_at: new Date().toISOString() })
         .eq('id', id)
         .select()
         .single()

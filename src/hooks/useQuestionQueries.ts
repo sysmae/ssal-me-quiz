@@ -5,6 +5,7 @@ import {
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query'
+import { QuestionUpdateData } from '@/types/quiz'
 
 export const useQuestionQueries = (quizId: number) => {
   const queryClient = useQueryClient()
@@ -20,7 +21,8 @@ export const useQuestionQueries = (quizId: number) => {
 
   // 문제 정보 업데이트
   const { mutate: updateQuestion } = useMutation({
-    mutationFn: (updates: any) => questions.details.update(quizId, updates),
+    mutationFn: (updates: QuestionUpdateData) =>
+      questions.details.update(quizId, updates),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['questions', quizId] })
     },
