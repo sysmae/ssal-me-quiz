@@ -48,4 +48,11 @@ export const questions = {
       if (error) throw error
     },
   },
+  // 문제 생성 관련 기능
+  create: async (question: QuestionInsertData) => {
+    const { data, error } = await supabase.from('questions').insert(question)
+
+    if (error) throw error
+    return data
+  },
 }

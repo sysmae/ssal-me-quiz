@@ -5,7 +5,7 @@ import {
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query'
-import { QuestionUpdateData } from '@/types/quiz'
+import { QuestionInsertData, QuestionUpdateData } from '@/types/quiz'
 
 export const useQuestionQueries = (quizId: number) => {
   const queryClient = useQueryClient()
@@ -17,6 +17,16 @@ export const useQuestionQueries = (quizId: number) => {
     enabled: !!quizId,
     staleTime: Infinity,
     gcTime: 1000 * 60 * 30,
+  })
+
+  // 문제 생성
+  const { mutate: createQuestion } = useMutation({
+    mutationFn: (question: QuestionInsertData) => questions.create(question),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['questions', quizId],
+      })
+    },
   })
 
   // 문제 정보 업데이트
@@ -45,6 +55,7 @@ export const useQuestionQueries = (quizId: number) => {
 
   return {
     questionsData,
+    createQuestion,
     updateQuestion,
     deleteQuestion,
   }
