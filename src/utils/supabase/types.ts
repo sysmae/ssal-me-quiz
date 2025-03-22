@@ -9,32 +9,6 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      alternative_answers: {
-        Row: {
-          alternative_answer: string
-          id: number
-          question_id: number | null
-        }
-        Insert: {
-          alternative_answer: string
-          id?: number
-          question_id?: number | null
-        }
-        Update: {
-          alternative_answer?: string
-          id?: number
-          question_id?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "alternative_answers_question_id_fkey"
-            columns: ["question_id"]
-            isOneToOne: false
-            referencedRelation: "questions"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       questions: {
         Row: {
           correct_answer: string
@@ -124,6 +98,7 @@ export type Database = {
           like_count: number
           thumbnail_url: string | null
           title: string
+          updated_at: string | null
           view_count: number | null
         }
         Insert: {
@@ -133,7 +108,8 @@ export type Database = {
           id?: number
           like_count?: number
           thumbnail_url?: string | null
-          title: string
+          title?: string
+          updated_at?: string | null
           view_count?: number | null
         }
         Update: {
@@ -144,6 +120,7 @@ export type Database = {
           like_count?: number
           thumbnail_url?: string | null
           title?: string
+          updated_at?: string | null
           view_count?: number | null
         }
         Relationships: [

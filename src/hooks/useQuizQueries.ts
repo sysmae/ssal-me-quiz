@@ -60,26 +60,6 @@ export const useGetQuizzes = (sortBy = 'like_count', searchTerm = '') => {
   })
 }
 
-// 인기 퀴즈 가져오기 - 개별 훅으로 분리
-export const useGetPopularQuizzes = (limit = 10) => {
-  return useQuery({
-    queryKey: ['quizzes', 'popular', limit],
-    queryFn: () => quizzes.list.getPopular(limit),
-    staleTime: 24 * 60 * 60 * 1000, // 24시간 동안 신선한 상태 유지
-    gcTime: 7 * 24 * 60 * 60 * 1000, // 7일 동안 캐시 유지
-  })
-}
-
-// ID 목록으로 퀴즈 가져오기 - 개별 훅으로 분리
-export const useGetQuizzesByIds = (ids: number[]) => {
-  return useQuery({
-    queryKey: ['quizzes', 'byIds', ids],
-    queryFn: () => quizzes.list.getByIds(ids),
-    enabled: ids.length > 0,
-    staleTime: 60 * 60 * 1000, // 1시간 동안 신선한 상태 유지
-  })
-}
-
 // 사용자의 퀴즈 가져오기 - 개별 훅으로 분리
 export const useGetUserQuizzes = () => {
   return useQuery({

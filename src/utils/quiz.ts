@@ -1,4 +1,4 @@
-// utils/quizzes.ts
+// utils/quiz.ts
 import { createClient } from '@/utils/supabase/client'
 
 const supabase = createClient()
@@ -35,16 +35,6 @@ export const quizzes = {
       return data
     },
 
-    getByIds: async (ids: number[]) => {
-      const { data, error } = await supabase
-        .from('quizzes')
-        .select('id, title, description, created_at')
-        .in('id', ids)
-
-      if (error) throw error
-      return data
-    },
-
     getMyQuizzes: async () => {
       const userId = (await supabase.auth.getUser()).data.user?.id
       if (!userId) throw new Error('User not found')
@@ -63,9 +53,7 @@ export const quizzes = {
     get: async (id: number) => {
       const { data, error } = await supabase
         .from('quizzes')
-        .select(
-          '*, questions:questions(*, alternative_answers:alternative_answers(*))'
-        )
+        .select('*, questions:questions(*)')
         .eq('id', id)
         .single()
 

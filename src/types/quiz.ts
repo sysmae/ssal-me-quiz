@@ -1,8 +1,6 @@
-export interface QuizUpdateData {
-  title?: string
-  description?: string
-  // 기타 업데이트 가능한 필드들
-}
+import { Database } from '@/utils/supabase/types'
+
+export type QuizUpdateData = Database['public']['Tables']['quizzes']['Row']
 export interface QuestionUpdateData {
   question_text?: string
   correct_answer?: string
