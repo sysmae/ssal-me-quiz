@@ -32,6 +32,7 @@ export const quizzes = {
       const { data, error } = await supabase
         .from('quizzes')
         .select('id, title, description, like_count')
+        .filter('published', 'eq', true) // 공개된 퀴즈만 가져오기
         .order('like_count', { ascending: false })
         .limit(limit)
 
