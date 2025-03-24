@@ -44,6 +44,51 @@ export type Database = {
           },
         ]
       }
+      quiz_comments: {
+        Row: {
+          content: string
+          created_at: string | null
+          id: number
+          parent_id: number | null
+          quiz_id: number
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          id?: number
+          parent_id?: number | null
+          quiz_id: number
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          id?: number
+          parent_id?: number | null
+          quiz_id?: number
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_comments_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "quiz_comments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quiz_comments_quiz_id_fkey"
+            columns: ["quiz_id"]
+            isOneToOne: false
+            referencedRelation: "quizzes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       quiz_likes: {
         Row: {
           created_at: string | null

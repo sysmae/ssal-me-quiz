@@ -1,3 +1,5 @@
+// types/quiz.ts
+
 import { Database } from '@/utils/supabase/types'
 
 export type QuizUpdateData = Database['public']['Tables']['quizzes']['Update']
