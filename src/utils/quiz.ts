@@ -46,7 +46,7 @@ export const quizzes = {
 
       const { data, error } = await supabase
         .from('quizzes')
-        .select('*')
+        .select('*, questions:questions(*)')
         .eq('created_by', userId)
 
       if (error) throw error

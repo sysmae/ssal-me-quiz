@@ -2,34 +2,33 @@
 
 import { useQuizQueries } from '@/hooks/useQuizQueries'
 import { useQuestionQueries } from '@/hooks/useQuestionQueries'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, use } from 'react'
 import { useRouter } from 'next/navigation'
 import { QuestionInsertData, QuestionUpdateData } from '@/types/quiz'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Eye, Trash2, ArrowLeft } from 'lucide-react'
+import { Skeleton } from '@/components/ui/skeleton'
 
 import QuizBasicInfo from './_components/QuizBasicInfo'
-import QuestionList from './_components/QuestionList'
-import QuestionCreate from './_components/QuestionCreate'
+import QuestionManager from './_components/QuestionManager'
 
-type Params = {
-  id: string
-}
-
-const QuizEditPage = async ({ params }: { params: Promise<Params> }) => {
+const QuizEditPage = ({ params }: { params: Promise<{ id: string }> }) => {
   const router = useRouter()
-  const { id } = await params
+  // React.use()를 사용하여 params Promise를 unwrap
+  const { id } = use(params)
 
   const [quizId, setQuizId] = useState<number | null>(null)
-  const [editingQuestion, setEditingQuestion] = useState<number | null>(null)
 
   useEffect(() => {
     if (id) {
       setQuizId(Number(id))
     }
-  }, [])
+  }, [id])
 
   const { quiz, updateQuiz, deleteQuiz } = useQuizQueries(quizId ?? 0)
   const { questionsData, createQuestion, updateQuestion, deleteQuestion } =
-    useQuestionQueries(quizId!)
+    useQuestionQueries(quizId ?? 0)
 
   const handleDeleteQuiz = () => {
     if (!quizId) return
@@ -55,7 +54,6 @@ const QuizEditPage = async ({ params }: { params: Promise<Params> }) => {
   ) => {
     try {
       updateQuestion({ questionId, updates: questionData })
-      setEditingQuestion(null)
     } catch (error) {
       console.error('질문 업데이트 오류:', error)
       alert('질문 업데이트 중 오류가 발생했습니다.')
@@ -86,56 +84,94 @@ const QuizEditPage = async ({ params }: { params: Promise<Params> }) => {
     }
   }
 
-  if (!quizId) return <p>잘못된 퀴즈 ID입니다.</p>
-  if (!quiz) return <p>로딩 중...</p>
+  if (!quizId)
+    return (
+      <div className="min-h-screen bg-indigo-900 flex items-center justify-center p-4">
+        <Card className="w-full max-w-md">
+          <CardContent className="pt-6">
+            <p className="text-center">잘못된 퀴즈 ID입니다.</p>
+            <Button
+              className="w-full mt-4"
+              onClick={() => router.push('/quiz')}
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              퀴즈 목록으로 돌아가기
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    )
+
+  if (!quiz)
+    return (
+      <div className="min-h-screen bg-indigo-900 flex items-center justify-center p-4">
+        <Card className="w-full max-w-3xl">
+          <CardHeader>
+            <Skeleton className="h-8 w-48" />
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-3/4" />
+            <Skeleton className="h-32 w-full" />
+          </CardContent>
+        </Card>
+      </div>
+    )
 
   return (
-    <div className="quiz-edit-page space-y-6">
-      {/* 페이지 헤더 */}
-      <div className="page-header flex justify-between items-center bg-white p-4 shadow-md rounded-lg">
-        <h1 className="text-2xl font-bold">퀴즈 편집</h1>
-        <div className="page-actions flex space-x-4">
-          <button
-            onClick={() => router.push(`/quiz/${quizId}`)}
-            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-          >
-            미리보기
-          </button>
-          <button
-            onClick={handleDeleteQuiz}
-            className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
-          >
-            퀴즈 삭제
-          </button>
-        </div>
+    <div className="min-h-screen bg-indigo-900 flex flex-col items-center p-4 pt-8">
+      <div className="w-full max-w-4xl">
+        {/* 페이지 헤더 */}
+        <Card className="mb-6">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-2xl font-bold">퀴즈 편집</CardTitle>
+            <div className="flex space-x-2">
+              <Button
+                variant="outline"
+                onClick={() => router.push(`/quiz/${quizId}`)}
+                className="bg-indigo-50 text-indigo-500 border-indigo-200 hover:bg-indigo-100"
+              >
+                <Eye className="mr-2 h-4 w-4" />
+                미리보기
+              </Button>
+              <Button variant="destructive" onClick={handleDeleteQuiz}>
+                <Trash2 className="mr-2 h-4 w-4" />
+                퀴즈 삭제
+              </Button>
+            </div>
+          </CardHeader>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>퀴즈 정보 및 질문 관리</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="mb-8">
+              <h3 className="text-lg font-medium mb-4">기본 정보</h3>
+              {quiz && <QuizBasicInfo quizId={quizId} quiz={quiz} />}
+            </div>
+
+            <div>
+              <h3 className="text-lg font-medium mb-4">질문 관리</h3>
+              {questionsData ? (
+                <QuestionManager
+                  quizId={quizId}
+                  questions={questionsData}
+                  onUpdateQuestion={handleUpdateQuestion}
+                  onDeleteQuestion={handleDeleteQuestion}
+                  onCreateQuestion={handleCreateQuestion}
+                />
+              ) : (
+                <div className="space-y-4">
+                  <Skeleton className="h-24 w-full" />
+                  <Skeleton className="h-24 w-full" />
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
       </div>
-
-      {/* 퀴즈 기본 정보 */}
-      <QuizBasicInfo quizId={quizId} quiz={quiz} />
-
-      {/* 기존 질문 관리 */}
-      <div className="questions-section space-y-4">
-        <h2 className="text-xl font-bold text-gray-800">퀴즈 질문 관리</h2>
-        {questionsData ? (
-          <QuestionList
-            questions={questionsData}
-            editingQuestionId={editingQuestion}
-            onEditQuestion={setEditingQuestion}
-            onUpdateQuestion={handleUpdateQuestion}
-            onDeleteQuestion={handleDeleteQuestion}
-          />
-        ) : (
-          <p>질문을 불러오는 중...</p>
-        )}
-      </div>
-
-      {/* 새 질문 추가 */}
-      {quizId && (
-        <QuestionCreate
-          quizId={quizId}
-          onCreateQuestion={handleCreateQuestion}
-        />
-      )}
     </div>
   )
 }

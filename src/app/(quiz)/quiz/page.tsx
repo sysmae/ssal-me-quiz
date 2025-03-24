@@ -1,8 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import QuizCard from '@/components/quiz/QuizCard'
-import SearchAndSort from '@/components/quiz/SearchAndSort'
+import QuizCard from './_components/QuizCard'
+import SearchAndSort from './_components/SearchAndSort'
 import { useGetQuizzes } from '@/hooks/useQuizQueries'
 
 export default function HomePage() {

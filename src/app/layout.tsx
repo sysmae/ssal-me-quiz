@@ -24,12 +24,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko" suppressHydrationWarning>
-      <body
-        className={cn(
-          'min-h-screen bg-background font-sans antialiased',
-          fontSans.variable
-        )}
-      >
+      <body className={cn(fontSans.variable)}>
         <QueryProvider>
           <ThemeProvider>
             <Navigation />

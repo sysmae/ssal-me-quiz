@@ -41,6 +41,7 @@ export const useQuizQueries = (quizId: number) => {
     mutationFn: () => quizzes.details.delete(quizId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['quizzes'] })
+      window.location.href = '/quiz'
     },
   })
 
@@ -72,7 +73,7 @@ export const useGetUserQuizzes = () => {
   })
 }
 
-// 퀴즈 생성 관련 뮤테이션 훅 (React Router 사용)
+// 퀴즈 생성 관련 뮤테이션 훅
 export const useCreateEmptyQuizMutation = () => {
   const queryClient = useQueryClient()
 
