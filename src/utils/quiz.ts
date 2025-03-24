@@ -105,4 +105,106 @@ export const quizzes = {
     // Step 2: 생성된 ID 반환 (페이지 이동 시 사용)
     return quiz.id
   },
+
+  // 좋아요 관련 기능 추가
+  likes: {
+    // 사용자가 퀴즈에 좋아요를 눌렀는지 확인
+    checkUserLike: async (quizId: number) => {
+      const userId = (await supabase.auth.getUser()).data.user?.id
+      if (!userId) return false
+
+      const { data, error } = await supabase
+        .from('quiz_likes')
+        .select('id')
+        .eq('user_id', userId)
+        .eq('quiz_id', quizId)
+        .maybeSingle()
+
+      if (error) throw error
+      return !!data
+    },
+
+    // 좋아요 추가
+    addLike: async (quizId: number) => {
+      const userId = (await supabase.auth.getUser()).data.user?.id
+      if (!userId) throw new Error('User not found')
+
+      // 1. 현재 좋아요 수 조회
+      const { data: quizData, error: fetchError } = await supabase
+        .from('quizzes')
+        .select('like_count')
+        .eq('id', quizId)
+        .single()
+
+      if (fetchError) throw fetchError
+
+      // 2. 좋아요 추가
+      const { error: likeError } = await supabase.from('quiz_likes').upsert({
+        user_id: userId,
+        quiz_id: quizId,
+      })
+
+      if (likeError) throw likeError
+
+      // 3. 좋아요 카운트 증가
+      const newLikeCount = (quizData.like_count || 0) + 1
+      const { data, error: updateError } = await supabase
+        .from('quizzes')
+        .update({ like_count: newLikeCount })
+        .eq('id', quizId)
+        .select('like_count')
+        .single()
+
+      if (updateError) throw updateError
+      return data.like_count
+    },
+
+    // 좋아요 취소
+    removeLike: async (quizId: number) => {
+      const userId = (await supabase.auth.getUser()).data.user?.id
+      if (!userId) throw new Error('User not found')
+
+      // 1. 현재 좋아요 수 조회
+      const { data: quizData, error: fetchError } = await supabase
+        .from('quizzes')
+        .select('like_count')
+        .eq('id', quizId)
+        .single()
+
+      if (fetchError) throw fetchError
+
+      // 2. 좋아요 삭제
+      const { error: unlikeError } = await supabase
+        .from('quiz_likes')
+        .delete()
+        .eq('user_id', userId)
+        .eq('quiz_id', quizId)
+
+      if (unlikeError) throw unlikeError
+
+      // 3. 좋아요 카운트 감소 (0 미만으로 내려가지 않도록)
+      const newLikeCount = Math.max(0, (quizData.like_count || 0) - 1)
+      const { data, error: updateError } = await supabase
+        .from('quizzes')
+        .update({ like_count: newLikeCount })
+        .eq('id', quizId)
+        .select('like_count')
+        .single()
+
+      if (updateError) throw updateError
+      return data.like_count
+    },
+
+    // 퀴즈 좋아요 수 조회
+    getLikeCount: async (quizId: number) => {
+      const { data, error } = await supabase
+        .from('quizzes')
+        .select('like_count')
+        .eq('id', quizId)
+        .single()
+
+      if (error) throw error
+      return data.like_count
+    },
+  },
 }

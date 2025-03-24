@@ -44,6 +44,35 @@ export type Database = {
           },
         ]
       }
+      quiz_likes: {
+        Row: {
+          created_at: string | null
+          id: number
+          quiz_id: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: number
+          quiz_id: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: number
+          quiz_id?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_likes_quiz_id_fkey"
+            columns: ["quiz_id"]
+            isOneToOne: false
+            referencedRelation: "quizzes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       quiz_results: {
         Row: {
           created_at: string | null

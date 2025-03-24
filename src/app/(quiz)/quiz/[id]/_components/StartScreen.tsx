@@ -10,7 +10,8 @@ import {
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { ThumbsUp, Eye, MessageSquare, Clock } from 'lucide-react'
+import { Eye, MessageSquare, Clock, ThumbsUp } from 'lucide-react'
+import LikeButton from './../../_components/LikeCount'
 
 type StartScreenProps = {
   quiz: QuizWithQuestions
@@ -60,10 +61,7 @@ export default function StartScreen({ quiz, onStart }: StartScreenProps) {
                   <Eye className="h-4 w-4" />
                   <span>{quiz.view_count}회</span>
                 </div>
-                <div className="flex items-center gap-1">
-                  <ThumbsUp className="h-4 w-4" />
-                  <span>{quiz.like_count}</span>
-                </div>
+                {/* 좋아요 아이콘과 카운트 부분 제거 */}
                 <div className="flex items-center gap-1">
                   <MessageSquare className="h-4 w-4" />
                   {/* <span>댓글 {quiz.comments?.length || 0}개</span> */}
@@ -85,10 +83,8 @@ export default function StartScreen({ quiz, onStart }: StartScreenProps) {
                   </span> */}
                 </div>
                 <div className="flex gap-2">
-                  <Button variant="outline" size="sm">
-                    <ThumbsUp className="h-4 w-4 mr-1" />
-                    좋아요
-                  </Button>
+                  {/* 기존 좋아요 버튼을 LikeButton 컴포넌트로 대체 */}
+                  <LikeButton quizId={quiz.id} likeCount={quiz.like_count} />
                   <Button variant="outline" size="sm">
                     공유하기
                   </Button>

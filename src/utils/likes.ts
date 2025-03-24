@@ -1,3 +1,4 @@
+'utils/likes.ts'
 import { QuizUpdateData } from '@/types/quiz'
 import { quizzes } from '@/utils/quiz'
 import {
@@ -105,36 +106,5 @@ export const prefetchQuiz = async (
     queryFn: () => quizzes.details.get(quizId),
     staleTime: Infinity,
     gcTime: 1000 * 60 * 30,
-  })
-}
-
-// 좋아요 상태 확인 훅
-export const useQuizLikeStatus = (quizId: number) => {
-  return useQuery({
-    queryKey: ['quiz', quizId, 'liked'],
-    queryFn: () => quizzes.likes.checkUserLike(quizId),
-    enabled: !!quizId,
-  })
-}
-
-// 좋아요 토글 훅
-export const useToggleQuizLike = (quizId: number) => {
-  const queryClient = useQueryClient()
-  const { data: isLiked } = useQuizLikeStatus(quizId)
-
-  return useMutation({
-    mutationFn: async () => {
-      if (isLiked) {
-        return quizzes.likes.removeLike(quizId)
-      } else {
-        return quizzes.likes.addLike(quizId)
-      }
-    },
-    onSuccess: () => {
-      // 관련 쿼리 무효화
-      queryClient.invalidateQueries({ queryKey: ['quiz', quizId, 'liked'] })
-      queryClient.invalidateQueries({ queryKey: ['quiz', quizId] })
-      queryClient.invalidateQueries({ queryKey: ['quizzes'] })
-    },
   })
 }
