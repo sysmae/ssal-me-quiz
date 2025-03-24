@@ -6,7 +6,7 @@ import {
 import { quizzes } from '@/utils/quiz'
 import { prefetchQuiz } from '@/hooks/useQuizQueries'
 
-import QuizClient from './QuizClient'
+import QuizClient from './_components/QuizClient'
 
 export async function generateMetadata({
   params,

@@ -14,20 +14,18 @@ type Params = {
   id: string
 }
 
-interface QuizEditPageProps {
-  params: Params
-}
-
-const QuizEditPage: React.FC<QuizEditPageProps> = ({ params }) => {
+const QuizEditPage = async ({ params }: { params: Promise<Params> }) => {
   const router = useRouter()
+  const { id } = await params
+
   const [quizId, setQuizId] = useState<number | null>(null)
   const [editingQuestion, setEditingQuestion] = useState<number | null>(null)
 
   useEffect(() => {
-    if (params.id) {
-      setQuizId(Number(params.id))
+    if (id) {
+      setQuizId(Number(id))
     }
-  }, [params])
+  }, [])
 
   const { quiz, updateQuiz, deleteQuiz } = useQuizQueries(quizId ?? 0)
   const { questionsData, createQuestion, updateQuestion, deleteQuestion } =

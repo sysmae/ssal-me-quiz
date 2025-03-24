@@ -1,5 +1,13 @@
 import React from 'react'
 import Link from 'next/link'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 
 type QuizCardProps = {
   id: string
@@ -16,7 +24,7 @@ const QuizCard: React.FC<QuizCardProps> = ({
 }) => {
   return (
     <Link href={`/quiz/${id}`} className="block">
-      <div className="border rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+      <Card className="border rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
         {thumbnail ? (
           <img
             src={thumbnail}
@@ -25,14 +33,16 @@ const QuizCard: React.FC<QuizCardProps> = ({
           />
         ) : (
           <div className="w-full h-48 bg-gray-200 flex items-center justify-center">
-            <span className="text-gray-500">이미지 없음</span>
+            <span className="text-gray-500 text-center px-2 line-clamp-2">
+              {title.length > 20 ? `${title.substring(0, 20)}...` : title}
+            </span>
           </div>
         )}
-        <div className="p-4">
+        <CardContent>
           <h2 className="text-lg font-bold">{title}</h2>
           <p className="text-gray-600 line-clamp-2">{description}</p>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </Link>
   )
 }
