@@ -1,25 +1,24 @@
-// utils/comments.ts
 import { createClient } from '@/utils/supabase/client'
 import {
   CommentData,
   CommentInsertData,
-  CommentUpdateData,
+  CommentWithReplies,
 } from '@/types/comment'
 
 const supabase = createClient()
 
 export const comments = {
-  // 댓글 목록 가져오기
+  // 댓글 목록 가져오기 (계층형 구조로 변환)
   getByQuizId: async (quizId: number) => {
     const { data, error } = await supabase
       .from('quiz_comments')
       .select(
         `
         *,
-        user:user_id (
+        users:user_id (
           id,
           name,
-          avatar_url
+          avatar
         )
       `
       )
@@ -27,10 +26,38 @@ export const comments = {
       .order('created_at', { ascending: true })
 
     if (error) throw error
-    return data
+
+    // 계층형 구조로 변환
+    const commentMap = new Map<number, CommentWithReplies>()
+    const rootComments: CommentWithReplies[] = []
+
+    // 모든 댓글을 Map에 저장
+    data.forEach((comment: CommentData) => {
+      const commentWithReplies = {
+        ...comment,
+        replies: [],
+      }
+      commentMap.set(comment.id, commentWithReplies)
+    })
+
+    // 부모-자식 관계 설정
+    data.forEach((comment: CommentData) => {
+      if (comment.parent_id === null) {
+        // 최상위 댓글
+        rootComments.push(commentMap.get(comment.id)!)
+      } else {
+        // 답글
+        const parentComment = commentMap.get(comment.parent_id)
+        if (parentComment && parentComment.replies) {
+          parentComment.replies.push(commentMap.get(comment.id)!)
+        }
+      }
+    })
+
+    return rootComments
   },
 
-  // 댓글 추가
+  // 댓글 추가 (최상위 댓글 또는 답글)
   add: async (commentData: CommentInsertData) => {
     const userId = (await supabase.auth.getUser()).data.user?.id
     if (!userId) throw new Error('로그인이 필요합니다')
@@ -46,10 +73,10 @@ export const comments = {
       .select(
         `
         *,
-        user:user_id (
+        users:user_id (
           id,
           name,
-          avatar_url
+          avatar
         )
       `
       )
@@ -75,10 +102,10 @@ export const comments = {
       .select(
         `
         *,
-        user:user_id (
+        users:user_id (
           id,
           name,
-          avatar_url
+          avatar
         )
       `
       )
@@ -111,6 +138,6 @@ export const comments = {
       .eq('quiz_id', quizId)
 
     if (error) throw error
-    return count || 0
+    return { count: count || 0 }
   },
 }

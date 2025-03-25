@@ -47,29 +47,29 @@ export type Database = {
       quiz_comments: {
         Row: {
           content: string
-          created_at: string | null
+          created_at: string
           id: number
           parent_id: number | null
           quiz_id: number
-          updated_at: string | null
+          updated_at: string
           user_id: string
         }
         Insert: {
           content: string
-          created_at?: string | null
+          created_at?: string
           id?: number
           parent_id?: number | null
           quiz_id: number
-          updated_at?: string | null
+          updated_at?: string
           user_id: string
         }
         Update: {
           content?: string
-          created_at?: string | null
+          created_at?: string
           id?: number
           parent_id?: number | null
           quiz_id?: number
-          updated_at?: string | null
+          updated_at?: string
           user_id?: string
         }
         Relationships: [
@@ -87,23 +87,30 @@ export type Database = {
             referencedRelation: "quizzes"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "quiz_comments_user_id_fkey1"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
         ]
       }
       quiz_likes: {
         Row: {
-          created_at: string | null
+          created_at: string
           id: number
           quiz_id: number
           user_id: string
         }
         Insert: {
-          created_at?: string | null
+          created_at?: string
           id?: number
           quiz_id: number
           user_id: string
         }
         Update: {
-          created_at?: string | null
+          created_at?: string
           id?: number
           quiz_id?: number
           user_id?: string
@@ -114,6 +121,13 @@ export type Database = {
             columns: ["quiz_id"]
             isOneToOne: false
             referencedRelation: "quizzes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quiz_likes_user_id_fkey1"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
