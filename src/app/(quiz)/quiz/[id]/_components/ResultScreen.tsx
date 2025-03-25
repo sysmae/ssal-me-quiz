@@ -1,6 +1,7 @@
 import { QuizWithQuestions } from './types'
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import QuizComment from './QuizComment'
 
 type ResultScreenProps = {
   quiz: QuizWithQuestions
@@ -76,60 +77,13 @@ export default function ResultScreen({
         <CardFooter className="flex-col">
           {/* 댓글 섹션은 기존 코드와 동일하게 유지 */}
           <div className="w-full mt-8 border-t pt-6">
-            <h3 className="text-lg font-bold mb-4">댓글 (3712)</h3>
             <div className="bg-gray-50 p-4 rounded-lg mb-4">
               <p className="text-sm text-gray-500">
                 댓글 작성 시 타인을 기분나쁘게 하거나 이용 약관이나 안전에 대한
                 문제 조장이 위험할 수 있습니다.
               </p>
-              <div className="flex mt-2 gap-2">
-                <input
-                  type="text"
-                  placeholder="닉네임"
-                  className="flex-grow p-2 border rounded-md text-sm"
-                />
-                <input
-                  type="password"
-                  placeholder="비밀번호"
-                  className="w-24 p-2 border rounded-md text-sm"
-                />
-                <Button className="bg-indigo-500 hover:bg-indigo-600 text-white text-sm">
-                  작성하기
-                </Button>
-              </div>
             </div>
-
-            {/* 댓글 목록 샘플 */}
-            <div className="space-y-4">
-              {[
-                {
-                  name: '장세현',
-                  date: '2023-03-24 06:30:01',
-                  content: '나 오세훈인데 너무 쉽다 역겨워서 게임 안한다야.',
-                },
-                {
-                  name: '국가안보위기',
-                  date: '2023-03-22 15:21:21',
-                  content: '요즘 세상 모르시네요 구글 찾아서 답하세요',
-                },
-              ].map((comment, i) => (
-                <div key={i} className="flex justify-between border-b pb-2">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="font-bold text-sm">{comment.name}</span>
-                      <span className="text-xs text-gray-500">
-                        {comment.date}
-                      </span>
-                    </div>
-                    <p className="text-sm mt-1">{comment.content}</p>
-                  </div>
-                  <div className="flex flex-col items-center">
-                    <button className="text-red-500">▲</button>
-                    <button className="text-gray-500">▼</button>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <QuizComment quizId={quiz.id} />
           </div>
         </CardFooter>
       </Card>

@@ -93,6 +93,13 @@ export default function QuizClient({ id }: { id: string }) {
             onRestart={handleRestartQuiz}
           />
         )}
+        {/* {state.status === 'quiz' && (
+          <ResultScreen
+            quiz={quiz}
+            score={state.score}
+            onRestart={handleRestartQuiz}
+          />
+        )} */}
       </div>
     </div>
   )
