@@ -8,12 +8,12 @@ import {
 
 const supabase = createClient()
 
-export const questions = {
+export const quiz_questions = {
   // 문제 목록 관련 기능
   list: {
     getAll: async (quizId: number) => {
       const { data, error } = await supabase
-        .from('questions')
+        .from('quiz_questions')
         .select('*')
         .eq('quiz_id', quizId)
 
@@ -25,7 +25,7 @@ export const questions = {
   details: {
     get: async (id: number) => {
       const { data, error } = await supabase
-        .from('questions')
+        .from('quiz_questions')
         .select('*')
         .eq('id', id)
         .single()
@@ -35,7 +35,7 @@ export const questions = {
     },
     update: async (id: number, updates: QuestionUpdateData) => {
       const { data, error } = await supabase
-        .from('questions')
+        .from('quiz_questions')
         .update(updates)
         .eq('id', id)
 
@@ -43,14 +43,19 @@ export const questions = {
       return data
     },
     delete: async (id: number) => {
-      const { error } = await supabase.from('questions').delete().eq('id', id)
+      const { error } = await supabase
+        .from('quiz_questions')
+        .delete()
+        .eq('id', id)
 
       if (error) throw error
     },
   },
   // 문제 생성 관련 기능
   create: async (question: QuestionInsertData) => {
-    const { data, error } = await supabase.from('questions').insert(question)
+    const { data, error } = await supabase
+      .from('quiz_questions')
+      .insert(question)
 
     if (error) throw error
     return data
