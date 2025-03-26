@@ -1,7 +1,7 @@
 'use client'
 
-import { useReducer } from 'react'
-import { useQuizQueries } from '@/hooks/useQuizQueries'
+import { useReducer, useEffect } from 'react'
+import { useQuizQueries, useIncrementQuizView } from '@/hooks/useQuizQueries'
 import { quizReducer, initialState } from './quizReducer'
 import StartScreen from './StartScreen'
 import QuizScreen from './QuizScreen'
@@ -12,6 +12,7 @@ import { QuizWithQuestions } from './types'
 export default function QuizClient({ id }: { id: string }) {
   const [state, dispatch] = useReducer(quizReducer, initialState)
   const { quiz: data } = useQuizQueries(Number(id))
+  const { mutate: incrementViewCount } = useIncrementQuizView(Number(id))
 
   // 타입 단언: data가 QuizWithQuestions 타입임을 명시
   const quiz = data as QuizWithQuestions | undefined
@@ -19,6 +20,32 @@ export default function QuizClient({ id }: { id: string }) {
   // 로딩 및 에러 상태 확인
   const isLoading = !quiz
   const isError = !quiz
+
+  // 페이지 접속 시 조회수 증가
+  useEffect(() => {
+    if (quiz) {
+      incrementViewWithDuplicatePrevention()
+    }
+  }, [quiz])
+
+  // 중복 조회수 방지를 위한 함수
+  const incrementViewWithDuplicatePrevention = () => {
+    // 로컬 스토리지에서 최근 조회 기록 확인
+    const viewedQuizzes = JSON.parse(
+      localStorage.getItem('viewedQuizzes') || '{}'
+    )
+    const lastViewTime = viewedQuizzes[id] || 0
+    const currentTime = Date.now()
+
+    // 6시간(21600000ms) 내에 조회한 적이 없으면 조회수 증가
+    if (currentTime - lastViewTime > 21600000) {
+      incrementViewCount()
+
+      // 최근 조회 시간 업데이트
+      viewedQuizzes[id] = currentTime
+      localStorage.setItem('viewedQuizzes', JSON.stringify(viewedQuizzes))
+    }
+  }
 
   // 퀴즈 시작 핸들러
   const handleStartQuiz = () => {
@@ -46,12 +73,6 @@ export default function QuizClient({ id }: { id: string }) {
   // 퀴즈 재시작
   const handleRestartQuiz = () => {
     dispatch({ type: 'RESTART_QUIZ' })
-  }
-
-  // 결과 저장 (선택적 기능)
-  const saveQuizResult = async () => {
-    // 여기에 quiz_results 테이블에 결과를 저장하는 로직을 추가할 수 있습니다
-    // 예: Supabase client를 사용하여 결과 저장
   }
 
   if (isLoading) {
@@ -93,13 +114,6 @@ export default function QuizClient({ id }: { id: string }) {
             onRestart={handleRestartQuiz}
           />
         )}
-        {/* {state.status === 'quiz' && (
-          <ResultScreen
-            quiz={quiz}
-            score={state.score}
-            onRestart={handleRestartQuiz}
-          />
-        )} */}
       </div>
     </div>
   )

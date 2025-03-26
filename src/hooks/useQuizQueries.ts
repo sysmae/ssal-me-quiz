@@ -37,10 +37,6 @@ export const useQuizQueries = (quizId: number) => {
   // 퀴즈 발행 상태 업데이트
   const updatePublished = (published: boolean) => updateQuiz({ published })
 
-  // 퀴즈 좋아요 업데이트
-  const updateLikeCount = (likeCount: number) =>
-    updateQuiz({ like_count: likeCount })
-
   // 퀴즈 삭제
   const { mutate: deleteQuiz } = useMutation({
     mutationFn: () => quizzes.details.delete(quizId),
@@ -136,5 +132,27 @@ export const useToggleQuizLike = (quizId: number) => {
       queryClient.invalidateQueries({ queryKey: ['quiz', quizId] })
       queryClient.invalidateQueries({ queryKey: ['quizzes'] })
     },
+  })
+}
+
+// 조회수 증가 훅
+export const useIncrementQuizView = (quizId: number) => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: () => quizzes.views.incrementViewCount(quizId),
+    onSuccess: () => {
+      // 관련 쿼리 무효화
+      queryClient.invalidateQueries({ queryKey: ['quiz', quizId] })
+    },
+  })
+}
+
+// 조회수 조회 훅
+export const useQuizViewCount = (quizId: number) => {
+  return useQuery({
+    queryKey: ['quiz', quizId, 'views'],
+    queryFn: () => quizzes.views.getViewCount(quizId),
+    enabled: !!quizId,
   })
 }

@@ -207,4 +207,48 @@ export const quizzes = {
       return data.like_count
     },
   },
+
+  // 조회수 관련 기능 추가
+  views: {
+    // 조회수 증가
+    incrementViewCount: async (quizId: number) => {
+      try {
+        // 현재 조회수 가져오기
+        const { data: quizData, error: fetchError } = await supabase
+          .from('quizzes')
+          .select('view_count')
+          .eq('id', quizId)
+          .single()
+
+        if (fetchError) throw fetchError
+
+        // 조회수 증가
+        const newViewCount = (quizData.view_count || 0) + 1
+        const { data, error: updateError } = await supabase
+          .from('quizzes')
+          .update({ view_count: newViewCount })
+          .eq('id', quizId)
+          .select('view_count')
+          .single()
+
+        if (updateError) throw updateError
+        return data.view_count
+      } catch (error) {
+        console.error('조회수 증가 실패:', error)
+        throw error
+      }
+    },
+
+    // 조회수 조회
+    getViewCount: async (quizId: number) => {
+      const { data, error } = await supabase
+        .from('quizzes')
+        .select('view_count')
+        .eq('id', quizId)
+        .single()
+
+      if (error) throw error
+      return data.view_count || 0
+    },
+  },
 }

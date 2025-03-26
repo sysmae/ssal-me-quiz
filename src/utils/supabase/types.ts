@@ -134,25 +134,25 @@ export type Database = {
       }
       quiz_results: {
         Row: {
-          created_at: string | null
+          created_at: string
           id: number
-          quiz_id: number | null
+          quiz_id: number
           score: number
           total_questions: number
           user_id: string | null
         }
         Insert: {
-          created_at?: string | null
+          created_at?: string
           id?: number
-          quiz_id?: number | null
+          quiz_id: number
           score: number
           total_questions: number
           user_id?: string | null
         }
         Update: {
-          created_at?: string | null
+          created_at?: string
           id?: number
-          quiz_id?: number | null
+          quiz_id?: number
           score?: number
           total_questions?: number
           user_id?: string | null

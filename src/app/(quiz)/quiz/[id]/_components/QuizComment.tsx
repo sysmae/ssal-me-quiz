@@ -11,7 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+// import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 
@@ -74,7 +74,7 @@ const CommentItem = ({
   return (
     <div className="border-b pb-4 mb-4 last:border-0 last:mb-0">
       <div className="flex gap-3">
-        <Avatar className="h-8 w-8 flex-shrink-0">
+        {/* <Avatar className="h-8 w-8 flex-shrink-0">
           <AvatarImage
             src={comment.users.avatar || ''}
             alt={comment.users.name || '사용자'}
@@ -82,7 +82,7 @@ const CommentItem = ({
           <AvatarFallback>
             {comment.users.name?.substring(0, 2) || 'UN'}
           </AvatarFallback>
-        </Avatar>
+        </Avatar> */}
         <div className="flex-1">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2">
@@ -270,12 +270,12 @@ const QuizComment = ({ quizId }: QuizCommentProps) => {
         {/* 댓글 작성 폼 */}
         {userId && (
           <form onSubmit={handleSubmit} className="flex gap-3">
-            <Avatar className="h-10 w-10 flex-shrink-0">
+            {/* <Avatar className="h-10 w-10 flex-shrink-0">
               <AvatarImage src={userAvatar || ''} alt={userName || '사용자'} />
               <AvatarFallback>
                 {userName?.substring(0, 2) || 'ME'}
               </AvatarFallback>
-            </Avatar>
+            </Avatar> */}
             <div className="flex-1">
               <div className="border rounded-lg overflow-hidden">
                 <Textarea

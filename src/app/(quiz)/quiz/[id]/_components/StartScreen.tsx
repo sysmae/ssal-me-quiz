@@ -12,7 +12,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Eye, MessageSquare, Clock, ThumbsUp } from 'lucide-react'
+import { Eye, MessageSquare, BookCheck } from 'lucide-react'
 import LikeButton from './../../_components/LikeCount'
 import QuizComment from './QuizComment'
 import { useQuizCommentCount } from '@/hooks/useCommentQueries'
@@ -60,8 +60,8 @@ export default function StartScreen({ quiz, onStart }: StartScreenProps) {
             <CardContent>
               <div className="flex items-center gap-4 text-sm text-muted-foreground">
                 <div className="flex items-center gap-1">
-                  <Clock className="h-4 w-4" />
-                  <span>약 {quiz.questions.length * 2}분</span>
+                  <BookCheck className="h-4 w-4" />
+                  <span>{quiz.questions.length} 개</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <Eye className="h-4 w-4" />
