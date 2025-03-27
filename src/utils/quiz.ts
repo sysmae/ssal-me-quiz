@@ -46,7 +46,7 @@ export const quizzes = {
 
       const { data, error } = await supabase
         .from('quizzes')
-        .select('*, questions:questions(*)')
+        .select('*, questions:quiz_questions(*)')
         .eq('created_by', userId)
 
       if (error) throw error
@@ -58,7 +58,7 @@ export const quizzes = {
     get: async (id: number) => {
       const { data, error } = await supabase
         .from('quizzes')
-        .select('*, questions:questions(*)')
+        .select('*, questions:quiz_questions(*)')
         .eq('id', id)
         .single()
 
