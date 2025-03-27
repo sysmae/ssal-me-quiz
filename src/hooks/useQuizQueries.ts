@@ -1,3 +1,5 @@
+// hooks/useQuizQueries.ts
+
 import { QuizUpdateData } from '@/types/quiz'
 import { quizzes } from '@/utils/quiz'
 import {

@@ -1,3 +1,5 @@
+// quizReducer.ts
+
 import { QuizState, QuizAction, QuizWithQuestions } from './types'
 
 export const initialState: QuizState = {
