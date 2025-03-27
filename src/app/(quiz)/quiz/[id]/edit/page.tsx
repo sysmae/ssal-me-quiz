@@ -1,7 +1,7 @@
 'use client'
 
 import { useQuizQueries } from '@/hooks/useQuizQueries'
-import { useQuestionQueries } from '@/hooks/useQuestionQueries'
+import { useQuizQuestionQueries } from '@/hooks/useQuizQuestionQueries'
 import { useEffect, useState, use } from 'react'
 import { useRouter } from 'next/navigation'
 import { QuestionInsertData, QuestionUpdateData } from '@/types/quiz'
@@ -27,8 +27,8 @@ const QuizEditPage = ({ params }: { params: Promise<{ id: string }> }) => {
   }, [id])
 
   const { quiz, updateQuiz, deleteQuiz } = useQuizQueries(quizId ?? 0)
-  const { questionsData, createQuestion, updateQuestion, deleteQuestion } =
-    useQuestionQueries(quizId ?? 0)
+  const { quiz_questionsData, createQuestion, updateQuestion, deleteQuestion } =
+    useQuizQuestionQueries(quizId ?? 0)
 
   const handleDeleteQuiz = () => {
     if (!quizId) return
@@ -50,10 +50,10 @@ const QuizEditPage = ({ params }: { params: Promise<{ id: string }> }) => {
 
   const handleUpdateQuestion = (
     questionId: number,
-    questionData: QuestionUpdateData
+    quiz_questionsData: QuestionUpdateData
   ) => {
     try {
-      updateQuestion({ questionId, updates: questionData })
+      updateQuestion({ questionId, updates: quiz_questionsData })
     } catch (error) {
       console.error('질문 업데이트 오류:', error)
       alert('질문 업데이트 중 오류가 발생했습니다.')
@@ -75,9 +75,9 @@ const QuizEditPage = ({ params }: { params: Promise<{ id: string }> }) => {
     }
   }
 
-  const handleCreateQuestion = (questionData: QuestionInsertData) => {
+  const handleCreateQuestion = (quiz_questionsData: QuestionInsertData) => {
     try {
-      createQuestion(questionData)
+      createQuestion(quiz_questionsData)
     } catch (error) {
       console.error('새 질문 생성 오류:', error)
       alert('새 질문 생성 중 오류가 발생했습니다.')
@@ -154,10 +154,10 @@ const QuizEditPage = ({ params }: { params: Promise<{ id: string }> }) => {
 
             <div>
               <h3 className="text-lg font-medium mb-4">질문 관리</h3>
-              {questionsData ? (
+              {quiz_questionsData ? (
                 <QuestionManager
                   quizId={quizId}
-                  questions={questionsData}
+                  questions={quiz_questionsData}
                   onUpdateQuestion={handleUpdateQuestion}
                   onDeleteQuestion={handleDeleteQuestion}
                   onCreateQuestion={handleCreateQuestion}

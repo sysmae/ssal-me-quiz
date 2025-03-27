@@ -49,7 +49,8 @@ export const quizAttempts = {
     saveAnswer: async (
       attemptId: number,
       questionId: number,
-      userAnswer: string
+      userAnswer: string,
+      isCorrect: boolean
     ) => {
       // 정답 확인을 위해 문제 정보 가져오기
       const { data: question, error: questionError } = await supabase
@@ -61,7 +62,7 @@ export const quizAttempts = {
       if (questionError) throw questionError
 
       // 정답 여부 확인
-      const isCorrect = userAnswer === question.correct_answer
+      // const isCorrect = userAnswer === question.correct_answer
 
       // 사용자 답변 저장
       const { data, error } = await supabase

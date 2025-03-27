@@ -54,31 +54,31 @@ export type Database = {
       quiz_attempts: {
         Row: {
           completed_at: string | null
-          correct_answers: number | null
+          correct_answers: number
           created_at: string
           id: number
-          is_completed: boolean | null
-          score: number | null
+          is_completed: boolean
+          score: number
           total_questions: number
           user_id: string
         }
         Insert: {
           completed_at?: string | null
-          correct_answers?: number | null
+          correct_answers?: number
           created_at?: string
           id?: number
-          is_completed?: boolean | null
-          score?: number | null
+          is_completed?: boolean
+          score?: number
           total_questions: number
           user_id: string
         }
         Update: {
           completed_at?: string | null
-          correct_answers?: number | null
+          correct_answers?: number
           created_at?: string
           id?: number
-          is_completed?: boolean | null
-          score?: number | null
+          is_completed?: boolean
+          score?: number
           total_questions?: number
           user_id?: string
         }
