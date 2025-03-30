@@ -56,6 +56,7 @@ export type Database = {
           correct_answers: number
           created_at: string
           id: number
+          quiz_id: number
           score: number
           total_questions: number
           user_id: string | null
@@ -64,6 +65,7 @@ export type Database = {
           correct_answers?: number
           created_at?: string
           id?: number
+          quiz_id: number
           score?: number
           total_questions: number
           user_id?: string | null
@@ -72,11 +74,20 @@ export type Database = {
           correct_answers?: number
           created_at?: string
           id?: number
+          quiz_id?: number
           score?: number
           total_questions?: number
           user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "quiz_attempts_quiz_id_fkey"
+            columns: ["quiz_id"]
+            isOneToOne: false
+            referencedRelation: "quizzes"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       quiz_comments: {
         Row: {
