@@ -1,4 +1,4 @@
-// utils/question.ts
+// utils/quiz_question.ts
 import { createClient } from '@/utils/supabase/client'
 import {
   QuestionData,

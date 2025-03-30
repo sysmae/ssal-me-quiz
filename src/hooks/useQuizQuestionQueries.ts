@@ -1,4 +1,4 @@
-import { questions } from '@/utils/question'
+import { quiz_questions } from '@/utils/quiz_question'
 import {
   QueryClient,
   useMutation,
@@ -12,8 +12,8 @@ export const useQuestionQueries = (quizId: number) => {
 
   // 문제 목록 가져오기
   const { data: questionsData } = useQuery({
-    queryKey: ['questions', quizId],
-    queryFn: () => questions.list.getAll(quizId),
+    queryKey: ['quiz_questions', quizId],
+    queryFn: () => quiz_questions.list.getAll(quizId),
     enabled: !!quizId,
     staleTime: Infinity,
     gcTime: 1000 * 60 * 30,
@@ -21,10 +21,11 @@ export const useQuestionQueries = (quizId: number) => {
 
   // 문제 생성
   const { mutate: createQuestion } = useMutation({
-    mutationFn: (question: QuestionInsertData) => questions.create(question),
+    mutationFn: (question: QuestionInsertData) =>
+      quiz_questions.create(question),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['questions', quizId],
+        queryKey: ['quiz_questions', quizId],
       })
     },
   })
@@ -37,19 +38,20 @@ export const useQuestionQueries = (quizId: number) => {
     }: {
       questionId: number
       updates: QuestionUpdateData
-    }) => questions.details.update(questionId, updates),
+    }) => quiz_questions.details.update(questionId, updates),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['questions', quizId],
+        queryKey: ['quiz_questions', quizId],
       })
     },
   })
 
   // 문제 삭제
   const { mutate: deleteQuestion } = useMutation({
-    mutationFn: (questionId: number) => questions.details.delete(questionId),
+    mutationFn: (questionId: number) =>
+      quiz_questions.details.delete(questionId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['questions', quizId] })
+      queryClient.invalidateQueries({ queryKey: ['quiz_questions', quizId] })
     },
   })
 

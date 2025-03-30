@@ -1,7 +1,7 @@
 'use client'
 
 import { useQuizQueries } from '@/hooks/useQuizQueries'
-import { useQuestionQueries } from '@/hooks/useQuestionQueries'
+import { useQuestionQueries } from '@/hooks/useQuizQuestionQueries'
 import { useEffect, useState, use } from 'react'
 import { useRouter } from 'next/navigation'
 import { QuestionInsertData, QuestionUpdateData } from '@/types/quiz'
