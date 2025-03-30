@@ -1,6 +1,6 @@
 'use client'
 
-import { useReducer, useEffect } from 'react'
+import { useReducer, useEffect, useState } from 'react'
 import { useQuizQueries, useIncrementQuizView } from '@/hooks/useQuizQueries'
 import { quizReducer, initialState } from './quizReducer'
 import StartScreen from './StartScreen'
@@ -8,11 +8,25 @@ import QuizScreen from './QuizScreen'
 import FeedbackScreen from './FeedbackScreen'
 import ResultScreen from './ResultScreen'
 import { QuizWithQuestions } from './types'
+import { createClient } from '@/utils/supabase/client'
+import { User } from '@supabase/supabase-js'
 
 export default function QuizClient({ id }: { id: string }) {
   const [state, dispatch] = useReducer(quizReducer, initialState)
   const { quiz: data } = useQuizQueries(Number(id))
   const { mutate: incrementViewCount } = useIncrementQuizView(Number(id))
+  const supabase = createClient()
+
+  const [user, setUser] = useState<User | null>(null)
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data } = await supabase.auth.getUser()
+      setUser(data.user)
+    }
+
+    fetchUser()
+  }, [])
 
   // 타입 단언: data가 QuizWithQuestions 타입임을 명시
   const quiz = data as QuizWithQuestions | undefined
@@ -27,6 +41,31 @@ export default function QuizClient({ id }: { id: string }) {
       incrementViewWithDuplicatePrevention()
     }
   }, [quiz])
+
+  // 퀴즈 결과 저장 함수
+  const saveQuizResults = async () => {
+    if (!quiz) return
+
+    try {
+      // 퀴즈 시도 데이터 구성
+      const attemptData = {
+        quizId: quiz.id,
+        correctAnswers: state.score,
+        totalQuestions: quiz.questions.length,
+        score: (state.score / quiz.questions.length) * 100, // 백분율 점수
+        userId: user?.id || null, // 로그인한 사용자 ID (없으면 null)
+        answerHistory: state.answerHistory, // 답변 기록
+      }
+
+      console.log('퀴즈 시도 데이터:', attemptData)
+
+      // 퀴즈 시도 데이터 저장 함수 호출
+      // await saveQuizAttempt(attemptData)
+      console.log('퀴즈 결과가 성공적으로 저장되었습니다.')
+    } catch (error) {
+      console.error('퀴즈 결과 저장 중 오류 발생:', error)
+    }
+  }
 
   // 중복 조회수 방지를 위한 함수
   const incrementViewWithDuplicatePrevention = () => {
@@ -49,7 +88,8 @@ export default function QuizClient({ id }: { id: string }) {
 
   // 퀴즈 시작 핸들러
   const handleStartQuiz = () => {
-    dispatch({ type: 'START_QUIZ' })
+    if (!quiz) return
+    dispatch({ type: 'START_QUIZ', payload: { quizId: quiz.id } })
   }
 
   // 답변 제출 핸들러

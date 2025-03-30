@@ -61,15 +61,15 @@ export default function StartScreen({ quiz, onStart }: StartScreenProps) {
               <div className="flex items-center gap-4 text-sm text-muted-foreground">
                 <div className="flex items-center gap-1">
                   <BookCheck className="h-4 w-4" />
-                  <span>{quiz.questions.length} 개</span>
+                  <span>{quiz.questions.length ?? 0} 개</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <Eye className="h-4 w-4" />
-                  <span>{quiz.view_count}회</span>
+                  <span>{quiz.view_count ?? 0}회</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <MessageSquare className="h-4 w-4" />
-                  <span>댓글 {commentCount?.count || 0}개</span>
+                  <span>댓글 {commentCount?.count ?? 0}개</span>
                 </div>
               </div>
             </CardContent>

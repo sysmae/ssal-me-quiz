@@ -21,6 +21,13 @@ export const users = {
     return data as DbUser
   },
 
+  async getCurrentUser() {
+    const { data, error } = await supabase.auth.getUser()
+    if (error) throw error
+    if (!data.user) return null
+    return await this.getUser(data.user.id)
+  },
+
   async createUser(user: DbUserInsert) {
     const { data, error } = await supabase
       .from('users')
