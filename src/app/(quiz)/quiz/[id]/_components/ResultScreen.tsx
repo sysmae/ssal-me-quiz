@@ -1,20 +1,70 @@
-import { QuizWithQuestions } from './types'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { QuizWithQuestions } from '@/types/quiz'
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import QuizComment from './QuizComment'
+import {
+  QuizAttempt,
+  QuizAttemptInsertData,
+  QuizAttemptQuestionUpdateData,
+} from '@/types/quiz_attempt'
 
 type ResultScreenProps = {
   quiz: QuizWithQuestions
-  score: number
   onRestart: () => void
+  saveQuizResults: () =>
+    | {
+        attempt: null
+      }
+    | {
+        attempt: {
+          quizId: number
+          correctAnswers: number
+          totalQuestions: number
+          score: number
+          userId: string | null
+        }
+      }
 }
 
 export default function ResultScreen({
   quiz,
-  score,
   onRestart,
+  saveQuizResults,
 }: ResultScreenProps) {
-  const percentage = Math.round((score / quiz.questions.length) * 100)
+  const [attempt, setAttempt] = useState<{
+    quizId: number
+    correctAnswers: number
+    totalQuestions: number
+    score: number
+    userId: string | null
+  } | null>(null)
+
+  const isSaved = useRef(false)
+
+  useEffect(() => {
+    if (!isSaved.current) {
+      const { attempt } = saveQuizResults()
+      setAttempt(attempt)
+      isSaved.current = true
+    }
+  }, [saveQuizResults])
+
+  if (!attempt) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="loader">Loading...</div>
+      </div>
+    )
+  }
+
+  if (!attempt) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="loader">Loading...</div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-indigo-900 flex flex-col items-center justify-start p-4 pt-16">
@@ -23,33 +73,16 @@ export default function ResultScreen({
           <div className="flex justify-center mb-4">
             <img src="/trophy.svg" alt="Trophy" className="w-24 h-24" />
           </div>
-          <h2 className="text-2xl md:text-3xl font-bold">
-            {score}개 맞히셨습니다
-          </h2>
+
+          <p className="text-lg text-gray-300 mt-2">
+            {attempt.totalQuestions}문제 중 {attempt.correctAnswers}문제를
+            맞히셨습니다.
+          </p>
+
+          <p className="text-lg text-gray-300 mt-2">점수: {attempt.score}점</p>
         </CardHeader>
 
         <CardContent className="flex flex-col items-center">
-          {/* 점수 그래프 */}
-          <div className="w-full max-w-md mb-6">
-            <div className="flex justify-center items-end h-32 gap-1">
-              {Array.from({ length: 15 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="w-4 bg-gray-200 rounded-t-sm"
-                  style={{
-                    height: `${Math.max(15, Math.min(100, 15 + i * 5))}%`,
-                    backgroundColor:
-                      i === 7 ? 'rgb(99, 102, 241)' : 'rgb(229, 231, 235)',
-                  }}
-                />
-              ))}
-            </div>
-          </div>
-
-          <p className="text-xl font-medium mb-8">
-            당신은 상위 {percentage}%입니다
-          </p>
-
           <div className="flex gap-3 w-full max-w-md justify-center">
             <Button
               onClick={onRestart}

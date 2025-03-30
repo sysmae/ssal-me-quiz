@@ -20,7 +20,10 @@ export const useQuizAttemptsQueries = () => {
       quizAttemptQuestionData,
     }: {
       quizAttemptData: QuizAttemptInsertData
-      quizAttemptQuestionData: QuizAttemptQuestionInsertData[]
+      quizAttemptQuestionData: Omit<
+        QuizAttemptQuestionInsertData,
+        'attempt_id'
+      >[]
     }) =>
       quizAttempts.createAttemptAndQuestions(
         quizAttemptData,

@@ -12,3 +12,8 @@ export type QuestionInsertData =
 
 export type QuizData = Database['public']['Tables']['quizzes']['Row']
 export type QuestionData = Database['public']['Tables']['quiz_questions']['Row']
+
+// 질문이 포함된 퀴즈 타입
+export type QuizWithQuestions = QuizData & {
+  questions: QuestionData[]
+}

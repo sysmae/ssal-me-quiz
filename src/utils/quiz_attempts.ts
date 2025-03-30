@@ -16,7 +16,7 @@ export const quizAttempts = {
       correct_answers: correct_answers,
       score: score,
     }: QuizAttemptInsertData,
-    quizAttemptQuestionData: QuizAttemptQuestionInsertData[]
+    quizAttemptQuestionData: Omit<QuizAttemptQuestionInsertData, 'attempt_id'>[]
   ) => {
     // 유저가 있는지 확인하고 userId 가져오기
     // 만약 유저가 없다면 userId를 null로 설정
@@ -39,10 +39,11 @@ export const quizAttempts = {
     if (attemptError) throw attemptError
 
     // 퀴즈 시도 ID 가져오기
+    if (!attempt) throw new Error('Attempt not found')
     const attemptId = attempt.id
 
     // 문제 및 답변 정보 생성
-    const { data: questions, error: questionsError } = await supabase
+    const { error: questionsError } = await supabase
       .from('quiz_attempt_questions')
       .insert(
         quizAttemptQuestionData.map((question) => ({
@@ -50,11 +51,13 @@ export const quizAttempts = {
           attempt_id: attemptId,
         }))
       )
-      .select('*')
-      .single()
 
     // 에러 처리
     if (questionsError) throw questionsError
+
+    return {
+      attempt,
+    }
   },
 
   // 퀴즈 결과 관련 기능
@@ -85,7 +88,6 @@ export const quizAttempts = {
 
       return {
         attempt,
-        questions,
       }
     },
   },

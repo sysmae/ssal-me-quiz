@@ -1,4 +1,4 @@
-import { QuizWithQuestions } from './types'
+import { QuizWithQuestions } from '@/types/quiz'
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { CheckCircle, XCircle } from 'lucide-react'
