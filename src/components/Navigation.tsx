@@ -2,6 +2,8 @@
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/utils/supabase/client'
+import { auth } from '@/utils/auth'
+import { Button } from './ui/button'
 
 const Navigation = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -25,10 +27,25 @@ const Navigation = () => {
           쌀미 퀴즈
         </Link>
         <div>
+          <Link href={'/quiz'} className="text-blue-500 mr-4">
+            퀴즈 목록
+          </Link>
           {isLoggedIn ? (
-            <Link href={'/quiz/my'} className="text-blue-500 mr-4">
-              내 퀴즈
-            </Link>
+            <>
+              <Link href={'/quiz/my'} className="text-blue-500 mr-4">
+                내 퀴즈
+              </Link>
+              {/* 로그아웃 */}
+              <Button
+                onClick={async () => {
+                  await auth.signOut()
+                  setIsLoggedIn(false)
+                }}
+                className="cursor-pointer"
+              >
+                로그아웃
+              </Button>
+            </>
           ) : (
             <Link href={'/login'} className="text-blue-500 mr-4">
               로그인

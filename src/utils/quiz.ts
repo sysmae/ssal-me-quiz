@@ -7,11 +7,18 @@ const supabase = createClient()
 export const quizzes = {
   // 퀴즈 목록 관련 기능
   list: {
-    getAll: async (sortBy = 'like_count', searchTerm = '') => {
+    getAll: async (
+      sortBy = 'like_count',
+      searchTerm = '',
+      page = 0,
+      pageSize = 9
+    ) => {
+      const startIndex = page * pageSize
+
       let query = supabase
         .from('quizzes')
         .select('*')
-        .filter('published', 'eq', true) // 공개된 퀴즈만 가져오기
+        .filter('published', 'eq', true)
 
       // 검색어가 있으면 필터링
       if (searchTerm) {
@@ -19,10 +26,31 @@ export const quizzes = {
       }
 
       // 정렬 방식 설정
-      const order = sortBy === 'newest' ? 'created_at' : sortBy
-      const ascending = sortBy === 'oldest'
+      let order
+      let ascending = false
 
-      const { data, error } = await query.order(order, { ascending }).limit(20)
+      switch (sortBy) {
+        case 'newest':
+          order = 'created_at'
+          ascending = false
+          break
+        case 'oldest':
+          order = 'created_at'
+          ascending = true
+          break
+        case 'view_count':
+          order = 'view_count'
+          ascending = false
+          break
+        case 'like_count':
+        default:
+          order = 'like_count'
+          ascending = false
+      }
+
+      const { data, error } = await query
+        .order(order, { ascending })
+        .range(startIndex, startIndex + pageSize - 1)
 
       if (error) throw error
       return data

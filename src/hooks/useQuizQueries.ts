@@ -9,6 +9,21 @@ import {
   useQueryClient,
 } from '@tanstack/react-query'
 
+import { useInfiniteQuery } from '@tanstack/react-query'
+
+// 무한 스크롤을 위한 퀴즈 목록 가져오기
+export const useInfiniteQuizzes = (sortBy = 'like_count', searchTerm = '') => {
+  return useInfiniteQuery({
+    queryKey: ['infiniteQuizzes', sortBy, searchTerm],
+    queryFn: ({ pageParam = 0 }) =>
+      quizzes.list.getAll(sortBy, searchTerm, pageParam, 9),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, allPages) => {
+      return lastPage.length === 0 ? undefined : allPages.length
+    },
+    staleTime: 60 * 60 * 1000, // 60분 동안 신선한 상태 유지
+  })
+}
 export const useQuizQueries = (quizId: number) => {
   const queryClient = useQueryClient()
 
