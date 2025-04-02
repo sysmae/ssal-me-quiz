@@ -1,4 +1,4 @@
-import { QuizWithQuestions } from './types'
+import { QuizWithQuestions } from '@/types/quiz'
 import { FormEvent } from 'react'
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'

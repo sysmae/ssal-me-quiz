@@ -1,6 +1,6 @@
 'use client'
 
-import { QuizWithQuestions } from './types'
+import { QuizWithQuestions } from '@/types/quiz'
 import {
   Card,
   CardContent,

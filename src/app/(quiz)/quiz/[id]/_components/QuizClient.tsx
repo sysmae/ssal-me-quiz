@@ -2,22 +2,26 @@
 
 import { useReducer, useEffect, useState } from 'react'
 import { useQuizQueries, useIncrementQuizView } from '@/hooks/useQuizQueries'
-import { quizReducer, initialState } from './quizReducer'
+import { quizReducer, initialState, QuizState, QuizAction } from './quizReducer'
+
 import StartScreen from './StartScreen'
 import QuizScreen from './QuizScreen'
 import FeedbackScreen from './FeedbackScreen'
 import ResultScreen from './ResultScreen'
-import { QuizWithQuestions } from './types'
+
 import { createClient } from '@/utils/supabase/client'
 import { User } from '@supabase/supabase-js'
 
+import { useQuizAttemptsQueries } from '@/hooks/useQuizAttemptsQueries'
+
 export default function QuizClient({ id }: { id: string }) {
   const [state, dispatch] = useReducer(quizReducer, initialState)
-  const { quiz: data } = useQuizQueries(Number(id))
+  const { quiz } = useQuizQueries(Number(id))
   const { mutate: incrementViewCount } = useIncrementQuizView(Number(id))
   const supabase = createClient()
 
   const [user, setUser] = useState<User | null>(null)
+  const { createQuizAttempt } = useQuizAttemptsQueries()
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -27,9 +31,6 @@ export default function QuizClient({ id }: { id: string }) {
 
     fetchUser()
   }, [])
-
-  // 타입 단언: data가 QuizWithQuestions 타입임을 명시
-  const quiz = data as QuizWithQuestions | undefined
 
   // 로딩 및 에러 상태 확인
   const isLoading = !quiz
@@ -43,29 +44,29 @@ export default function QuizClient({ id }: { id: string }) {
   }, [quiz])
 
   // 퀴즈 결과 저장 함수
-  const saveQuizResults = async () => {
-    if (!quiz) return
+  // const saveQuizResults = async () => {
+  //   if (!quiz) return
 
-    try {
-      // 퀴즈 시도 데이터 구성
-      const attemptData = {
-        quizId: quiz.id,
-        correctAnswers: state.score,
-        totalQuestions: quiz.questions.length,
-        score: (state.score / quiz.questions.length) * 100, // 백분율 점수
-        userId: user?.id || null, // 로그인한 사용자 ID (없으면 null)
-        answerHistory: state.answerHistory, // 답변 기록
-      }
+  //   try {
+  //     // 퀴즈 시도 데이터 구성
+  //     const attemptData = {
+  //       quizId: quiz.id,
+  //       correctAnswers: state.score,
+  //       totalQuestions: quiz.questions.length,
+  //       score: (state.score / quiz.questions.length) * 100, // 백분율 점수
+  //       userId: user?.id || null, // 로그인한 사용자 ID (없으면 null)
+  //       answerHistory: state.answerHistory, // 답변 기록
+  //     }
 
-      console.log('퀴즈 시도 데이터:', attemptData)
+  //     console.log('퀴즈 시도 데이터:', attemptData)
 
-      // 퀴즈 시도 데이터 저장 함수 호출
-      // await saveQuizAttempt(attemptData)
-      console.log('퀴즈 결과가 성공적으로 저장되었습니다.')
-    } catch (error) {
-      console.error('퀴즈 결과 저장 중 오류 발생:', error)
-    }
-  }
+  //     // 퀴즈 시도 데이터 저장 함수 호출
+  //     // await saveQuizAttempt(attemptData)
+  //     console.log('퀴즈 결과가 성공적으로 저장되었습니다.')
+  //   } catch (error) {
+  //     console.error('퀴즈 결과 저장 중 오류 발생:', error)
+  //   }
+  // }
 
   // 중복 조회수 방지를 위한 함수
   const incrementViewWithDuplicatePrevention = () => {
@@ -89,7 +90,10 @@ export default function QuizClient({ id }: { id: string }) {
   // 퀴즈 시작 핸들러
   const handleStartQuiz = () => {
     if (!quiz) return
-    dispatch({ type: 'START_QUIZ', payload: { quizId: quiz.id } })
+    dispatch({
+      type: 'START_QUIZ',
+      payload: { quizId: quiz.id, totalQuestions: quiz.questions.length },
+    })
   }
 
   // 답변 제출 핸들러
@@ -97,7 +101,13 @@ export default function QuizClient({ id }: { id: string }) {
     if (!quiz) return
     dispatch({
       type: 'SUBMIT_ANSWER',
-      payload: { userAnswer, quiz },
+      payload: {
+        userAnswer,
+        questionId: quiz.questions[state.currentQuestionIndex].id,
+        isCorrect:
+          quiz.questions[state.currentQuestionIndex].correct_answer ==
+          userAnswer,
+      },
     })
   }
 
@@ -121,6 +131,44 @@ export default function QuizClient({ id }: { id: string }) {
 
   if (isError || !quiz) {
     return <div>오류가 발생했습니다.</div>
+  }
+
+  // 퀴즈 완료 후 결과 저장 함수
+  const saveQuizResults = () => {
+    if (!quiz) return { attempt: null }
+
+    try {
+      const attemptData = {
+        quizId: quiz.id,
+        correctAnswers: state.attemptData?.correct_answers || 0,
+        totalQuestions: quiz.questions.length,
+        score: state.attemptData.score || 0,
+        userId: user?.id || null,
+      }
+
+      console.log('퀴즈 시도 데이터:', attemptData)
+
+      createQuizAttempt({
+        quizAttemptData: {
+          quiz_id: attemptData.quizId,
+          user_id: attemptData.userId,
+          total_questions: attemptData.totalQuestions,
+          correct_answers: attemptData.correctAnswers,
+          score: attemptData.score,
+        },
+        quizAttemptQuestionData: state.questionAnswers.map((question) => ({
+          question_id: question.question_id,
+          user_answer: question.user_answer,
+          is_correct: question.is_correct,
+        })),
+      })
+
+      console.log('퀴즈 결과가 성공적으로 저장되었습니다.')
+      return { attempt: { ...attemptData } }
+    } catch (error) {
+      console.error('퀴즈 결과 저장 중 오류 발생:', error)
+      return { attempt: null }
+    }
   }
 
   return (
@@ -150,8 +198,8 @@ export default function QuizClient({ id }: { id: string }) {
         {state.status === 'result' && (
           <ResultScreen
             quiz={quiz}
-            score={state.score}
             onRestart={handleRestartQuiz}
+            saveQuizResults={saveQuizResults}
           />
         )}
       </div>
