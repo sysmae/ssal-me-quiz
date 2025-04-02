@@ -8,24 +8,24 @@ import { prefetchQuiz } from '@/hooks/useQuizQueries'
 
 import QuizClient from './_components/QuizClient'
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ id: string }>
-}) {
-  const resolvedParams = await params
-  const quiz = await quizzes.details.get(Number(resolvedParams.id))
+// export async function generateMetadata({
+//   params,
+// }: {
+//   params: Promise<{ id: string }>
+// }) {
+//   const resolvedParams = await params
+//   const quiz = await quizzes.details.get(Number(resolvedParams.id))
 
-  return {
-    title: `${quiz.title} | 나에게 맞는 퀴즈 찾기`,
-    description: quiz.description ? quiz.description.substring(0, 160) : '',
-    openGraph: {
-      title: quiz.title,
-      description: quiz.description,
-      type: 'website',
-    },
-  }
-}
+//   return {
+//     title: `${quiz.title} | 나에게 맞는 퀴즈 찾기`,
+//     description: quiz.description ? quiz.description.substring(0, 160) : '',
+//     openGraph: {
+//       title: quiz.title,
+//       description: quiz.description,
+//       type: 'website',
+//     },
+//   }
+// }
 
 export const dynamic = 'force-static'
 export const revalidate = false // 또는 원하는 시간(초) 설정

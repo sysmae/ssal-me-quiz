@@ -53,6 +53,14 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
+  // 로그인 안되어 있는데 /quiz/my 페이지로 접근하면 로그인 페이지로 이동
+  if (!user && request.nextUrl.pathname.startsWith('/quiz/my')) {
+    // For logged out users trying to access auth pages, redirect to the next path
+    const url = request.nextUrl.clone()
+    url.pathname = '/login'
+    return NextResponse.redirect(url)
+  }
+
   // IMPORTANT: You *must* return the supabaseResponse object as it is.
   // If you're creating a new response object with NextResponse.next() make sure to:
   // 1. Pass the request in it, like so:

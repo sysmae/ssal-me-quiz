@@ -45,54 +45,75 @@ export function LoginForm() {
   }
 
   return (
-    <Card className="w-96">
+    <Card className="w-full max-w-md bg-blue-50 shadow-lg rounded-2xl">
       <form onSubmit={handleSubmit}>
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl">Log in</CardTitle>
-          <CardDescription className="text-xs">Welcome back</CardDescription>
+        <CardHeader className="space-y-1 text-center">
+          <CardTitle className="text-3xl font-bold text-blue-600">
+            로그인
+          </CardTitle>
+          <CardDescription className="text-sm text-gray-600">
+            환영합니다
+          </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4">
-          <div>
-            Don&apos;t have an account?{' '}
-            <Link href="/create-account" className="text-blue-500">
-              Create account
+          <div className="text-center">
+            계정이 없으신가요?{' '}
+            <Link
+              href="/create-account"
+              className="text-blue-500 hover:underline"
+            >
+              회원가입
             </Link>
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email" className="text-gray-700">
+              이메일
+            </Label>
             <Input
               id="email"
               type="email"
-              placeholder="m@example.com"
+              placeholder="이메일을 입력하세요"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               disabled={isLoading}
               required
+              className="rounded-lg"
             />
           </div>
           <div className="grid gap-2">
             <div className="flex items-center justify-between">
-              <Label htmlFor="password">Password</Label>
-              <Link href="/forgot-password" className="text-xs text-blue-500">
-                Forgot password?
+              <Label htmlFor="password" className="text-gray-700">
+                비밀번호
+              </Label>
+              <Link
+                href="/forgot-password"
+                className="text-xs text-blue-500 hover:underline"
+              >
+                비밀번호 찾기
               </Link>
             </div>
             <Input
               id="password"
               type="password"
+              placeholder="비밀번호를 입력하세요"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               disabled={isLoading}
               required
+              className="rounded-lg"
             />
           </div>
 
-          <Button className="w-full" type="submit" disabled={isLoading}>
+          <Button
+            className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg"
+            type="submit"
+            disabled={isLoading}
+          >
             {isLoading && (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
             )}
-            Sign In
+            로그인
           </Button>
         </CardContent>
         <CardFooter>

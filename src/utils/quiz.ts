@@ -120,7 +120,7 @@ export const quizzes = {
   // 퀴즈 목록 관련 기능
   list: {
     getAll: async (
-      sortBy = 'like_count',
+      sortBy = 'view_count',
       searchTerm = '',
       page = 0,
       pageSize = 9
@@ -196,14 +196,56 @@ export const quizzes = {
   // 퀴즈 상세 관련 기능
   details: {
     get: async (id: number) => {
-      const { data, error } = await supabase
-        .from('quizzes')
-        .select('*, questions:quiz_questions(*)')
-        .eq('id', id)
-        .single()
+      try {
+        // 먼저 퀴즈를 가져옵니다
+        const { data: quiz, error: fetchError } = await supabase
+          .from('quizzes')
+          .select('*, questions:quiz_questions(*)')
+          .eq('id', id)
+          .single()
 
-      if (error) throw error
-      return data
+        if (fetchError) {
+          window.location.href = '/quiz'
+          return
+        }
+
+        if (!quiz) {
+          window.location.href = '/quiz'
+          return
+        }
+
+        // 공개된 퀴즈는 인증 없이 바로 반환
+        if (quiz.published) {
+          return quiz
+        }
+
+        // 비공개 퀴즈는 사용자 인증 필요
+        const { data, error } = await supabase.auth.getUser()
+
+        // 인증 에러 발생 시 리다이렉트
+        if (error) {
+          window.location.href = '/quiz'
+          return
+        }
+
+        const userId = data.user?.id
+
+        if (!userId) {
+          window.location.href = '/quiz'
+          return
+        }
+
+        // 소유권 확인
+        if (quiz.created_by !== userId) {
+          window.location.href = '/quiz'
+          return
+        }
+
+        return quiz
+      } catch (error) {
+        window.location.href = '/quiz'
+        return
+      }
     },
 
     update: async (id: number, updates: QuizUpdateData) => {

@@ -11,8 +11,26 @@ import {
 
 import { useInfiniteQuery } from '@tanstack/react-query'
 
+// 인기 퀴즈 가져오기 (조회수 기준)
+export const usePopularQuizzes = (limit = 3) => {
+  return useQuery({
+    queryKey: ['popularQuizzes', limit],
+    queryFn: () => quizzes.list.getAll('view_count', '', 0, limit),
+    staleTime: 24 * 60 * 60 * 1000, // 1일 동안 신선한 상태 유지
+  })
+}
+
+// 최신 퀴즈 가져오기 (생성일 기준)
+export const useRecentQuizzes = (limit = 3) => {
+  return useQuery({
+    queryKey: ['recentQuizzes', limit],
+    queryFn: () => quizzes.list.getAll('newest', '', 0, limit),
+    staleTime: 24 * 60 * 60 * 1000, // 1일 동안 신선한 상태 유지
+  })
+}
+
 // 무한 스크롤을 위한 퀴즈 목록 가져오기
-export const useInfiniteQuizzes = (sortBy = 'like_count', searchTerm = '') => {
+export const useInfiniteQuizzes = (sortBy = 'view_count', searchTerm = '') => {
   return useInfiniteQuery({
     queryKey: ['infiniteQuizzes', sortBy, searchTerm],
     queryFn: ({ pageParam = 0 }) =>
@@ -32,7 +50,7 @@ export const useQuizQueries = (quizId: number) => {
     queryKey: ['quiz', quizId],
     queryFn: () => quizzes.details.get(quizId),
     enabled: !!quizId,
-    staleTime: Infinity,
+    staleTime: 60 * 60 * 1000, // 1시간 동안 신선한 상태 유지
     gcTime: 1000 * 60 * 30,
   })
 
@@ -82,7 +100,7 @@ export const useQuizQueries = (quizId: number) => {
 export const useGetQuizzes = (sortBy = 'like_count', searchTerm = '') => {
   return useQuery({
     queryKey: ['quizzes', sortBy, searchTerm],
-    queryFn: () => quizzes.list.getAll(sortBy, searchTerm),
+    queryFn: async () => await quizzes.list.getAll(sortBy, searchTerm),
     staleTime: 60 * 60 * 1000, // 1시간 동안 신선한 상태 유지
   })
 }

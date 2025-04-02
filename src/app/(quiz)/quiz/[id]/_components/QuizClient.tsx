@@ -121,7 +121,7 @@ export default function QuizClient({ id }: { id: string }) {
         userId: user?.id || null,
       }
 
-      console.log('퀴즈 시도 데이터:', attemptData)
+      // console.log('퀴즈 시도 데이터:', attemptData)
 
       createQuizAttempt({
         quizAttemptData: {
@@ -138,10 +138,10 @@ export default function QuizClient({ id }: { id: string }) {
         })),
       })
 
-      console.log('퀴즈 결과가 성공적으로 저장되었습니다.')
+      // console.log('퀴즈 결과가 성공적으로 저장되었습니다.')
       return { attempt: { ...attemptData } }
     } catch (error) {
-      console.error('퀴즈 결과 저장 중 오류 발생:', error)
+      // console.error('퀴즈 결과 저장 중 오류 발생:', error)
       return { attempt: null }
     }
   }

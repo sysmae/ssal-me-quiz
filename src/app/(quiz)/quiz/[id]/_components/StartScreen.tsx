@@ -17,6 +17,8 @@ import { Eye, MessageSquare, BookCheck } from 'lucide-react'
 import LikeButton from './../../_components/LikeCount'
 import QuizComment from './QuizComment'
 import { useQuizCommentCount } from '@/hooks/useCommentQueries'
+import RecommendedQuizzes from '../../_components/RecommendedQuizzes'
+import ShareButton from '../../_components/ShareButton'
 
 type StartScreenProps = {
   quiz: QuizWithQuestions
@@ -33,21 +35,28 @@ export default function StartScreen({ quiz, onStart }: StartScreenProps) {
         {/* 왼쪽 썸네일, 제목, 설명 */}
         <div className="md:col-span-2">
           <Card className="overflow-hidden">
-            <div className="relative w-full h-64 overflow-hidden bg-gray-100">
+            <div className="relative w-full h-64 overflow-hidden bg-gradient-to-b from-gray-700 to-gray-900">
               {quiz.thumbnail_url ? (
                 <Image
                   src={quiz.thumbnail_url}
                   alt={quiz.title}
                   fill
-                  style={{ objectFit: 'contain' }}
+                  style={{ objectFit: 'cover' }}
+                  onError={(e) => {
+                    e.currentTarget.onerror = null
+                    e.currentTarget.src = '/path/to/fallback-image.jpg'
+                  }}
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
-                  <span className="text-gray-500">이미지 없음</span>
+                  <h3 className="text-white font-bold text-2xl text-center px-4 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                    {quiz.title.length > 15
+                      ? `${quiz.title.substring(0, 15)}...`
+                      : quiz.title}
+                  </h3>
                 </div>
               )}
             </div>
-
             <CardHeader>
               <div className="flex justify-between items-center">
                 <CardTitle className="text-2xl font-bold">
@@ -89,9 +98,7 @@ export default function StartScreen({ quiz, onStart }: StartScreenProps) {
                 </div>
                 <div className="flex gap-2">
                   <LikeButton quizId={quiz.id} likeCount={quiz.like_count} />
-                  <Button variant="outline" size="sm">
-                    공유하기
-                  </Button>
+                  <ShareButton />
                 </div>
               </div>
             </CardFooter>
@@ -100,59 +107,7 @@ export default function StartScreen({ quiz, onStart }: StartScreenProps) {
 
         {/* 오른쪽 추천 퀴즈들 */}
         <div className="md:col-span-1">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">추천 퀴즈</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <Tabs defaultValue="popular" className="w-full">
-                <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="popular">인기</TabsTrigger>
-                  <TabsTrigger value="recent">최신</TabsTrigger>
-                </TabsList>
-                <TabsContent value="popular" className="space-y-4 mt-4">
-                  {[1, 2, 3].map((_, i) => (
-                    <div key={i} className="flex gap-3 items-center">
-                      <div className="w-16 h-16 rounded-md overflow-hidden bg-muted flex-shrink-0">
-                        <img
-                          src="https://via.placeholder.com/150"
-                          alt="추천 퀴즈"
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                      <div>
-                        <h3 className="font-medium text-sm">
-                          인기 퀴즈 {i + 1}
-                        </h3>
-                        <p className="text-xs text-muted-foreground">
-                          조회수 {1000 * (i + 1)}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </TabsContent>
-                <TabsContent value="recent" className="space-y-4 mt-4">
-                  {[1, 2, 3].map((_, i) => (
-                    <div key={i} className="flex gap-3 items-center">
-                      <div className="w-16 h-16 rounded-md overflow-hidden bg-muted flex-shrink-0">
-                        <img
-                          src="https://via.placeholder.com/150"
-                          alt="추천 퀴즈"
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                      <div>
-                        <h3 className="font-medium text-sm">
-                          최신 퀴즈 {i + 1}
-                        </h3>
-                        <p className="text-xs text-muted-foreground">2일 전</p>
-                      </div>
-                    </div>
-                  ))}
-                </TabsContent>
-              </Tabs>
-            </CardContent>
-          </Card>
+          <RecommendedQuizzes />
         </div>
       </div>
 

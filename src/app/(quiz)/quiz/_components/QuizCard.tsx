@@ -17,6 +17,23 @@ type QuizCardProps = {
   thumbnail: string
 }
 
+const ThumbnailCard = ({ title }: { title: string }) => {
+  // 글자수 제한 (15자 이상이면 자르기)
+  const displayTitle =
+    title.length > 15 ? `${title.substring(0, 15)}...` : title
+
+  return (
+    <div className="relative w-full h-48 overflow-hidden flex items-center justify-center bg-gradient-to-b from-gray-700 to-gray-900">
+      {/* 텍스트 영역 */}
+      <div className="text-center px-4">
+        <h3 className="text-white font-bold text-2xl drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+          {displayTitle}
+        </h3>
+      </div>
+    </div>
+  )
+}
+
 const QuizCard: React.FC<QuizCardProps> = ({
   id,
   title,
@@ -26,19 +43,17 @@ const QuizCard: React.FC<QuizCardProps> = ({
   return (
     <Link href={`/quiz/${id}`} className="block">
       <Card className="border rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
-        {thumbnail ? (
-          <img
-            src={thumbnail}
-            alt={title}
-            className="w-full h-48 object-contain"
-          />
-        ) : (
-          <div className="w-full h-48 bg-gray-200 flex items-center justify-center">
-            <span className="text-gray-500 text-center px-2 line-clamp-2">
-              {title.length > 20 ? `${title.substring(0, 20)}...` : title}
-            </span>
-          </div>
-        )}
+        <div className="w-full h-48 overflow-hidden">
+          {thumbnail ? (
+            <img
+              src={thumbnail}
+              alt={title}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <ThumbnailCard title={title} />
+          )}
+        </div>
         <CardContent>
           <h2 className="text-lg font-bold">{title}</h2>
           <p className="text-gray-600 line-clamp-2">{description}</p>

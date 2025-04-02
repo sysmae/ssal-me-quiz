@@ -36,7 +36,7 @@ export default function LikeButton({ quizId, likeCount }: LikeButtonProps) {
     <button
       onClick={handleLikeClick}
       disabled={isLoading || toggleLike.isPending}
-      className={`flex items-center gap-2 px-4 py-2 rounded-full ${
+      className={`flex items-center gap-2 px-4 py-2 rounded-full cursor-pointer ${
         isLiked ? 'bg-pink-100 text-pink-600' : 'bg-gray-100'
       }`}
     >
