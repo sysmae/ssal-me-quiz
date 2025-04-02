@@ -1,4 +1,5 @@
 'use client'
+import Image from 'next/image'
 
 import { QuizWithQuestions } from '@/types/quiz'
 import {
@@ -32,12 +33,19 @@ export default function StartScreen({ quiz, onStart }: StartScreenProps) {
         {/* 왼쪽 썸네일, 제목, 설명 */}
         <div className="md:col-span-2">
           <Card className="overflow-hidden">
-            <div className="relative w-full h-64 overflow-hidden">
-              <img
-                src={quiz.thumbnail_url ?? ''}
-                alt={quiz.title}
-                className="w-full h-full object-cover"
-              />
+            <div className="relative w-full h-64 overflow-hidden bg-gray-100">
+              {quiz.thumbnail_url ? (
+                <Image
+                  src={quiz.thumbnail_url}
+                  alt={quiz.title}
+                  fill
+                  style={{ objectFit: 'contain' }}
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                  <span className="text-gray-500">이미지 없음</span>
+                </div>
+              )}
             </div>
 
             <CardHeader>

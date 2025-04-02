@@ -54,6 +54,10 @@ export const useQuizQueries = (quizId: number) => {
   // 퀴즈 발행 상태 업데이트
   const updatePublished = (published: boolean) => updateQuiz({ published })
 
+  // 퀴즈 썸네일 업데이트 - updateQuiz를 활용하여 중복 제거
+  const updateThumbnail = (thumbnailUrl: string) =>
+    updateQuiz({ thumbnail_url: thumbnailUrl })
+
   // 퀴즈 삭제
   const { mutate: deleteQuiz } = useMutation({
     mutationFn: () => quizzes.details.delete(quizId),
@@ -69,6 +73,7 @@ export const useQuizQueries = (quizId: number) => {
     updateTitle,
     updateDescription,
     updatePublished,
+    updateThumbnail,
     deleteQuiz,
   }
 }

@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
 import { Check, Save } from 'lucide-react'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import ThumbnailUploader from './ThumbnailUploader'
 
 // 퀴즈 기본 정보 컴포넌트
 const QuizBasicInfo = ({
@@ -24,7 +25,7 @@ const QuizBasicInfo = ({
   const [saveMessage, setSaveMessage] = useState('')
   const [messageType, setMessageType] = useState<'success' | 'error'>('success')
   const [published, setPublished] = useState(quiz?.published || false)
-  const { updateTitle, updateDescription, updatePublished } =
+  const { updateTitle, updateDescription, updatePublished, updateThumbnail } =
     useQuizQueries(quizId)
 
   useEffect(() => {
@@ -76,6 +77,20 @@ const QuizBasicInfo = ({
       console.error('발행 상태 변경 중 오류 발생:', error)
       setMessageType('error')
       setSaveMessage('발행 상태 변경 중 오류가 발생했습니다.')
+      setTimeout(() => setSaveMessage(''), 3000)
+    }
+  }
+
+  const handleThumbnailChange = (url: string) => {
+    try {
+      updateThumbnail(url)
+      setMessageType('success')
+      setSaveMessage('썸네일이 업데이트되었습니다.')
+      setTimeout(() => setSaveMessage(''), 3000)
+    } catch (error) {
+      console.error('썸네일 업데이트 중 오류 발생:', error)
+      setMessageType('error')
+      setSaveMessage('썸네일 업데이트 중 오류가 발생했습니다.')
       setTimeout(() => setSaveMessage(''), 3000)
     }
   }
@@ -160,6 +175,14 @@ const QuizBasicInfo = ({
               저장
             </Button>
           </div>
+        </div>
+
+        <div className="space-y-2">
+          <Label className="text-sm font-medium">퀴즈 썸네일</Label>
+          <ThumbnailUploader
+            currentThumbnail={quiz.thumbnail_url || null}
+            onThumbnailChange={handleThumbnailChange}
+          />
         </div>
       </div>
     </div>

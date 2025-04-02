@@ -1,5 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import {
   Card,
   CardContent,
@@ -29,7 +30,7 @@ const QuizCard: React.FC<QuizCardProps> = ({
           <img
             src={thumbnail}
             alt={title}
-            className="w-full h-48 object-cover"
+            className="w-full h-48 object-contain"
           />
         ) : (
           <div className="w-full h-48 bg-gray-200 flex items-center justify-center">

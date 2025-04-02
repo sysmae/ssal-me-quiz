@@ -5,6 +5,118 @@ import { QuizData, QuizInsertData, QuizUpdateData } from '@/types/quiz'
 const supabase = createClient()
 
 export const quizzes = {
+  // 썸네일 관련 기능 추가
+  thumbnails: {
+    // 이미지 업로드 및 URL 반환
+    uploadThumbnail: async (file: File) => {
+      try {
+        // 사용자 인증 확인
+        const {
+          data: { user },
+        } = await supabase.auth.getUser()
+        if (!user) {
+          throw new Error('사용자 인증이 필요합니다.')
+        }
+
+        console.log('인증된 사용자:', user.id)
+        console.log(
+          '파일 업로드 시작:',
+          file.name,
+          'Size:',
+          file.size,
+          'Type:',
+          file.type
+        )
+
+        // 파일 크기 제한 확인 (5MB)
+        if (file.size > 5 * 1024 * 1024) {
+          throw new Error('파일 크기는 5MB 이하여야 합니다.')
+        }
+
+        // 파일 확장자 추출 및 유효성 검사
+        const fileExt = file.name.split('.').pop()?.toLowerCase()
+        if (
+          !fileExt ||
+          !['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(fileExt)
+        ) {
+          throw new Error(
+            '지원되지 않는 파일 형식입니다. (jpg, jpeg, png, gif, webp만 허용)'
+          )
+        }
+
+        // 고유한 파일명 생성
+        const fileName = `${Date.now()}-${Math.random()
+          .toString(36)
+          .substring(2, 15)}.${fileExt}`
+        const filePath = `quiz-thumbnails/${fileName}`
+
+        // Supabase Storage에 파일 업로드
+        console.log('Supabase Storage 업로드 시작:', filePath)
+
+        // 업로드 시도
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from('quiz-assets')
+          .upload(filePath, file, {
+            upsert: true,
+            contentType: file.type,
+            cacheControl: '3600',
+          })
+
+        if (uploadError) {
+          console.error(
+            'Supabase Storage 업로드 오류:',
+            JSON.stringify(uploadError)
+          )
+          throw new Error(`파일 업로드 실패: ${uploadError.message}`)
+        }
+
+        // 업로드된 파일의 공개 URL 가져오기
+        const { data: urlData } = supabase.storage
+          .from('quiz-assets')
+          .getPublicUrl(filePath)
+
+        return urlData.publicUrl
+      } catch (error) {
+        console.error('썸네일 업로드 실패:', error)
+        // 사용자에게 더 친숙한 오류 메시지 제공
+        if (error instanceof Error) {
+          throw new Error(`썸네일 업로드 실패: ${error.message}`)
+        } else {
+          throw new Error('썸네일 업로드 중 알 수 없는 오류가 발생했습니다.')
+        }
+      }
+    },
+    // 썸네일 삭제 (필요시 사용)
+    deleteThumbnail: async (url: string) => {
+      try {
+        console.log('썸네일 삭제 시작:', url)
+
+        // URL에서 파일 경로 추출
+        const urlObj = new URL(url)
+        const pathSegments = urlObj.pathname.split('/')
+        const bucketName = pathSegments[pathSegments.length - 2]
+        const fileName = pathSegments[pathSegments.length - 1]
+        const filePath = `quiz-thumbnails/${fileName}`
+        console.log('삭제할 파일 경로:', filePath)
+
+        // Supabase Storage에서 파일 삭제
+        const { data, error } = await supabase.storage
+          .from('quiz-assets')
+          .remove([filePath])
+
+        if (error) {
+          console.error('Supabase Storage 삭제 오류:', error)
+          throw error
+        }
+
+        console.log('삭제 성공:', data)
+        return true
+      } catch (error) {
+        console.error('썸네일 삭제 실패:', error)
+        throw error
+      }
+    },
+  },
   // 퀴즈 목록 관련 기능
   list: {
     getAll: async (
