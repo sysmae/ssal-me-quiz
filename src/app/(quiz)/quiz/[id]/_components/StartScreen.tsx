@@ -11,8 +11,6 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Eye, MessageSquare, BookCheck } from 'lucide-react'
 import LikeButton from './../../_components/LikeCount'
 import QuizComment from './QuizComment'

@@ -94,6 +94,8 @@ export const auth = {
   async signOut() {
     const { error } = await supabase.auth.signOut()
     if (error) throw { message: error.message, status: error.status }
+    // 로그아웃 하면 홈으로 리다이렉트
+    window.location.href = '/'
   },
 
   // Password Reset Request

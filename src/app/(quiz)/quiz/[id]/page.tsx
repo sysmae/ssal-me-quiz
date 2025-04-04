@@ -5,9 +5,10 @@ import {
 } from '@tanstack/react-query'
 import { quizzes } from '@/utils/quiz'
 import { prefetchQuiz } from '@/hooks/useQuizQueries'
-
 import QuizClient from './_components/QuizClient'
+import RecommendedQuizzes from '../_components/RecommendedQuizzes'
 
+// TODO: 메타데이터를 설정 위해 공개된 퀴즈만 가져오는 hook 추가
 // export async function generateMetadata({
 //   params,
 // }: {
