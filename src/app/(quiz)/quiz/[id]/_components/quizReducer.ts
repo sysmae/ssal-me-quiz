@@ -71,9 +71,6 @@ export function quizReducer(state: QuizState, action: QuizAction): QuizState {
         is_correct: isCorrect,
       }
 
-      console.log('newAnswerRecord', newAnswerRecord)
-      console.log('state.questionAnswers', state.questionAnswers)
-
       return {
         ...state,
         currentAnswer: {

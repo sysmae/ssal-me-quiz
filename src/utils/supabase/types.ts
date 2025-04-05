@@ -215,7 +215,6 @@ export type Database = {
       quizzes: {
         Row: {
           created_at: string
-          created_by: string
           description: string | null
           id: number
           like_count: number
@@ -223,11 +222,11 @@ export type Database = {
           thumbnail_url: string | null
           title: string
           updated_at: string
+          user_id: string
           view_count: number
         }
         Insert: {
           created_at?: string
-          created_by: string
           description?: string | null
           id?: number
           like_count?: number
@@ -235,11 +234,11 @@ export type Database = {
           thumbnail_url?: string | null
           title?: string
           updated_at?: string
+          user_id: string
           view_count?: number
         }
         Update: {
           created_at?: string
-          created_by?: string
           description?: string | null
           id?: number
           like_count?: number
@@ -247,12 +246,13 @@ export type Database = {
           thumbnail_url?: string | null
           title?: string
           updated_at?: string
+          user_id?: string
           view_count?: number
         }
         Relationships: [
           {
-            foreignKeyName: "quizzes_created_by_fkey"
-            columns: ["created_by"]
+            foreignKeyName: "quizzes_user_id_fkey"
+            columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
@@ -297,7 +297,24 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      add_quiz_like: {
+        Args: {
+          quiz_id: number
+        }
+        Returns: number
+      }
+      increment_view_count: {
+        Args: {
+          quiz_id: number
+        }
+        Returns: number
+      }
+      remove_quiz_like: {
+        Args: {
+          quiz_id: number
+        }
+        Returns: number
+      }
     }
     Enums: {
       [_ in never]: never

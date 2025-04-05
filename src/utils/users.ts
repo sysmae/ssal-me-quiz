@@ -103,7 +103,10 @@ export const users = {
       })
 
       if (authError) {
-        console.error('Failed to update auth user metadata:', authError)
+        return {
+          error: authError,
+          message: 'Failed to update user metadata in auth',
+        }
       }
     }
   },

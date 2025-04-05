@@ -4,32 +4,38 @@ import {
   QueryClient,
 } from '@tanstack/react-query'
 import { quizzes } from '@/utils/quiz'
-import { prefetchQuiz } from '@/hooks/useQuizQueries'
+import { prefetchQuiz, prefetchPublishedQuiz } from '@/hooks/useQuizQueries'
 import QuizClient from './_components/QuizClient'
-import RecommendedQuizzes from '../_components/RecommendedQuizzes'
 
-// TODO: 메타데이터를 설정 위해 공개된 퀴즈만 가져오는 hook 추가
-// export async function generateMetadata({
-//   params,
-// }: {
-//   params: Promise<{ id: string }>
-// }) {
-//   const resolvedParams = await params
-//   const quiz = await quizzes.details.get(Number(resolvedParams.id))
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}) {
+  const resolvedParams = await params
+  const quiz = await quizzes.list.getPublished(Number(resolvedParams.id))
 
-//   return {
-//     title: `${quiz.title} | 나에게 맞는 퀴즈 찾기`,
-//     description: quiz.description ? quiz.description.substring(0, 160) : '',
-//     openGraph: {
-//       title: quiz.title,
-//       description: quiz.description,
-//       type: 'website',
-//     },
-//   }
-// }
+  if (!quiz) {
+    return {
+      title: '퀴즈를 찾을 수 없습니다 | 나에게 맞는 퀴즈 찾기',
+      description: '요청하신 퀴즈를 찾을 수 없거나 비공개 상태입니다.',
+    }
+  }
 
-export const dynamic = 'force-static'
-export const revalidate = false // 또는 원하는 시간(초) 설정
+  return {
+    title: `${quiz.title} | 나에게 맞는 퀴즈 찾기`,
+    description: quiz.description ? quiz.description.substring(0, 160) : '',
+    openGraph: {
+      title: quiz.title,
+      description: quiz.description,
+      images: quiz.thumbnail_url ? [quiz.thumbnail_url] : [],
+      type: 'website',
+    },
+  }
+}
+
+export const dynamic = 'force-static' // 정적 생성 유지 (성능 최적화)
+export const revalidate = 300 // 5분마다 재검증 (필요에 따라 조정)
 
 type Params = {
   id: string
@@ -51,6 +57,9 @@ export default async function QuizPage({
 
   // 서버에서 쿼리 미리 실행 - prefetchQuiz 함수 사용
   await prefetchQuiz(queryClient, Number(id))
+
+  // 메타데이터용 공개 퀴즈 데이터도 미리 가져오기
+  await prefetchPublishedQuiz(queryClient, Number(id))
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>

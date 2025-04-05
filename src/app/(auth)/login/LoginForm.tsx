@@ -36,7 +36,6 @@ export function LoginForm() {
       router.push('/')
       router.refresh()
     } catch (error) {
-      console.error('Auth error:', error)
       const { message } = getAuthError(error)
       toast.error(message, { id: toastId })
     } finally {

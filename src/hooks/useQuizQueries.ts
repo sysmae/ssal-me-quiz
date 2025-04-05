@@ -42,6 +42,7 @@ export const useInfiniteQuizzes = (sortBy = 'view_count', searchTerm = '') => {
     staleTime: 60 * 60 * 1000, // 60분 동안 신선한 상태 유지
   })
 }
+
 export const useQuizQueries = (quizId: number) => {
   const queryClient = useQueryClient()
 
@@ -141,6 +142,32 @@ export const prefetchQuiz = async (
     queryFn: () => quizzes.details.get(quizId),
     staleTime: Infinity,
     gcTime: 1000 * 60 * 30,
+  })
+}
+
+// 공개된 퀴즈 정보 가져오기 (메타데이터용)
+export const usePublishedQuizQuery = (quizId: number) => {
+  return useQuery({
+    queryKey: ['publishedQuiz', quizId],
+    queryFn: () => quizzes.list.getPublished(quizId),
+    enabled: !!quizId,
+  })
+}
+
+// 메타데이터용 퀴즈 정보 가져오기
+export const getPublishedQuizForMetadata = async (id: number) => {
+  return await quizzes.list.getPublished(id)
+}
+
+// 서버 컴포넌트에서 사용할 prefetch 함수
+export const prefetchPublishedQuiz = async (
+  queryClient: QueryClient,
+  quizId: number
+) => {
+  return queryClient.prefetchQuery({
+    queryKey: ['publishedQuiz', quizId],
+    queryFn: () => quizzes.list.getPublished(quizId),
+    staleTime: 60 * 60 * 1000, // 1시간
   })
 }
 

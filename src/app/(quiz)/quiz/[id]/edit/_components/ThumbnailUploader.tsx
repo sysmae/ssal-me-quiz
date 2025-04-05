@@ -10,11 +10,13 @@ import Image from 'next/image'
 import { quizzes } from '@/utils/quiz'
 
 interface ThumbnailUploaderProps {
+  quizId: number
   currentThumbnail: string | null
   onThumbnailChange: (url: string) => void
 }
 
 const ThumbnailUploader: React.FC<ThumbnailUploaderProps> = ({
+  quizId,
   currentThumbnail,
   onThumbnailChange,
 }) => {
@@ -59,7 +61,6 @@ const ThumbnailUploader: React.FC<ThumbnailUploaderProps> = ({
       if (error instanceof Error) {
         errorMessage = error.message
       }
-      console.error('썸네일 업로드 오류:', error)
       alert(errorMessage)
 
       // 미리보기 초기화
@@ -69,10 +70,31 @@ const ThumbnailUploader: React.FC<ThumbnailUploaderProps> = ({
     }
   }
 
-  const handleRemoveThumbnail = () => {
+  const handleRemoveThumbnail = async () => {
     if (confirm('썸네일을 삭제하시겠습니까?')) {
-      setPreviewUrl(null)
-      onThumbnailChange('')
+      try {
+        // 현재 썸네일이 있는 경우에만 삭제 작업 수행
+        if (currentThumbnail) {
+          setUploading(true)
+          // TODO: Supabase 스토리지에서 실제 파일 삭제
+          await quizzes.thumbnails.deleteThumbnail(currentThumbnail, quizId)
+
+          // 썸네일 URL 초기화
+          setPreviewUrl(null)
+        }
+
+        // UI 상태 업데이트
+        setPreviewUrl(null)
+        onThumbnailChange('')
+      } catch (error) {
+        let errorMessage = '썸네일 삭제 중 오류가 발생했습니다.'
+        if (error instanceof Error) {
+          errorMessage = error.message
+        }
+        alert(errorMessage)
+      } finally {
+        setUploading(false)
+      }
     }
   }
 

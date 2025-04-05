@@ -15,7 +15,6 @@ export default function ShareButton({ url }: ShareButtonProps) {
       setIsCopied(true)
       setTimeout(() => setIsCopied(false), 3000)
     } catch (error) {
-      console.error('클립보드 복사 실패:', error)
       alert('URL 복사에 실패했습니다. 다시 시도해주세요.')
     }
   }

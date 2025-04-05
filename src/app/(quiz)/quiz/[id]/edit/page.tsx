@@ -42,7 +42,6 @@ const QuizEditPage = ({ params }: { params: Promise<{ id: string }> }) => {
         deleteQuiz()
         router.push('/quiz')
       } catch (error) {
-        console.error('퀴즈 삭제 오류:', error)
         alert('퀴즈 삭제 중 오류가 발생했습니다.')
       }
     }
@@ -55,7 +54,6 @@ const QuizEditPage = ({ params }: { params: Promise<{ id: string }> }) => {
     try {
       updateQuestion({ questionId, updates: questionData })
     } catch (error) {
-      console.error('질문 업데이트 오류:', error)
       alert('질문 업데이트 중 오류가 발생했습니다.')
     }
   }
@@ -69,7 +67,6 @@ const QuizEditPage = ({ params }: { params: Promise<{ id: string }> }) => {
       try {
         deleteQuestion(questionId)
       } catch (error) {
-        console.error('질문 삭제 오류:', error)
         alert('질문 삭제 중 오류가 발생했습니다.')
       }
     }
@@ -79,7 +76,6 @@ const QuizEditPage = ({ params }: { params: Promise<{ id: string }> }) => {
     try {
       createQuestion(questionData)
     } catch (error) {
-      console.error('새 질문 생성 오류:', error)
       alert('새 질문 생성 중 오류가 발생했습니다.')
     }
   }

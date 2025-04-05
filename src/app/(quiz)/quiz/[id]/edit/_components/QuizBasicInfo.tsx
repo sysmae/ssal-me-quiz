@@ -45,7 +45,6 @@ const QuizBasicInfo = ({
       setSaveMessage('제목이 저장되었습니다.')
       setTimeout(() => setSaveMessage(''), 3000)
     } catch (error) {
-      console.error('제목 저장 중 오류 발생:', error)
       setMessageType('error')
       setSaveMessage('제목 저장 중 오류가 발생했습니다.')
       setTimeout(() => setSaveMessage(''), 3000)
@@ -59,7 +58,6 @@ const QuizBasicInfo = ({
       setSaveMessage('설명이 저장되었습니다.')
       setTimeout(() => setSaveMessage(''), 3000)
     } catch (error) {
-      console.error('설명 저장 중 오류 발생:', error)
       setMessageType('error')
       setSaveMessage('설명 저장 중 오류가 발생했습니다.')
       setTimeout(() => setSaveMessage(''), 3000)
@@ -74,7 +72,6 @@ const QuizBasicInfo = ({
       setSaveMessage(`퀴즈가 ${!published ? '발행' : '발행 취소'}되었습니다.`)
       setTimeout(() => setSaveMessage(''), 3000)
     } catch (error) {
-      console.error('발행 상태 변경 중 오류 발생:', error)
       setMessageType('error')
       setSaveMessage('발행 상태 변경 중 오류가 발생했습니다.')
       setTimeout(() => setSaveMessage(''), 3000)
@@ -88,7 +85,6 @@ const QuizBasicInfo = ({
       setSaveMessage('썸네일이 업데이트되었습니다.')
       setTimeout(() => setSaveMessage(''), 3000)
     } catch (error) {
-      console.error('썸네일 업데이트 중 오류 발생:', error)
       setMessageType('error')
       setSaveMessage('썸네일 업데이트 중 오류가 발생했습니다.')
       setTimeout(() => setSaveMessage(''), 3000)
@@ -180,6 +176,7 @@ const QuizBasicInfo = ({
         <div className="space-y-2">
           <Label className="text-sm font-medium">퀴즈 썸네일</Label>
           <ThumbnailUploader
+            quizId={quizId}
             currentThumbnail={quiz.thumbnail_url || null}
             onThumbnailChange={handleThumbnailChange}
           />

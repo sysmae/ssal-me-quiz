@@ -28,7 +28,7 @@ const Page = () => {
       const quizId = await createQuizMutation.mutateAsync()
       router.push(`/quiz/${quizId}/edit`)
     } catch (error) {
-      console.error('퀴즈 생성 중 오류:', error)
+      alert('퀴즈 생성 중 오류가 발생했습니다.')
     }
   }
 
