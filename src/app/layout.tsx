@@ -94,15 +94,17 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <QueryProvider>
             <Navigation />
-            <main className="flex-grow">{children}</main>
+            <main className="flex-grow">
+              {children}
+              <Analytics />
+              <SpeedInsights />
+            </main>
             <Toaster />
             <footer className="flex items-center justify-center w-full h-16 bg-gray-200 dark:bg-gray-800">
               <span className="text-sm text-gray-600 dark:text-gray-400">
                 © 2025 SYSMAE. All rights reserved.
               </span>
             </footer>
-            <Analytics />
-            <SpeedInsights />
           </QueryProvider>
         </ThemeProvider>
       </body>
