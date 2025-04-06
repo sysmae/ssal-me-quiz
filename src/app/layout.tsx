@@ -6,7 +6,8 @@ import { Toaster } from 'sonner'
 import { ThemeProvider } from '@/components/providers/ThemeProvider'
 import QueryProvider from '@/components/providers/QueryProvider'
 import Navigation from '@/components/Navigation'
-
+import { Analytics } from '@vercel/analytics/react'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 const fontSans = Inter({
   subsets: ['latin'],
   variable: '--font-sans',
