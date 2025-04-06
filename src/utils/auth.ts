@@ -3,6 +3,21 @@ import { users } from './users'
 
 const supabase = createClient()
 
+// 환경에 따라 BASE_URL 설정
+const getBaseUrl = () => {
+  if (process.env.NODE_ENV === 'production') {
+    return 'https://ssal.me'
+  }
+
+  // 개발 환경에서는 현재 origin 사용
+  if (typeof window !== 'undefined') {
+    return window.location.origin
+  }
+
+  // SSR 상황을 위한 기본값
+  return 'http://localhost:3000'
+}
+
 export type AuthError = {
   message: string
   status?: number
@@ -34,7 +49,7 @@ export const auth = {
       email,
       password,
       options: {
-        emailRedirectTo: `${location.origin}/auth/callback`,
+        emailRedirectTo: `${getBaseUrl()}/auth/callback`,
       },
     })
 
@@ -82,9 +97,10 @@ export const auth = {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider,
       options: {
-        redirectTo: `${location.origin}/auth/callback?next=${nextUrl || '/'}`,
+        redirectTo: `${getBaseUrl()}/auth/callback?next=${nextUrl || '/'}`,
       },
     })
+
     if (error) throw error
 
     return data
@@ -121,7 +137,7 @@ export const auth = {
       }
     }
 
-    const resetLink = `${location.origin}/auth/reset-password`
+    const resetLink = `${getBaseUrl()}/auth/reset-password`
     const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: resetLink,
     })
