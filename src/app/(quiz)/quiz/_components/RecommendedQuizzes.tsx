@@ -28,8 +28,8 @@ const QuizItem: React.FC<QuizItemProps> = ({
   isPopular,
 }) => (
   <Link href={`/quiz/${id}`} className="block">
-    <div className="flex gap-3 items-center hover:bg-gray-50 p-2 rounded-md transition-colors">
-      <div className="relative w-16 h-16 rounded-md overflow-hidden bg-muted flex-shrink-0">
+    <div className="flex gap-3 items-center hover:bg-gray-50 dark:hover:bg-gray-800 p-2 rounded-md transition-colors">
+      <div className="relative w-16 h-16 rounded-md overflow-hidden bg-muted dark:bg-gray-700 flex-shrink-0">
         {thumbnail_url ? (
           <Image
             src={thumbnail_url}
@@ -38,14 +38,16 @@ const QuizItem: React.FC<QuizItemProps> = ({
             style={{ objectFit: 'contain' }}
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-xs text-gray-500 text-center p-1">
+          <div className="w-full h-full flex items-center justify-center text-xs text-gray-500 dark:text-gray-400 text-center p-1">
             {title.length > 20 ? `${title.substring(0, 20)}...` : title}
           </div>
         )}
       </div>
       <div className="flex-1 min-w-0">
-        <h3 className="font-medium text-sm truncate">{title}</h3>
-        <p className="text-xs text-muted-foreground">
+        <h3 className="font-medium text-sm truncate dark:text-gray-200">
+          {title}
+        </h3>
+        <p className="text-xs text-muted-foreground dark:text-gray-400">
           {isPopular
             ? `조회수 ${view_count?.toLocaleString() || 0}`
             : created_at
@@ -59,10 +61,10 @@ const QuizItem: React.FC<QuizItemProps> = ({
 
 const QuizItemSkeleton = () => (
   <div className="flex gap-3 items-center p-2">
-    <Skeleton className="w-16 h-16 rounded-md flex-shrink-0" />
+    <Skeleton className="w-16 h-16 rounded-md flex-shrink-0 dark:bg-gray-700" />
     <div className="flex-1">
-      <Skeleton className="h-4 w-full mb-2" />
-      <Skeleton className="h-3 w-24" />
+      <Skeleton className="h-4 w-full mb-2 dark:bg-gray-700" />
+      <Skeleton className="h-3 w-24 dark:bg-gray-700" />
     </div>
   </div>
 )
@@ -73,15 +75,25 @@ const RecommendedQuizzes: React.FC = () => {
   const { data: recentQuizzes, isLoading: isLoadingRecent } = useRecentQuizzes()
 
   return (
-    <Card>
+    <Card className="dark:bg-gray-800 dark:border-gray-700">
       <CardHeader>
-        <CardTitle className="text-lg">추천 퀴즈</CardTitle>
+        <CardTitle className="text-lg dark:text-white">추천 퀴즈</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <Tabs defaultValue="popular" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="popular">인기</TabsTrigger>
-            <TabsTrigger value="recent">최신</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-2 dark:bg-gray-700">
+            <TabsTrigger
+              value="popular"
+              className="dark:data-[state=active]:bg-gray-600"
+            >
+              인기
+            </TabsTrigger>
+            <TabsTrigger
+              value="recent"
+              className="dark:data-[state=active]:bg-gray-600"
+            >
+              최신
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="popular" className="space-y-4 mt-4">
@@ -101,7 +113,7 @@ const RecommendedQuizzes: React.FC = () => {
                 />
               ))
             ) : (
-              <p className="text-center text-sm text-muted-foreground py-4">
+              <p className="text-center text-sm text-muted-foreground dark:text-gray-400 py-4">
                 인기 퀴즈가 없습니다
               </p>
             )}
@@ -124,7 +136,7 @@ const RecommendedQuizzes: React.FC = () => {
                 />
               ))
             ) : (
-              <p className="text-center text-sm text-muted-foreground py-4">
+              <p className="text-center text-sm text-muted-foreground dark:text-gray-400 py-4">
                 최신 퀴즈가 없습니다
               </p>
             )}

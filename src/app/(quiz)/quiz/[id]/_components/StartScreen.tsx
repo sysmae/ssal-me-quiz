@@ -32,7 +32,7 @@ export default function StartScreen({ quiz, onStart }: StartScreenProps) {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         {/* 왼쪽 썸네일, 제목, 설명 */}
         <div className="md:col-span-2">
-          <Card className="overflow-hidden">
+          <Card className="overflow-hidden dark:bg-gray-800 dark:border-gray-700">
             <div className="relative w-full h-64 overflow-hidden bg-gradient-to-b from-gray-700 to-gray-900">
               {quiz.thumbnail_url ? (
                 <Image
@@ -57,23 +57,23 @@ export default function StartScreen({ quiz, onStart }: StartScreenProps) {
             </div>
             <CardHeader>
               <div className="flex justify-between items-center">
-                <CardTitle className="text-2xl font-bold">
+                <CardTitle className="text-2xl font-bold dark:text-white">
                   {quiz.title}
                 </CardTitle>
                 <Button
                   onClick={onStart}
-                  className="bg-primary hover:bg-primary/90"
+                  className="bg-primary hover:bg-primary/90 dark:bg-primary/80 dark:hover:bg-primary/70"
                 >
                   퀴즈 시작하기
                 </Button>
               </div>
-              <CardDescription className="mt-2">
+              <CardDescription className="mt-2 dark:text-gray-300">
                 {quiz.description}
               </CardDescription>
             </CardHeader>
 
             <CardContent>
-              <div className="flex items-center gap-4 text-sm text-muted-foreground">
+              <div className="flex items-center gap-4 text-sm text-muted-foreground dark:text-gray-400">
                 <div className="flex items-center gap-1">
                   <BookCheck className="h-4 w-4" />
                   <span>{quiz.questions.length ?? 0} 개</span>
@@ -89,7 +89,7 @@ export default function StartScreen({ quiz, onStart }: StartScreenProps) {
               </div>
             </CardContent>
 
-            <CardFooter className="border-t pt-4">
+            <CardFooter className="border-t dark:border-gray-700 pt-4">
               <div className="flex justify-between items-center w-full">
                 <div className="flex items-center gap-2">
                   {/* 작성자 정보 */}

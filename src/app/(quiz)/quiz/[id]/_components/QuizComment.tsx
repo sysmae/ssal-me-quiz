@@ -324,13 +324,6 @@ const QuizComment = ({ quizId }: QuizCommentProps) => {
           </div>
         )}
       </CardContent>
-      {commentData && commentData.length > 5 && (
-        <CardFooter className="border-t pt-4">
-          <Button variant="outline" className="w-full">
-            더 보기
-          </Button>
-        </CardFooter>
-      )}
     </Card>
   )
 }

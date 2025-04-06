@@ -44,15 +44,11 @@ export function LoginForm() {
   }
 
   return (
-    <Card className="w-full max-w-md bg-blue-50 shadow-lg rounded-2xl">
+    <Card className="w-full max-w-md  shadow-lg rounded-2xl">
       <form onSubmit={handleSubmit}>
         <CardHeader className="space-y-1 text-center">
-          <CardTitle className="text-3xl font-bold text-blue-600">
-            로그인
-          </CardTitle>
-          <CardDescription className="text-sm text-gray-600">
-            환영합니다
-          </CardDescription>
+          <CardTitle className="text-3xl font-bold ">로그인</CardTitle>
+          <CardDescription className="text-sm">환영합니다</CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4">
           <div className="text-center">
@@ -87,7 +83,7 @@ export function LoginForm() {
               </Label>
               <Link
                 href="/forgot-password"
-                className="text-xs text-blue-500 hover:underline"
+                className="text-xs  hover:underline"
               >
                 비밀번호 찾기
               </Link>
@@ -105,7 +101,7 @@ export function LoginForm() {
           </div>
 
           <Button
-            className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg"
+            className="w-full  font-bold py-2 px-4 rounded-lg"
             type="submit"
             disabled={isLoading}
           >

@@ -63,7 +63,7 @@ export default function QuizScreen({
         className="w-full max-w-3xl"
       >
         <Card className="shadow-lg border-2 overflow-hidden">
-          <CardHeader className="pb-2 px-6 bg-gray-50">
+          <CardHeader className="pb-2 px-6">
             <div className="flex justify-between items-center">
               <p className="text-lg font-medium text-gray-700">
                 문제 {currentQuestionIndex + 1} / {quiz.questions.length}
@@ -175,7 +175,7 @@ export default function QuizScreen({
             </motion.form>
           </CardContent>
 
-          <CardFooter className="justify-center pt-2 pb-6 px-6 bg-gray-50">
+          <CardFooter className="justify-center pt-2 pb-6 px-6">
             <p className="text-sm text-gray-500 text-center">
               답변을 입력한 후 엔터 키를 누르거나 제출 버튼을 클릭하세요
             </p>

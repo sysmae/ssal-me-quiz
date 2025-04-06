@@ -38,7 +38,7 @@ export function CreateAccountForm() {
     try {
       setIsLoading(true)
       await auth.signUp(email, password)
-      toast.success('계정이 생성되었습니다. 이메일을 통해 인증해주세요', {
+      toast.success('계정이 생성되었습니다. 이메일을 통해 인증해주세요.', {
         id: toastId,
       })
       router.push('/login')
@@ -55,25 +55,25 @@ export function CreateAccountForm() {
     <Card className="w-96">
       <form onSubmit={handleSubmit}>
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl">Create an account</CardTitle>
+          <CardTitle className="text-2xl">계정 생성</CardTitle>
           <CardDescription className="text-xs">
-            Enter your email below to create your account
+            아래 이메일을 입력하여 계정을 생성하세요.
           </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4">
           <div>
-            Already have an account?{' '}
+            이미 계정이 있으신가요?{' '}
             <Link href="/login" className="text-blue-500">
-              Login
+              로그인
             </Link>
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">이메일</Label>
             <Input
               id="email"
               type="email"
-              placeholder="m@example.com"
+              placeholder="example@domain.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               disabled={isLoading}
@@ -81,7 +81,7 @@ export function CreateAccountForm() {
             />
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">비밀번호</Label>
             <Input
               id="password"
               type="password"
@@ -92,7 +92,7 @@ export function CreateAccountForm() {
             />
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="confirmPassword">Confirm Password</Label>
+            <Label htmlFor="confirmPassword">비밀번호 확인</Label>
             <Input
               id="confirmPassword"
               type="password"
@@ -107,7 +107,7 @@ export function CreateAccountForm() {
             {isLoading && (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
             )}
-            Create account
+            계정 생성
           </Button>
         </CardContent>
         <CardFooter>

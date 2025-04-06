@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import heroImg from '../../../public/img/hero.png'
+import { Container } from './Container'
 
 export const Hero = () => {
   return (
@@ -205,22 +206,5 @@ function VerizonLogo() {
         </g>
       </g>
     </svg>
-  )
-}
-
-interface ContainerProps {
-  children: React.ReactNode
-  className?: string
-}
-
-export function Container(props: Readonly<ContainerProps>) {
-  return (
-    <div
-      className={`container p-8 mx-auto xl:px-0 ${
-        props.className ? props.className : ''
-      }`}
-    >
-      {props.children}
-    </div>
   )
 }

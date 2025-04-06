@@ -36,8 +36,12 @@ export default function LikeButton({ quizId, likeCount }: LikeButtonProps) {
     <button
       onClick={handleLikeClick}
       disabled={isLoading || toggleLike.isPending}
-      className={`flex items-center gap-2 px-4 py-2 rounded-full cursor-pointer ${
-        isLiked ? 'bg-pink-100 text-pink-600' : 'bg-gray-100'
+      className={`flex items-center gap-2 px-4 py-2 rounded-full cursor-pointer transition-colors ${
+        isLiked
+          ? 'bg-pink-100 text-pink-600 dark:bg-pink-900/30 dark:text-pink-400'
+          : 'bg-gray-100 dark:bg-gray-700 dark:text-gray-300'
+      } ${
+        isLoading || toggleLike.isPending ? 'opacity-70 cursor-not-allowed' : ''
       }`}
     >
       <svg
@@ -50,6 +54,7 @@ export default function LikeButton({ quizId, likeCount }: LikeButtonProps) {
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
+        className="transition-colors"
       >
         <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
       </svg>

@@ -24,15 +24,19 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko" suppressHydrationWarning>
-      <body className={cn(fontSans.variable)}>
+      <body className={cn(fontSans.variable, 'flex flex-col min-h-screen')}>
         <QueryProvider>
-          <ThemeProvider>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <Navigation />
-
-            {children}
+            <main className="flex-grow">{children}</main>
           </ThemeProvider>
           <Toaster />
         </QueryProvider>
+        <footer className="flex items-center justify-center w-full h-16 bg-gray-200 dark:bg-gray-800">
+          <span className="text-sm text-gray-600 dark:text-gray-400">
+            © 2025 SYSMAE. All rights reserved.
+          </span>
+        </footer>
       </body>
     </html>
   )

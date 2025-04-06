@@ -69,10 +69,10 @@ export default function FeedbackScreen({
         transition={{ duration: 0.5 }}
         className="w-full max-w-3xl"
       >
-        <Card className="shadow-lg border-2 overflow-hidden">
-          <CardHeader className="pb-2 px-6 bg-gray-50">
+        <Card className="shadow-lg border-2 overflow-hidden dark:border-gray-700 dark:bg-gray-800">
+          <CardHeader className="pb-2 px-6">
             <div className="flex justify-between items-center">
-              <p className="text-lg font-medium text-gray-700">
+              <p className="text-lg font-medium text-gray-700 dark:text-gray-200">
                 문제 {currentQuestionIndex + 1} / {quiz.questions.length}
               </p>
               <div className="flex space-x-2">
@@ -127,10 +127,10 @@ export default function FeedbackScreen({
                     <XCircle className="w-16 h-16 text-red-500 mb-3" />
                   </motion.div>
                 )}
-                <h2 className="text-2xl font-bold text-center mb-2">
+                <h2 className="text-2xl font-bold text-center mb-2 dark:text-white">
                   {currentAnswer.isCorrect ? '정답입니다!' : '오답입니다.'}
                 </h2>
-                <p className="text-gray-600 text-center">
+                <p className="text-gray-600 text-center dark:text-gray-300">
                   {currentAnswer.isCorrect
                     ? '잘하셨습니다! 다음 문제로 계속 진행해보세요.'
                     : '괜찮습니다. 아래 정답을 확인해보세요.'}
@@ -140,9 +140,11 @@ export default function FeedbackScreen({
 
             <Tabs defaultValue="answer" className="w-full">
               <TabsContent value="answer" className="pt-2">
-                <div className="bg-gray-50 p-5 rounded-lg mb-6 max-h-[400px] overflow-y-auto">
-                  <h3 className="text-lg font-semibold mb-2">문제</h3>
-                  <p className="text-xl mb-4">
+                <div className="p-5 rounded-lg mb-6 max-h-[400px] overflow-y-auto dark:bg-gray-700/20">
+                  <h3 className="text-lg font-semibold mb-2 dark:text-gray-200">
+                    문제
+                  </h3>
+                  <p className="text-xl mb-4 dark:text-white">
                     {currentQuestion.question_text}
                   </p>
 
@@ -158,7 +160,7 @@ export default function FeedbackScreen({
 
                   <div className="flex flex-col sm:flex-row items-start gap-4 mt-6">
                     <div className="flex-1 min-w-[200px] w-full">
-                      <h3 className="text-lg font-semibold mb-2">
+                      <h3 className="text-lg font-semibold mb-2 dark:text-gray-200">
                         제출한 답변
                       </h3>
                       <motion.div
@@ -167,8 +169,8 @@ export default function FeedbackScreen({
                         transition={{ delay: 0.2 }}
                         className={`p-4 rounded-lg border-2 ${
                           currentAnswer.isCorrect
-                            ? 'border-green-500 bg-green-50'
-                            : 'border-red-500 bg-red-50'
+                            ? 'border-green-500 bg-green-50 dark:bg-green-900/20 dark:text-green-200'
+                            : 'border-red-500 bg-red-50 dark:bg-red-900/20 dark:text-red-200'
                         }`}
                       >
                         <p className="text-lg">{currentAnswer.userAnswer}</p>
@@ -177,12 +179,14 @@ export default function FeedbackScreen({
 
                     {!currentAnswer.isCorrect && (
                       <div className="flex-1 min-w-[200px] w-full mt-4 sm:mt-0">
-                        <h3 className="text-lg font-semibold mb-2">정답</h3>
+                        <h3 className="text-lg font-semibold mb-2 dark:text-gray-200">
+                          정답
+                        </h3>
                         <motion.div
                           initial={{ x: 20, opacity: 0 }}
                           animate={{ x: 0, opacity: 1 }}
                           transition={{ delay: 0.3 }}
-                          className="p-4 rounded-lg border-2 border-green-500 bg-green-50"
+                          className="p-4 rounded-lg border-2 border-green-500 bg-green-50 dark:bg-green-900/20 dark:text-green-200"
                         >
                           <p className="text-lg">
                             {currentQuestion.correct_answer}
@@ -196,11 +200,11 @@ export default function FeedbackScreen({
             </Tabs>
           </CardContent>
 
-          <CardFooter className="justify-center pt-2 pb-6 px-6 bg-gray-50">
+          <CardFooter className="justify-center pt-2 pb-6 px-6">
             <Button
               ref={buttonRef}
               onClick={onNext}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white text-xl p-5 h-auto rounded-lg w-full max-w-xs transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg"
+              className="bg-indigo-600 hover:bg-indigo-700 text-white text-xl p-5 h-auto rounded-lg w-full max-w-xs transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg dark:bg-indigo-700 dark:hover:bg-indigo-800"
             >
               {currentQuestionIndex < quiz.questions.length - 1
                 ? '다음 문제'
