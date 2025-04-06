@@ -6,64 +6,116 @@ import {
 import { quizzes } from '@/utils/quiz'
 import { prefetchQuiz, prefetchPublishedQuiz } from '@/hooks/useQuizQueries'
 import QuizClient from './_components/QuizClient'
+import { Metadata } from 'next'
 
+// 동적 메타데이터 생성
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ id: string }>
-}) {
-  const resolvedParams = await params
-  const quiz = await quizzes.list.getPublished(Number(resolvedParams.id))
+}): Promise<Metadata> {
+  const resolvedParams = await params // 비동기 처리로 params 접근
+  const siteUrl = 'https://ssal.me'
+  const quizId = Number(resolvedParams.id)
 
-  if (!quiz) {
+  try {
+    const quiz = await quizzes.list.getPublished(quizId)
+
+    if (!quiz) {
+      return {
+        title: '쌀미 퀴즈 | 퀴즈를 찾을 수 없습니다',
+        description: '요청하신 퀴즈를 찾을 수 없거나 비공개 상태입니다.',
+        alternates: {
+          canonical: `${siteUrl}/quiz/${resolvedParams.id}`,
+        },
+      }
+    }
+
+    // 퀴즈 질문 최대 3개 가져오기
+    const quizQuestions =
+      quiz.questions?.slice(0, 3).map((question) => question.question_text) ||
+      []
+    const questionsText =
+      quizQuestions.length > 0
+        ? ` 예를 들어, "${quizQuestions.join('", "')}" 같은 질문들이 있습니다.`
+        : ''
+
+    // Canonical URL 및 메타데이터 설정
+    const canonicalUrl = `${siteUrl}/quiz/${resolvedParams.id}`
+
     return {
-      title: '퀴즈를 찾을 수 없습니다 | 나에게 맞는 퀴즈 찾기',
-      description: '요청하신 퀴즈를 찾을 수 없거나 비공개 상태입니다.',
+      title: `쌀미 퀴즈 | ${quiz.title}`,
+      description: `퀴즈 설명: ${quiz.description?.substring(
+        0,
+        160
+      )}${questionsText}`,
+      alternates: {
+        canonical: canonicalUrl,
+      },
+      openGraph: {
+        title: quiz.title,
+        description: quiz.description?.substring(0, 160) || '',
+        url: canonicalUrl,
+        images: quiz.thumbnail_url
+          ? [
+              {
+                url: quiz.thumbnail_url,
+                width: 1200,
+                height: 630,
+                alt: quiz.title,
+              },
+            ]
+          : [],
+        type: 'website',
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: quiz.title,
+        description: `쌀미 퀴즈에서 이런 퀴즈를 풀어보세요: ${quiz.description?.substring(
+          0,
+          160
+        )}${questionsText}`,
+        images: quiz.thumbnail_url ? [quiz.thumbnail_url] : [],
+      },
+    }
+  } catch (error) {
+    console.error('메타데이터 생성 오류:', error)
+    return {
+      title: '쌀미 퀴즈 | 퀴즈 상세',
+      alternates: {
+        canonical: `${siteUrl}/quiz/${resolvedParams.id}`,
+      },
     }
   }
-
-  return {
-    title: `${quiz.title} | 나에게 맞는 퀴즈 찾기`,
-    description: quiz.description ? quiz.description.substring(0, 160) : '',
-    openGraph: {
-      title: quiz.title,
-      description: quiz.description,
-      images: quiz.thumbnail_url ? [quiz.thumbnail_url] : [],
-      type: 'website',
-    },
-  }
 }
 
-export const dynamic = 'force-static' // 정적 생성 유지 (성능 최적화)
-export const revalidate = 300 // 5분마다 재검증 (필요에 따라 조정)
-
-type Params = {
-  id: string
-}
-
+// 정적 경로 생성
 export async function generateStaticParams() {
-  // 모든 퀴즈 ID를 가져와서 정적 페이지 생성
-  const quizzes_data = await quizzes.list.getAll()
-  return quizzes_data.map((quiz) => ({ id: String(quiz.id) }))
+  const quizzesData = await quizzes.list.getAll()
+  return quizzesData.map((quiz) => ({
+    id: String(quiz.id),
+  }))
 }
 
+// Quiz 페이지 컴포넌트
 export default async function QuizPage({
   params,
 }: {
-  params: Promise<Params>
+  params: Promise<{ id: string }>
 }) {
-  const { id } = await params
+  const resolvedParams = await params // 비동기 처리로 params 접근
   const queryClient = new QueryClient()
+  const quizId = Number(resolvedParams.id)
 
-  // 서버에서 쿼리 미리 실행 - prefetchQuiz 함수 사용
-  await prefetchQuiz(queryClient, Number(id))
-
-  // 메타데이터용 공개 퀴즈 데이터도 미리 가져오기
-  await prefetchPublishedQuiz(queryClient, Number(id))
+  // 데이터 프리페치 병렬 처리
+  await Promise.all([
+    prefetchQuiz(queryClient, quizId),
+    prefetchPublishedQuiz(queryClient, quizId),
+  ])
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <QuizClient id={id} />
+      <QuizClient id={resolvedParams.id} />
     </HydrationBoundary>
   )
 }

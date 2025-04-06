@@ -1,11 +1,19 @@
 import Link from 'next/link'
-import { Sparkles } from 'lucide-react'
+import Image from 'next/image'
 
 const Logo = () => {
   return (
     <Link href="/" className="flex items-center gap-2">
-      <Sparkles className="size-8" strokeWidth={1.5} />
-      <span className="text-lg font-semibold">쌀미 AI</span>
+      <Image
+        src="/logo.png"
+        alt="Logo"
+        width={40}
+        height={40}
+        className="object-cover"
+      />
+      <span className="text-xl font-bold text-gray-800 dark:text-white">
+        쌀미 앱
+      </span>
     </Link>
   )
 }

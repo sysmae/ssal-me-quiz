@@ -16,6 +16,7 @@ import {
   NavigationMenuTrigger,
 } from '@/components/ui/navigation-menu'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
+import Logo from './authentication/Logo'
 
 const Navigation = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -36,9 +37,7 @@ const Navigation = () => {
   return (
     <nav className="sticky top-0 z-40 w-full border-b bg-background">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        <Link href="/" className="text-xl font-bold flex items-center">
-          쌀미 퀴즈
-        </Link>
+        <Logo />
 
         {/* 데스크탑 메뉴 */}
         <div className="hidden md:flex items-center gap-4">
