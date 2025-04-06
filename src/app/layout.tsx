@@ -103,6 +103,8 @@ export default function RootLayout({
             © 2025 SYSMAE. All rights reserved.
           </span>
         </footer>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   )
