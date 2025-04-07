@@ -45,10 +45,34 @@ export async function updateQuiz(id: number, updates: QuizUpdateData) {
   return data
 }
 
-// 퀴즈 삭제
+// 퀴즈 삭제 함수 수정
 export async function deleteQuiz(id: number) {
   const supabase = await createClient()
 
+  // 먼저 퀴즈의 중요도 지표 확인 (좋아요 수, 조회수)
+  const { data: quizData, error: quizError } = await supabase
+    .from('quizzes')
+    .select('like_count, view_count, published')
+    .eq('id', id)
+    .single()
+
+  if (quizError) throw quizError
+
+  // 중요 퀴즈 기준 설정
+  const LIKE_THRESHOLD = 30 // 좋아요 30개 이상
+  const VIEW_THRESHOLD = 100 // 조회수 100회 이상
+
+  // 중요 퀴즈인 경우 삭제 불가, 오류 메시지 반환
+  if (
+    quizData.like_count >= LIKE_THRESHOLD ||
+    quizData.view_count >= VIEW_THRESHOLD
+  ) {
+    throw new Error(
+      `이 퀴즈는 ${quizData.like_count}개의 좋아요와 ${quizData.view_count}회의 조회수가 있어 삭제할 수 없습니다. 대신 비공개로 설정할 수 있습니다.`
+    )
+  }
+
+  // 중요하지 않은 퀴즈는 정상적으로 삭제 진행
   const { error } = await supabase.from('quizzes').delete().eq('id', id)
   if (error) throw error
 

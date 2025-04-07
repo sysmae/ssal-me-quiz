@@ -76,12 +76,12 @@ export const useQuizQueries = (quizId: number) => {
   const updateThumbnail = async (thumbnailUrl: string) =>
     await updateQuiz({ thumbnail_url: thumbnailUrl })
 
-  // 퀴즈 삭제 - 마찬가지로 mutateAsync 사용
+  // 퀴즈 삭제 - mutateAsync 사용하여 Promise 반환
   const { mutateAsync: deleteQuiz } = useMutation({
     mutationFn: () => quizzes.details.delete(quizId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['quizzes'] })
-      window.location.href = '/quiz'
+      // 성공 시 리다이렉트는 컴포넌트에서 처리
     },
   })
 
