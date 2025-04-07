@@ -35,19 +35,19 @@ export const useQuizAttemptsQueries = () => {
   })
 
   // 퀴즈의 총 시도 횟수 가져오기
-  const getQuizTotalAttemptCount = (quizId: number) => {
+  const useQuizTotalAttemptCount = (quizId: number) => {
     return useQuery({
       queryKey: ['quiz_total_attempts_count', quizId],
-      queryFn: () => quizAttempts.getQuizTotalAttemptCount(quizId),
+      queryFn: () => quizAttempts.useQuizTotalAttemptCount(quizId),
       staleTime: 1000 * 60 * 5, // 5분 동안 캐시 유지
     })
   }
 
   // 퀴즈의 모든 점수 데이터 가져오기
-  const getQuizScoreData = (quizId: number) => {
+  const useQuizScoreData = (quizId: number) => {
     return useQuery({
       queryKey: ['quiz_score_data', quizId],
-      queryFn: () => quizAttempts.getQuizScoreData(quizId),
+      queryFn: () => quizAttempts.useQuizScoreData(quizId),
       staleTime: 1000 * 60 * 5,
       enabled: false, // 필요할 때만 실행되도록 기본적으로 비활성화
     })
@@ -55,7 +55,7 @@ export const useQuizAttemptsQueries = () => {
 
   return {
     createQuizAttempt,
-    getQuizTotalAttemptCount,
-    getQuizScoreData,
+    useQuizTotalAttemptCount,
+    useQuizScoreData,
   }
 }

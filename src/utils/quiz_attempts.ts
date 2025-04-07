@@ -60,7 +60,7 @@ export const quizAttempts = {
     }
   },
   // 특정 퀴즈에 대한 모든 사용자의 시도 횟수 가져오기
-  getQuizTotalAttemptCount: async (quizId: number) => {
+  useQuizTotalAttemptCount: async (quizId: number) => {
     const { count, error } = await supabase
       .from('quiz_attempts')
       .select('*', { count: 'exact', head: true }) // head: true 추가
@@ -71,7 +71,7 @@ export const quizAttempts = {
   },
 
   // 특정 퀴즈에 대한 모든 사용자의 점수 데이터 가져오기
-  getQuizScoreData: async (quizId: number) => {
+  useQuizScoreData: async (quizId: number) => {
     const { data, error } = await supabase
       .from('quiz_attempts')
       .select('score')

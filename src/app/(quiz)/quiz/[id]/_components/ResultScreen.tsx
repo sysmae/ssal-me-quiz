@@ -49,17 +49,17 @@ export default function ResultScreen({
   } | null>(null)
 
   const isSaved = useRef(false)
-  const { getQuizTotalAttemptCount, getQuizScoreData } =
+  const { useQuizTotalAttemptCount, useQuizScoreData } =
     useQuizAttemptsQueries()
 
   const { data: totalAttemptCount = 0, isLoading: isCountLoading } =
-    getQuizTotalAttemptCount(quiz.id)
+    useQuizTotalAttemptCount(quiz.id)
 
   const {
     data: scoreData = [],
     isLoading: isScoreDataLoading,
     refetch: refetchScoreData,
-  } = getQuizScoreData(quiz.id)
+  } = useQuizScoreData(quiz.id)
 
   useEffect(() => {
     if (!isSaved.current) {
