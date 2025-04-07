@@ -12,6 +12,24 @@ export async function updateQuiz(id: number, updates: QuizUpdateData) {
   // 함수 내부에서 클라이언트 생성
   const supabase = await createClient()
 
+  // published 상태를 변경하려는 경우 문제 수 검증 추가
+  if (updates.published !== undefined && updates.published === true) {
+    // 현재 퀴즈의 문제 수 조회
+    const { data: questionData, error: questionError } = await supabase
+      .from('quiz_questions')
+      .select('*', { count: 'exact' })
+      .eq('quiz_id', id)
+
+    if (questionError) throw questionError
+
+    // 문제 수가 5개 미만인 경우 에러 발생
+    if (!questionData || questionData.length < 5) {
+      throw new Error(
+        '퀴즈는 최소 5개 이상의 문제가 있어야 공개할 수 있습니다.'
+      )
+    }
+  }
+
   const { data, error } = await supabase
     .from('quizzes')
     .update({ ...updates, updated_at: new Date().toISOString() })

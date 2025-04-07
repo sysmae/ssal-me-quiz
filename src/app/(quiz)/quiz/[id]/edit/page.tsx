@@ -139,12 +139,8 @@ const QuizEditPage = ({ params }: { params: Promise<{ id: string }> }) => {
         </Card>
 
         <Card>
-          <CardHeader>
-            <CardTitle>퀴즈 정보 및 질문 관리</CardTitle>
-          </CardHeader>
           <CardContent>
             <div className="mb-8">
-              <h3 className="text-lg font-medium mb-4">기본 정보</h3>
               {quiz && <QuizBasicInfo quizId={quizId} quiz={quiz} />}
             </div>
 

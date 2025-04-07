@@ -25,9 +25,15 @@ const QuizBasicInfo = ({
   const [saveMessage, setSaveMessage] = useState('')
   const [messageType, setMessageType] = useState<'success' | 'error'>('success')
   const [published, setPublished] = useState(quiz?.published || false)
+  const [isUpdating, setIsUpdating] = useState(false)
+  const [isSavingTitle, setIsSavingTitle] = useState(false)
+  const [isSavingDescription, setIsSavingDescription] = useState(false)
+  const [isSavingThumbnail, setIsSavingThumbnail] = useState(false)
+
   const { updateTitle, updateDescription, updatePublished, updateThumbnail } =
     useQuizQueries(quizId)
 
+  // 퀴즈 데이터가 변경될 때마다 로컬 상태 업데이트
   useEffect(() => {
     if (quiz) {
       setTitle(quiz.title || '')
@@ -36,58 +42,72 @@ const QuizBasicInfo = ({
     }
   }, [quiz])
 
-  const handleTitleSave = () => {
+  const showMessage = (message: string, type: 'success' | 'error') => {
+    setMessageType(type)
+    setSaveMessage(message)
+    setTimeout(() => setSaveMessage(''), 3000)
+  }
+
+  const handleTitleSave = async () => {
     if (!title.trim()) return
 
+    setIsSavingTitle(true)
     try {
-      updateTitle(title)
-      setMessageType('success')
-      setSaveMessage('제목이 저장되었습니다.')
-      setTimeout(() => setSaveMessage(''), 3000)
+      await updateTitle(title)
+      showMessage('제목이 저장되었습니다.', 'success')
     } catch (error) {
-      setMessageType('error')
-      setSaveMessage('제목 저장 중 오류가 발생했습니다.')
-      setTimeout(() => setSaveMessage(''), 3000)
+      showMessage('제목 저장 중 오류가 발생했습니다.', 'error')
+    } finally {
+      setIsSavingTitle(false)
     }
   }
 
-  const handleDescriptionSave = () => {
+  const handleDescriptionSave = async () => {
+    setIsSavingDescription(true)
     try {
-      updateDescription(description)
-      setMessageType('success')
-      setSaveMessage('설명이 저장되었습니다.')
-      setTimeout(() => setSaveMessage(''), 3000)
+      await updateDescription(description)
+      showMessage('설명이 저장되었습니다.', 'success')
     } catch (error) {
-      setMessageType('error')
-      setSaveMessage('설명 저장 중 오류가 발생했습니다.')
-      setTimeout(() => setSaveMessage(''), 3000)
+      showMessage('설명 저장 중 오류가 발생했습니다.', 'error')
+    } finally {
+      setIsSavingDescription(false)
     }
   }
 
-  const handlePublish = () => {
+  const handlePublish = async () => {
+    setIsUpdating(true)
     try {
-      updatePublished(!published)
+      // 서버 측 검증이 이루어지므로 단순히 API 호출만 수행
+      await updatePublished(!published)
+
+      // API 호출이 성공하면 로컬 상태 업데이트
       setPublished((prev) => !prev)
-      setMessageType('success')
-      setSaveMessage(`퀴즈가 ${!published ? '발행' : '발행 취소'}되었습니다.`)
-      setTimeout(() => setSaveMessage(''), 3000)
+      showMessage(
+        `퀴즈가 ${!published ? '발행' : '발행 취소'}되었습니다.`,
+        'success'
+      )
     } catch (error) {
-      setMessageType('error')
-      setSaveMessage('발행 상태 변경 중 오류가 발생했습니다.')
-      setTimeout(() => setSaveMessage(''), 3000)
+      // 서버에서 전달된 오류 메시지 사용
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : '발행 상태 변경 중 오류가 발생했습니다.'
+
+      showMessage(errorMessage, 'error')
+    } finally {
+      setIsUpdating(false)
     }
   }
 
-  const handleThumbnailChange = (url: string) => {
+  const handleThumbnailChange = async (url: string) => {
+    setIsSavingThumbnail(true)
     try {
-      updateThumbnail(url)
-      setMessageType('success')
-      setSaveMessage('썸네일이 업데이트되었습니다.')
-      setTimeout(() => setSaveMessage(''), 3000)
+      await updateThumbnail(url)
+      showMessage('썸네일이 업데이트되었습니다.', 'success')
     } catch (error) {
-      setMessageType('error')
-      setSaveMessage('썸네일 업데이트 중 오류가 발생했습니다.')
-      setTimeout(() => setSaveMessage(''), 3000)
+      showMessage('썸네일 업데이트 중 오류가 발생했습니다.', 'error')
+    } finally {
+      setIsSavingThumbnail(false)
     }
   }
 
@@ -104,6 +124,7 @@ const QuizBasicInfo = ({
               id="published"
               checked={published}
               onCheckedChange={handlePublish}
+              disabled={isUpdating}
             />
           </div>
         </div>
@@ -139,13 +160,15 @@ const QuizBasicInfo = ({
               onChange={(e) => setTitle(e.target.value)}
               placeholder="퀴즈 제목을 입력하세요"
               className="flex-grow"
+              disabled={isSavingTitle}
             />
             <Button
               onClick={handleTitleSave}
               className="bg-indigo-500 hover:bg-indigo-600"
+              disabled={isSavingTitle || !title.trim()}
             >
               <Save className="h-4 w-4 mr-2" />
-              저장
+              {isSavingTitle ? '저장 중...' : '저장'}
             </Button>
           </div>
         </div>
@@ -162,13 +185,15 @@ const QuizBasicInfo = ({
               rows={4}
               placeholder="퀴즈에 대한 설명을 입력하세요"
               className="flex-grow resize-none"
+              disabled={isSavingDescription}
             />
             <Button
               onClick={handleDescriptionSave}
               className="bg-indigo-500 hover:bg-indigo-600 self-end"
+              disabled={isSavingDescription}
             >
               <Save className="h-4 w-4 mr-2" />
-              저장
+              {isSavingDescription ? '저장 중...' : '저장'}
             </Button>
           </div>
         </div>

@@ -51,12 +51,12 @@ export const useQuizQueries = (quizId: number) => {
     queryKey: ['quiz', quizId],
     queryFn: () => quizzes.details.get(quizId),
     enabled: !!quizId,
-    staleTime: 60 * 60 * 1000, // 1시간 동안 신선한 상태 유지
+    staleTime: 60 * 60 * 1000,
     gcTime: 1000 * 60 * 30,
   })
 
-  // 퀴즈 정보 업데이트
-  const { mutate: updateQuiz } = useMutation({
+  // 퀴즈 정보 업데이트 - mutateAsync 사용
+  const { mutateAsync: updateQuiz } = useMutation({
     mutationFn: (updates: QuizUpdateData) =>
       quizzes.details.update(quizId, updates),
     onSuccess: () => {
@@ -64,21 +64,20 @@ export const useQuizQueries = (quizId: number) => {
     },
   })
 
-  // 퀴즈 제목 업데이트 - updateQuiz를 활용하여 중복 제거
-  const updateTitle = (title: string) => updateQuiz({ title })
+  // Promise를 반환하는 함수로 변경
+  const updateTitle = async (title: string) => await updateQuiz({ title })
 
-  // 퀴즈 설명 업데이트 - updateQuiz를 활용하여 중복 제거
-  const updateDescription = (description: string) => updateQuiz({ description })
+  const updateDescription = async (description: string) =>
+    await updateQuiz({ description })
 
-  // 퀴즈 발행 상태 업데이트
-  const updatePublished = (published: boolean) => updateQuiz({ published })
+  const updatePublished = async (published: boolean) =>
+    await updateQuiz({ published })
 
-  // 퀴즈 썸네일 업데이트 - updateQuiz를 활용하여 중복 제거
-  const updateThumbnail = (thumbnailUrl: string) =>
-    updateQuiz({ thumbnail_url: thumbnailUrl })
+  const updateThumbnail = async (thumbnailUrl: string) =>
+    await updateQuiz({ thumbnail_url: thumbnailUrl })
 
-  // 퀴즈 삭제
-  const { mutate: deleteQuiz } = useMutation({
+  // 퀴즈 삭제 - 마찬가지로 mutateAsync 사용
+  const { mutateAsync: deleteQuiz } = useMutation({
     mutationFn: () => quizzes.details.delete(quizId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['quizzes'] })

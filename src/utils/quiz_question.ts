@@ -43,6 +43,39 @@ export const quiz_questions = {
       return data
     },
     delete: async (id: number) => {
+      // 1. 먼저 해당 문제의 정보를 가져와 퀴즈 ID를 확인
+      const { data: question, error: questionError } = await supabase
+        .from('quiz_questions')
+        .select('quiz_id')
+        .eq('id', id)
+        .single()
+
+      if (questionError) throw questionError
+
+      // 2. 퀴즈의 상태 확인 (공개 여부)
+      const { data: quiz, error: quizError } = await supabase
+        .from('quizzes')
+        .select('published')
+        .eq('id', question.quiz_id)
+        .single()
+
+      if (quizError) throw quizError
+
+      // 3. 해당 퀴즈에 속한 문제 개수 확인
+      const { data: questions, error: countError } = await supabase
+        .from('quiz_questions')
+        .select('*', { count: 'exact' })
+        .eq('quiz_id', question.quiz_id)
+
+      if (countError) throw countError
+
+      // 4. 공개 상태이고 문제가 5개 미만이면 삭제 불가
+      if (quiz.published && questions.length <= 5) {
+        alert('공개된 퀴즈는 최소 5개 이상의 문제를 유자해야 합니다.')
+        return
+      }
+
+      // 조건을 통과하면 삭제 진행
       const { error } = await supabase
         .from('quiz_questions')
         .delete()

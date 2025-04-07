@@ -21,118 +21,10 @@ export const quizzes = {
       return uploadThumbnail(file)
     },
 
-    // uploadThumbnail: async (file: File) => {
-    //   try {
-    //     // 사용자 인증 확인
-    //     const {
-    //       data: { user },
-    //     } = await supabase.auth.getUser()
-    //     if (!user) {
-    //       throw new Error('사용자 인증이 필요합니다.')
-    //     }
-
-    //     // 파일 크기 제한 확인 (5MB)
-    //     if (file.size > 5 * 1024 * 1024) {
-    //       throw new Error('파일 크기는 5MB 이하여야 합니다.')
-    //     }
-
-    //     // 파일 확장자 추출 및 유효성 검사
-    //     const fileExt = file.name.split('.').pop()?.toLowerCase()
-    //     if (
-    //       !fileExt ||
-    //       !['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(fileExt)
-    //     ) {
-    //       throw new Error(
-    //         '지원되지 않는 파일 형식입니다. (jpg, jpeg, png, gif, webp만 허용)'
-    //       )
-    //     }
-
-    //     // 고유한 파일명 생성
-    //     const fileName = `${Date.now()}-${Math.random()
-    //       .toString(36)
-    //       .substring(2, 15)}.${fileExt}`
-    //     const filePath = `quiz-thumbnails/${fileName}`
-
-    //     // Supabase Storage에 파일 업로드
-
-    //     // 업로드 시도
-    //     const { data: uploadData, error: uploadError } = await supabase.storage
-    //       .from('quiz-assets')
-    //       .upload(filePath, file, {
-    //         upsert: true,
-    //         contentType: file.type,
-    //         cacheControl: '3600',
-    //       })
-
-    //     if (uploadError) {
-    //       throw new Error(`파일 업로드 실패: ${uploadError.message}`)
-    //     }
-
-    //     // 업로드된 파일의 공개 URL 가져오기
-    //     const { data: urlData } = supabase.storage
-    //       .from('quiz-assets')
-    //       .getPublicUrl(filePath)
-
-    //     return urlData.publicUrl
-    //   } catch (error) {
-    //     // 사용자에게 더 친숙한 오류 메시지 제공
-    //     if (error instanceof Error) {
-    //       throw new Error(`썸네일 업로드 실패: ${error.message}`)
-    //     } else {
-    //       throw new Error('썸네일 업로드 중 알 수 없는 오류가 발생했습니다.')
-    //     }
-    //   }
-    // },
     // 새로운 deleteThumbnail 메소드
     deleteThumbnail: async (thumbnail_url: string, quizId: number) => {
       deleteThumbnail(thumbnail_url, quizId)
     },
-    // deleteThumbnail: async (
-    //   thumbnail_url: string,
-    //   quizId: number
-    // ): Promise<void> => {
-    //   try {
-    //     // 퀴즈의 썸네일 URL을 null로 업데이트
-    //     const { error: updateError } = await supabase
-    //       .from('quizzes')
-    //       .update({ thumbnail_url: null })
-    //       .eq('id', quizId)
-
-    //     if (updateError) {
-    //       console.error('퀴즈 업데이트 실패:', updateError)
-    //       throw new Error(`퀴즈 업데이트 실패: ${updateError.message}`)
-    //     }
-
-    //     // Supabase 스토리지에서 실제 파일 삭제
-    //     console.log('썸네일 삭제 시작:', thumbnail_url)
-
-    //     // URL에서 파일 경로 추출
-    //     const urlObj = new URL(thumbnail_url)
-    //     const pathSegments = urlObj.pathname.split('/')
-    //     const fileName = pathSegments[pathSegments.length - 1]
-    //     const filePath = `quiz-thumbnails/${fileName}`
-    //     console.log('삭제할 파일 경로:', filePath)
-
-    //     // Supabase Storage에서 파일 삭제
-    //     const { data, error: removeError } = await supabase.storage
-    //       .from('quiz-assets')
-    //       .remove([filePath])
-
-    //     if (removeError) {
-    //       console.error('썸네일 파일 삭제 실패:', removeError)
-    //       throw new Error(`썸네일 삭제 실패: ${removeError.message}`)
-    //     }
-
-    //     console.log('썸네일 삭제 성공:', data)
-    //   } catch (error) {
-    //     // 사용자에게 더 친숙한 오류 메시지 제공
-    //     if (error instanceof Error) {
-    //       throw new Error(`썸네일 삭제 실패: ${error.message}`)
-    //     } else {
-    //       throw new Error('썸네일 삭제 중 알 수 없는 오류가 발생했습니다.')
-    //     }
-    //   }
-    // },
   },
 
   // 퀴즈 목록 관련 기능
@@ -229,6 +121,7 @@ export const quizzes = {
       return data
     },
   },
+
   // 퀴즈 상세 관련 기능
   details: {
     get: async (id: number) => {
@@ -285,46 +178,16 @@ export const quizzes = {
     },
 
     update: async (id: number, updates: QuizUpdateData) => {
-      // const { data, error } = await supabase
-      //   .from('quizzes')
-      //   .update({ ...updates, updated_at: new Date().toISOString() })
-      //   .eq('id', id)
-      //   .select()
-      //   .single()
-
-      // if (error) throw error
-
-      // return data
       return updateQuiz(id, updates)
     },
 
     delete: async (id: number) => {
-      // const { error } = await supabase.from('quizzes').delete().eq('id', id)
-      // if (error) throw error
       return deleteQuiz(id)
     },
   },
 
   // + 버튼 클릭 시 기본값으로 퀴즈 생성
   createEmptyQuiz: async () => {
-    // const userId = (await supabase.auth.getUser()).data.user?.id
-    // if (!userId) throw new Error('User not found')
-
-    // // Step 1: 기본값으로 퀴즈 생성
-    // const { data: quiz, error } = await supabase
-    //   .from('quizzes')
-    //   .insert({
-    //     title: '새 퀴즈', // 기본 제목
-    //     description: '', // 초기 설명은 빈 값
-    //     user_id: userId,
-    //   })
-    //   .select()
-    //   .single()
-
-    // if (error) throw error
-
-    // // Step 2: 생성된 ID 반환 (페이지 이동 시 사용)
-    // return quiz.id
     return createEmptyQuiz()
   },
 
@@ -348,53 +211,11 @@ export const quizzes = {
 
     // 좋아요 추가
     addLike: async (quizId: number) => {
-      // const userId = (await supabase.auth.getUser()).data.user?.id
-      // if (!userId) throw new Error('User not found')
-
-      // // 1. 좋아요 추가
-      // const { error: likeError } = await supabase.from('quiz_likes').upsert({
-      //   user_id: userId,
-      //   quiz_id: quizId,
-      // })
-
-      // if (likeError) throw likeError
-
-      // // 2. 좋아요 카운트 증가
-      // try {
-      //   const { data, error } = await supabase.rpc('add_quiz_like', {
-      //     quiz_id: quizId,
-      //   })
-
-      //   if (error) throw error
-
-      //   return data
-      // } catch (error) {
-      //   throw error
-      // }
       return addLike(quizId)
     },
 
     // 좋아요 취소
     removeLike: async (quizId: number) => {
-      // const userId = (await supabase.auth.getUser()).data.user?.id
-      // if (!userId) throw new Error('User not found')
-      // // 1. 좋아요 삭제
-      // const { error: unlikeError } = await supabase
-      //   .from('quiz_likes')
-      //   .delete()
-      //   .eq('user_id', userId)
-      //   .eq('quiz_id', quizId)
-      // if (unlikeError) throw unlikeError
-      // // 3. 좋아요 카운트 감소 (0 미만으로 내려가지 않도록)
-      // try {
-      //   const { data, error } = await supabase.rpc('remove_quiz_like', {
-      //     quiz_id: quizId,
-      //   })
-      //   if (error) throw error
-      //   return data
-      // } catch (error) {
-      //   throw error
-      // }
       return removeLike(quizId)
     },
 
