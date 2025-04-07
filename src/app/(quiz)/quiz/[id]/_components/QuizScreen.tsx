@@ -6,18 +6,23 @@ import { Button } from '@/components/ui/button'
 import { motion, AnimatePresence } from 'framer-motion'
 import { PenLine, ArrowRight, Brain } from 'lucide-react'
 
-type QuizScreenProps = {
+interface QuizScreenProps {
   quiz: QuizWithQuestions
   currentQuestionIndex: number
-  onSubmit: (answer: string) => void
+  selectedQuestions: number[] // 선택된 문제 인덱스 배열 추가
+  onSubmit: (userAnswer: string) => void
 }
 
 export default function QuizScreen({
   quiz,
   currentQuestionIndex,
+  selectedQuestions, // 추가된 props
   onSubmit,
 }: QuizScreenProps) {
-  const currentQuestion = quiz.questions[currentQuestionIndex]
+  // 선택된 문제 인덱스를 사용하여 실제 문제 가져오기
+  const actualQuestionIndex = selectedQuestions[currentQuestionIndex]
+  const currentQuestion = quiz.questions[actualQuestionIndex]
+
   const inputRef = useRef<HTMLInputElement>(null)
   const [inputValue, setInputValue] = useState('')
 
@@ -66,10 +71,10 @@ export default function QuizScreen({
           <CardHeader className="pb-2 px-6">
             <div className="flex justify-between items-center">
               <p className="text-lg font-medium text-gray-700">
-                문제 {currentQuestionIndex + 1} / {quiz.questions.length}
+                문제 {currentQuestionIndex + 1} / {selectedQuestions.length}
               </p>
               <div className="flex space-x-2">
-                {Array.from({ length: quiz.questions.length }).map(
+                {Array.from({ length: selectedQuestions.length }).map(
                   (_, index) => (
                     <motion.div
                       key={index}

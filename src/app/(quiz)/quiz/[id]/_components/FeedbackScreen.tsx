@@ -16,6 +16,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 type FeedbackScreenProps = {
   quiz: QuizWithQuestions
   currentQuestionIndex: number
+  selectedQuestions: number[] // 선택된 문제 인덱스 배열 추가
   currentAnswer: {
     userAnswer: string
     isCorrect: boolean
@@ -26,10 +27,14 @@ type FeedbackScreenProps = {
 export default function FeedbackScreen({
   quiz,
   currentQuestionIndex,
+  selectedQuestions, // 추가된 props
   currentAnswer,
   onNext,
 }: FeedbackScreenProps) {
-  const currentQuestion = quiz.questions[currentQuestionIndex]
+  // 선택된 문제 인덱스를 사용하여 실제 문제 가져오기
+  const actualQuestionIndex = selectedQuestions[currentQuestionIndex]
+  const currentQuestion = quiz.questions[actualQuestionIndex]
+
   const buttonRef = useRef<HTMLButtonElement>(null)
   const [showExplanation, setShowExplanation] = useState(false)
   const [userFeedback, setUserFeedback] = useState<string | null>(null)
@@ -73,10 +78,10 @@ export default function FeedbackScreen({
           <CardHeader className="pb-2 px-6">
             <div className="flex justify-between items-center">
               <p className="text-lg font-medium text-gray-700 dark:text-gray-200">
-                문제 {currentQuestionIndex + 1} / {quiz.questions.length}
+                문제 {currentQuestionIndex + 1} / {selectedQuestions.length}
               </p>
               <div className="flex space-x-2">
-                {Array.from({ length: quiz.questions.length }).map(
+                {Array.from({ length: selectedQuestions.length }).map(
                   (_, index) => (
                     <motion.div
                       key={index}
@@ -206,7 +211,7 @@ export default function FeedbackScreen({
               onClick={onNext}
               className="bg-indigo-600 hover:bg-indigo-700 text-white text-xl p-5 h-auto rounded-lg w-full max-w-xs transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg dark:bg-indigo-700 dark:hover:bg-indigo-800"
             >
-              {currentQuestionIndex < quiz.questions.length - 1
+              {currentQuestionIndex < selectedQuestions.length - 1
                 ? '다음 문제'
                 : '결과 보기'}
             </Button>

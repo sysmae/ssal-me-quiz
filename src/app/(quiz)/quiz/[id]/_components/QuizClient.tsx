@@ -3,15 +3,12 @@
 import { useReducer, useEffect, useState } from 'react'
 import { useQuizQueries, useIncrementQuizView } from '@/hooks/useQuizQueries'
 import { quizReducer, initialState, QuizState, QuizAction } from './quizReducer'
-
 import StartScreen from './StartScreen'
 import QuizScreen from './QuizScreen'
 import FeedbackScreen from './FeedbackScreen'
 import ResultScreen from './ResultScreen'
-
 import { createClient } from '@/utils/supabase/client'
 import { User } from '@supabase/supabase-js'
-
 import { useQuizAttemptsQueries } from '@/hooks/useQuizAttemptsQueries'
 
 export default function QuizClient({ id }: { id: string }) {
@@ -19,16 +16,18 @@ export default function QuizClient({ id }: { id: string }) {
   const { quiz } = useQuizQueries(Number(id))
   const { mutate: incrementViewCount } = useIncrementQuizView(Number(id))
   const supabase = createClient()
-
   const [user, setUser] = useState<User | null>(null)
   const { createQuizAttempt } = useQuizAttemptsQueries()
 
+  // 선택된 문제들을 저장할 상태 추가
+  const [selectedQuestions, setSelectedQuestions] = useState<number[]>([])
+
+  // 기존 코드 유지
   useEffect(() => {
     const fetchUser = async () => {
       const { data } = await supabase.auth.getUser()
       setUser(data.user)
     }
-
     fetchUser()
   }, [])
 
@@ -45,58 +44,84 @@ export default function QuizClient({ id }: { id: string }) {
 
   // 중복 조회수 방지를 위한 함수
   const incrementViewWithDuplicatePrevention = () => {
-    // 로컬 스토리지에서 최근 조회 기록 확인
+    // 기존 코드 유지
     const viewedQuizzes = JSON.parse(
       localStorage.getItem('viewedQuizzes') || '{}'
     )
     const lastViewTime = viewedQuizzes[id] || 0
     const currentTime = Date.now()
 
-    // 6시간(21600000ms) 내에 조회한 적이 없으면 조회수 증가
     if (currentTime - lastViewTime > 21600000) {
       incrementViewCount()
-
-      // 최근 조회 시간 업데이트
       viewedQuizzes[id] = currentTime
       localStorage.setItem('viewedQuizzes', JSON.stringify(viewedQuizzes))
     }
   }
 
-  // 퀴즈 시작 핸들러
-  const handleStartQuiz = () => {
+  // 랜덤하게 문제 선택하는 함수
+  const getRandomQuestions = (
+    totalCount: number,
+    selectCount: number
+  ): number[] => {
+    // Fisher-Yates 셔플 알고리즘 사용
+    const indices = Array.from({ length: totalCount }, (_, i) => i)
+    for (let i = totalCount - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1))
+      ;[indices[i], indices[j]] = [indices[j], indices[i]]
+    }
+    return indices.slice(0, selectCount)
+  }
+
+  // 퀴즈 시작 핸들러 수정
+  const handleStartQuiz = (questionCount: number) => {
     if (!quiz) return
+
+    // 선택한 갯수만큼 랜덤하게 문제 선택
+    const randomIndices = getRandomQuestions(
+      quiz.questions.length,
+      questionCount
+    )
+    setSelectedQuestions(randomIndices)
+
+    // 선택한 문제 갯수를 total_questions로 설정
     dispatch({
       type: 'START_QUIZ',
-      payload: { quizId: quiz.id, totalQuestions: quiz.questions.length },
+      payload: { quizId: quiz.id, totalQuestions: questionCount },
     })
   }
 
-  // 답변 제출 핸들러
+  // 답변 제출 핸들러 수정
   const handleAnswer = (userAnswer: string) => {
     if (!quiz) return
+
+    // 선택된 문제 인덱스를 사용하여 실제 문제 가져오기
+    const actualQuestionIndex = selectedQuestions[state.currentQuestionIndex]
+    const currentQuestion = quiz.questions[actualQuestionIndex]
+
     dispatch({
       type: 'SUBMIT_ANSWER',
       payload: {
         userAnswer,
-        questionId: quiz.questions[state.currentQuestionIndex].id,
-        isCorrect:
-          quiz.questions[state.currentQuestionIndex].correct_answer ==
-          userAnswer,
+        questionId: currentQuestion.id,
+        isCorrect: currentQuestion.correct_answer === userAnswer,
       },
     })
   }
 
-  // 다음 문제로 이동
+  // 다음 문제로 이동 핸들러 수정
   const handleNextQuestion = () => {
     if (!quiz) return
+
+    // 선택한 문제 갯수를 totalQuestions로 전달
     dispatch({
       type: 'NEXT_QUESTION',
-      payload: { totalQuestions: quiz.questions.length },
+      payload: { totalQuestions: selectedQuestions.length },
     })
   }
 
   // 퀴즈 재시작
   const handleRestartQuiz = () => {
+    setSelectedQuestions([])
     dispatch({ type: 'RESTART_QUIZ' })
   }
 
@@ -116,7 +141,7 @@ export default function QuizClient({ id }: { id: string }) {
       const attemptData = {
         quizId: quiz.id,
         correctAnswers: state.attemptData?.correct_answers || 0,
-        totalQuestions: quiz.questions.length,
+        totalQuestions: selectedQuestions.length, // 선택한 문제 갯수 사용
         score: state.attemptData.score || 0,
         userId: user?.id || null,
       }
@@ -153,6 +178,7 @@ export default function QuizClient({ id }: { id: string }) {
           <QuizScreen
             quiz={quiz}
             currentQuestionIndex={state.currentQuestionIndex}
+            selectedQuestions={selectedQuestions} // 선택된 문제 인덱스 전달
             onSubmit={handleAnswer}
           />
         )}
@@ -161,6 +187,7 @@ export default function QuizClient({ id }: { id: string }) {
           <FeedbackScreen
             quiz={quiz}
             currentQuestionIndex={state.currentQuestionIndex}
+            selectedQuestions={selectedQuestions} // 선택된 문제 인덱스 전달
             currentAnswer={state.currentAnswer}
             onNext={handleNextQuestion}
           />
@@ -171,6 +198,7 @@ export default function QuizClient({ id }: { id: string }) {
             quiz={quiz}
             onRestart={handleRestartQuiz}
             saveQuizResults={saveQuizResults}
+            selectedCount={selectedQuestions.length} // 선택한 문제 갯수 전달
           />
         )}
       </div>

@@ -23,12 +23,14 @@ type ResultScreenProps = {
           userId: string | null
         }
       }
+  selectedCount?: number // 선택한 문제 갯수 추가 (선택적)
 }
 
 export default function ResultScreen({
   quiz,
   onRestart,
   saveQuizResults,
+  selectedCount, // 추가된 props
 }: ResultScreenProps) {
   const [attempt, setAttempt] = useState<{
     quizId: number
@@ -73,8 +75,17 @@ export default function ResultScreen({
               </h2>
 
               <p className="text-lg text-gray-700 dark:text-gray-300 mb-2">
-                {attempt.totalQuestions}문제 중 {attempt.correctAnswers}문제를
-                맞히셨습니다.
+                {selectedCount !== undefined ? (
+                  <>
+                    총 {quiz.questions.length}문제 중 {selectedCount}문제를
+                    선택하셨고, {attempt.correctAnswers}문제를 맞히셨습니다.
+                  </>
+                ) : (
+                  <>
+                    {attempt.totalQuestions}문제 중 {attempt.correctAnswers}
+                    문제를 맞히셨습니다.
+                  </>
+                )}
               </p>
 
               <p className="text-lg font-bold text-indigo-600 dark:text-indigo-400 mb-6">
