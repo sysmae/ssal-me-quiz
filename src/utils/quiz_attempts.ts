@@ -59,37 +59,26 @@ export const quizAttempts = {
       attempt,
     }
   },
+  // 특정 퀴즈에 대한 모든 사용자의 시도 횟수 가져오기
+  getQuizTotalAttemptCount: async (quizId: number) => {
+    const { count, error } = await supabase
+      .from('quiz_attempts')
+      .select('*', { count: 'exact', head: true }) // head: true 추가
+      .eq('quiz_id', quizId)
 
-  // 퀴즈 결과 관련 기능
-  results: {
-    // 특정 퀴즈 시도 결과 가져오기
-    getAttemptResult: async (attemptId: number) => {
-      // 퀴즈 시도 정보 가져오기
-      const { data: attempt, error: attemptError } = await supabase
-        .from('quiz_attempts')
-        .select('*')
-        .eq('id', attemptId)
-        .single()
+    if (error) throw error
+    return count || 0
+  },
 
-      if (attemptError) throw attemptError
+  // 특정 퀴즈에 대한 모든 사용자의 점수 데이터 가져오기
+  getQuizScoreData: async (quizId: number) => {
+    const { data, error } = await supabase
+      .from('quiz_attempts')
+      .select('score')
+      .eq('quiz_id', quizId)
 
-      // 문제 및 답변 정보 가져오기
-      const { data: questions, error: questionsError } = await supabase
-        .from('quiz_attempt_questions')
-        .select(
-          `
-          *,
-          question:quiz_questions(*)
-        `
-        )
-        .eq('attempt_id', attemptId)
-
-      if (questionsError) throw questionsError
-
-      return {
-        attempt,
-      }
-    },
+    if (error) throw error
+    return data.map((item) => item.score)
   },
 }
 // 사용자의 모든 퀴즈 시도 목록 가져오기
