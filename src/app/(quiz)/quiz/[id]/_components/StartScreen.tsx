@@ -86,8 +86,8 @@ export default function StartScreen({ quiz, onStart }: StartScreenProps) {
                       onClick={() => setSelectedCount(count)}
                     >
                       {count === quiz.questions.length
-                        ? `전체 (${count})`
-                        : count}
+                        ? `전체 (${count} 문제)`
+                        : `${count} 문제`}
                     </Button>
                   ))}
                 </div>

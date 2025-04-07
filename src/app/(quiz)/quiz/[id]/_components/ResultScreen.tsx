@@ -6,16 +6,7 @@ import QuizComment from './QuizComment'
 import RecommendedQuizzes from '../../_components/RecommendedQuizzes'
 import ShareButton from '../../_components/ShareButton'
 import { useQuizAttemptsQueries } from '@/hooks/useQuizAttemptsQueries'
-
-import {
-  ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-  ChartLegend,
-  ChartLegendContent,
-} from '@/components/ui/chart'
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts'
+import ScoreDistributionChart from './ScoreDistributionChart'
 
 type ResultScreenProps = {
   quiz: QuizWithQuestions
@@ -61,82 +52,20 @@ export default function ResultScreen({
     refetch: refetchScoreData,
   } = useQuizScoreData(quiz.id)
 
+  // 결과 저장 및 데이터 로딩
   useEffect(() => {
     if (!isSaved.current) {
       const { attempt } = saveQuizResults()
       setAttempt(attempt)
       isSaved.current = true
-    }
-  }, [saveQuizResults])
 
-  useEffect(() => {
-    if (totalAttemptCount >= 5) {
+      // 결과 저장 후 점수 데이터 다시 가져오기
       refetchScoreData()
     }
-    console.log(totalAttemptCount)
-  }, [totalAttemptCount, refetchScoreData])
+  }, [saveQuizResults, refetchScoreData])
 
-  const calculateScoreStats = (scores: number[]) => {
-    if (!scores.length)
-      return { average: 0, median: 0, bins: [], binLabels: [] }
-
-    const average =
-      scores.reduce((sum, score) => sum + score, 0) / scores.length
-
-    const sortedScores = [...scores].sort((a, b) => a - b)
-    const median =
-      sortedScores.length % 2 === 0
-        ? (sortedScores[sortedScores.length / 2 - 1] +
-            sortedScores[sortedScores.length / 2]) /
-          2
-        : sortedScores[Math.floor(sortedScores.length / 2)]
-
-    const min = 0
-    const max = 100
-    const binSize = 5
-    const binCount = Math.ceil((max - min) / binSize) + 1
-
-    const bins = Array(binCount).fill(0)
-    const binLabels = Array(binCount)
-      .fill(0)
-      .map((_, i) => {
-        if (i === binCount - 1) return '100'
-        return `${min + i * binSize}~${min + (i + 1) * binSize - 1}`
-      })
-
-    scores.forEach((score) => {
-      if (score === 100) {
-        bins[binCount - 1]++
-      } else {
-        const binIndex = Math.floor(score / binSize)
-        if (binIndex >= 0 && binIndex < binCount - 1) {
-          bins[binIndex]++
-        }
-      }
-    })
-
-    return { average, median, bins, binLabels, min, max }
-  }
-
-  const scoreStats = calculateScoreStats(scoreData)
-
-  const chartData = scoreStats.binLabels.map((label, index) => ({
-    range: label,
-    frequency: scoreStats.bins[index],
-  }))
-
-  const chartConfig = {
-    frequency: {
-      label: '빈도',
-      color: 'hsl(var(--chart-1))',
-    },
-  } satisfies ChartConfig
-
-  if (
-    !attempt ||
-    isCountLoading ||
-    (totalAttemptCount > 5 && isScoreDataLoading)
-  ) {
+  // 로딩 상태 표시
+  if (!attempt || isCountLoading || isScoreDataLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center dark:bg-gray-900">
         <div className="loader dark:text-white">Loading...</div>
@@ -161,8 +90,9 @@ export default function ResultScreen({
               <p className="text-lg text-gray-700 dark:text-gray-300 mb-2">
                 {selectedCount !== undefined ? (
                   <>
-                    총 {quiz.questions.length}문제 중 {selectedCount}문제를
-                    선택하셨고, {attempt.correctAnswers}문제를 맞히셨습니다.
+                    총 {selectedCount}문제를 선택하셨고,{' '}
+                    {attempt.correctAnswers}
+                    문제를 맞히셨습니다.
                   </>
                 ) : (
                   <>
@@ -176,61 +106,14 @@ export default function ResultScreen({
                 점수: {attempt.score}점
               </p>
 
-              {totalAttemptCount >= 5 && (
-                <div className="mb-6">
-                  <div className="text-md text-gray-700 dark:text-gray-300 mb-2">
-                    <p>전체 시도 횟수: {totalAttemptCount}회</p>
-                    <p>평균 점수: {scoreStats.average.toFixed(2)}점</p>
-                    <p>중앙값 점수: {scoreStats.median.toFixed(2)}점</p>
-                  </div>
-
-                  <ChartContainer config={chartConfig} className="h-64 w-full">
-                    <BarChart accessibilityLayer data={chartData}>
-                      <CartesianGrid vertical={false} />
-                      <XAxis
-                        dataKey="range"
-                        tickLine={false}
-                        tickMargin={10}
-                        axisLine={false}
-                      />
-                      <YAxis
-                        tickLine={false}
-                        tickMargin={10}
-                        axisLine={false}
-                      />
-                      <ChartTooltip
-                        content={(props) => {
-                          if (!props.active || !props.payload?.length)
-                            return null
-
-                          const modifiedPayload = props.payload.map((item) => ({
-                            ...item,
-                            value:
-                              typeof item.value === 'number'
-                                ? `${item.value}명`
-                                : item.value,
-                          }))
-
-                          return (
-                            <ChartTooltipContent
-                              active={props.active}
-                              payload={modifiedPayload}
-                              label={props.label}
-                              labelFormatter={(label) => `점수 범위: ${label}`}
-                            />
-                          )
-                        }}
-                      />
-                      <ChartLegend content={<ChartLegendContent />} />
-                      <Bar
-                        dataKey="frequency"
-                        fill="var(--color-frequency)"
-                        radius={4}
-                      />
-                    </BarChart>
-                  </ChartContainer>
+              <div className="mb-6">
+                <div className="text-md text-gray-700 dark:text-gray-300 mb-2">
+                  <p>전체 시도 횟수: {totalAttemptCount}회</p>
                 </div>
-              )}
+
+                {/* 모든 상황에서 그래프 표시 */}
+                <ScoreDistributionChart scoreData={scoreData} />
+              </div>
 
               <div className="flex gap-3 justify-center">
                 <Button
