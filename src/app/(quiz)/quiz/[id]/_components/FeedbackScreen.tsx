@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import { QuizWithQuestions } from '@/types/quiz'
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -152,17 +153,20 @@ export default function FeedbackScreen({
                   <p className="text-xl mb-4 dark:text-white">
                     {currentQuestion.question_text}
                   </p>
-
                   {currentQuestion.question_image_url && (
                     <div className="mb-4 flex justify-center">
-                      <img
-                        src={currentQuestion.question_image_url}
-                        alt="문제 이미지"
-                        className="w-full max-w-md h-auto rounded-lg shadow-sm"
-                      />
+                      <div className="w-full max-w-md h-auto relative">
+                        <Image
+                          src={currentQuestion.question_image_url}
+                          alt="문제 이미지"
+                          layout="responsive"
+                          width={500} // 이미지의 기본 너비
+                          height={300} // 이미지의 기본 높이
+                          className="rounded-lg shadow-sm"
+                        />
+                      </div>
                     </div>
                   )}
-
                   <div className="flex flex-col sm:flex-row items-start gap-4 mt-6">
                     <div className="flex-1 min-w-[200px] w-full">
                       <h3 className="text-lg font-semibold mb-2 dark:text-gray-200">

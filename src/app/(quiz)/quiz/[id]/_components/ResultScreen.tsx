@@ -7,6 +7,7 @@ import RecommendedQuizzes from '../../_components/RecommendedQuizzes'
 import ShareButton from '../../_components/ShareButton'
 import { useQuizAttemptsQueries } from '@/hooks/useQuizAttemptsQueries'
 import ScoreDistributionChart from './ScoreDistributionChart'
+import Image from 'next/image'
 
 type ResultScreenProps = {
   quiz: QuizWithQuestions
@@ -80,7 +81,15 @@ export default function ResultScreen({
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 md:w-1/2">
             <div className="text-center mb-6">
               <div className="flex justify-center mb-4">
-                <img src="/trophy.svg" alt="Trophy" className="w-24 h-24" />
+                <div className="relative w-24 h-24">
+                  <Image
+                    src="/trophy.svg"
+                    alt="Trophy"
+                    width={96} // 24 * 4 (tailwind 기준)
+                    height={96} // 24 * 4 (tailwind 기준)
+                    className="rounded-lg"
+                  />
+                </div>
               </div>
 
               <h2 className="text-2xl font-bold text-indigo-800 dark:text-indigo-300 mb-4">

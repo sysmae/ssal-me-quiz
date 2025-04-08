@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { motion, AnimatePresence } from 'framer-motion'
 import { PenLine, ArrowRight, Brain } from 'lucide-react'
+import Image from 'next/image'
 
 interface QuizScreenProps {
   quiz: QuizWithQuestions
@@ -138,11 +139,16 @@ export default function QuizScreen({
                 transition={{ delay: 0.3 }}
                 className="mb-8 flex justify-center"
               >
-                <img
-                  src={currentQuestion.question_image_url}
-                  alt="문제 이미지"
-                  className="w-full max-w-md h-auto rounded-lg shadow-sm"
-                />
+                <div className="relative w-full max-w-md h-auto">
+                  <Image
+                    src={currentQuestion.question_image_url}
+                    alt="문제 이미지"
+                    layout="responsive"
+                    width={500} // 이미지의 기본 너비
+                    height={300} // 이미지의 기본 높이
+                    className="rounded-lg shadow-sm"
+                  />
+                </div>
               </motion.div>
             )}
 

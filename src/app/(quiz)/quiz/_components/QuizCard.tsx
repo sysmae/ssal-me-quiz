@@ -43,12 +43,14 @@ const QuizCard: React.FC<QuizCardProps> = ({
   return (
     <Link href={`/quiz/${id}`} className="block">
       <Card className="border rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
-        <div className="w-full h-48 overflow-hidden">
+        <div className="relative w-full h-48">
           {thumbnail ? (
-            <img
+            <Image
               src={thumbnail}
               alt={title}
-              className="w-full h-full object-cover"
+              layout="fill"
+              objectFit="cover"
+              className="rounded-t-lg"
             />
           ) : (
             <ThumbnailCard title={title} />
