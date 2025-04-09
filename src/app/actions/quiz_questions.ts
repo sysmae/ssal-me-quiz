@@ -9,75 +9,150 @@ import {
 import { QuizQuestionType } from '@/constants'
 
 // 문제 생성 (객관식 지원)
-export const createQuestion = async (
-  question: QuestionInsertData,
-  options?: OptionData[]
+export const createQuestion = async (questionData: QuestionInsertData) => {
+  const supabase = await createClient()
+  try {
+    const { data: newQuestion, error: questionError } = await supabase
+      .from('quiz_questions')
+      .insert({
+        quiz_id: questionData.quiz_id,
+        question_text: questionData.question_text,
+        question_type: questionData.question_type,
+        correct_answer:
+          questionData.question_type === QuizQuestionType.MULTIPLE_CHOICE
+            ? questionData.options?.find((opt) => opt.is_correct)
+                ?.option_text || ''
+            : questionData.correct_answer,
+      })
+      .select()
+      .single()
+
+    if (questionError) throw questionError
+
+    if (
+      questionData.question_type === QuizQuestionType.MULTIPLE_CHOICE &&
+      questionData.options
+    ) {
+      const options = questionData.options.map((option) => ({
+        ...option,
+        question_id: newQuestion.id,
+      }))
+
+      const { error: optionsError } = await supabase
+        .from('quiz_options')
+        .insert(options)
+
+      if (optionsError) throw optionsError
+    }
+
+    return newQuestion
+  } catch (error) {
+    console.error('질문 생성 오류:', error)
+    throw error
+  }
+}
+export const updateQuestion = async (
+  questionId: number,
+  updates: QuestionUpdateData
 ) => {
   const supabase = await createClient()
+  try {
+    // options 필드를 제외한 업데이트 데이터 생성
+    const { options, ...questionUpdates } = updates
 
-  const { data: questionData, error: questionError } = await supabase
-    .from('quiz_questions')
-    .insert(question)
-    .select()
-    .single()
+    // 정답 텍스트 설정
+    const correctAnswer =
+      updates.question_type === 'multiple_choice' && options
+        ? options.find((opt) => opt.is_correct)?.option_text || ''
+        : updates.correct_answer
 
-  if (questionError || !questionData) throw questionError
+    // 질문 업데이트
+    const { data: updatedQuestion, error: questionError } = await supabase
+      .from('quiz_questions')
+      .update({
+        ...questionUpdates,
+        correct_answer: correctAnswer,
+      })
+      .eq('id', questionId)
+      .select()
+      .single()
 
-  if (
-    options &&
-    questionData.question_type === QuizQuestionType.MULTIPLE_CHOICE
-  ) {
-    const { error: optionsError } = await supabase.from('quiz_options').insert(
-      options.map((opt) => ({
-        ...opt,
-        question_id: questionData.id,
-      }))
-    )
+    if (questionError) throw questionError
 
-    if (optionsError) throw optionsError
+    // 객관식 문제이고 옵션이 있는 경우
+    if (updates.question_type === 'multiple_choice' && options) {
+      // 기존 옵션과 새 옵션 분리 (타입 안전하게)
+      const existingOptions = options.filter(
+        (opt): opt is typeof opt & { id: number } =>
+          'id' in opt && typeof opt.id === 'number'
+      )
+      const newOptions = options.filter(
+        (opt) => !('id' in opt) || typeof opt.id !== 'number'
+      )
+
+      // 1. 기존 옵션 중 유지할 옵션의 ID 목록
+      const keepOptionIds = existingOptions.map((opt) => opt.id)
+
+      // 2. 기존 옵션 처리
+      if (keepOptionIds.length > 0) {
+        // 유지할 옵션 외의 다른 옵션 삭제
+        const { error: deleteError } = await supabase
+          .from('quiz_options')
+          .delete()
+          .eq('question_id', questionId)
+          .not('id', 'in', `(${keepOptionIds.join(',')})`)
+
+        if (deleteError) throw deleteError
+
+        // 기존 옵션 업데이트
+        for (const option of existingOptions) {
+          // 타입 가드를 통해 id가 존재하는지 확인 (이미 existingOptions 필터에서 확인했지만 TypeScript를 위해 다시 확인)
+          if (typeof option.id === 'number') {
+            const { error: updateError } = await supabase
+              .from('quiz_options')
+              .update({
+                option_text: option.option_text || '',
+                is_correct: option.is_correct || false,
+              })
+              .eq('id', option.id)
+
+            if (updateError) throw updateError
+          }
+        }
+      } else {
+        // 유지할 옵션이 없으면 모든 옵션 삭제
+        const { error: deleteAllError } = await supabase
+          .from('quiz_options')
+          .delete()
+          .eq('question_id', questionId)
+
+        if (deleteAllError) throw deleteAllError
+      }
+
+      // 3. 새 옵션 추가
+      if (newOptions.length > 0) {
+        const newOptionsData = newOptions.map((opt) => ({
+          question_id: questionId,
+          option_text: opt.option_text || '',
+          is_correct: opt.is_correct || false,
+        }))
+
+        const { error: insertError } = await supabase
+          .from('quiz_options')
+          .insert(newOptionsData)
+
+        if (insertError) throw insertError
+      }
+    }
+
+    // 캐시 무효화
+    revalidatePath(`/quiz/${updates.quiz_id}`)
+    revalidatePath(`/quiz/${updates.quiz_id}/edit`)
+    return updatedQuestion
+  } catch (error) {
+    console.error('질문 업데이트 오류:', error)
+    throw error
   }
-
-  revalidatePath(`/quiz/edit/${question.quiz_id}`)
-  return questionData
-}
-
-// 문제 업데이트 (객관식 지원)
-export async function updateQuestion(
-  id: number,
-  updates: QuestionUpdateData,
-  options?: OptionData[]
-) {
-  const supabase = await createClient()
-
-  const { data: questionData, error: questionError } = await supabase
-    .from('quiz_questions')
-    .update(updates)
-    .eq('id', id)
-    .select()
-    .single()
-
-  if (questionError || !questionData) throw questionError
-
-  if (
-    options &&
-    questionData.question_type === QuizQuestionType.MULTIPLE_CHOICE
-  ) {
-    // 기존 옵션 삭제
-    await supabase.from('quiz_options').delete().eq('question_id', id)
-
-    // 새 옵션 추가
-    const { error: optionsError } = await supabase.from('quiz_options').insert(
-      options.map((opt) => ({
-        ...opt,
-        question_id: id,
-      }))
-    )
-
-    if (optionsError) throw optionsError
-  }
-
-  revalidatePath(`/quiz/edit/${questionData.quiz_id}`)
-  return questionData
 }
 
 // 문제 삭제

@@ -1,19 +1,16 @@
 // types/quiz.ts
 
-import { QuizQuestionType } from '@/constants'
 import { Database } from '@/utils/supabase/types'
 
 export type QuizUpdateData = Database['public']['Tables']['quizzes']['Update']
 export type QuestionUpdateData =
   Database['public']['Tables']['quiz_questions']['Update'] & {
-    question_type?: QuizQuestionType
     options?: OptionUpdateData[] | OptionInsertData[]
   }
 
 export type QuizInsertData = Database['public']['Tables']['quizzes']['Insert']
 export type QuestionInsertData =
   Database['public']['Tables']['quiz_questions']['Insert'] & {
-    question_type: QuizQuestionType
     options?: OptionInsertData[]
   }
 
@@ -29,7 +26,6 @@ export type OptionUpdateData =
 // 질문 타입 확장
 export type QuestionData =
   Database['public']['Tables']['quiz_questions']['Row'] & {
-    question_type: QuizQuestionType
     options?: OptionData[]
   }
 

@@ -212,7 +212,7 @@ export type Database = {
           id: number
           question_image_url: string | null
           question_text: string
-          question_type: string | null
+          question_type: string
           quiz_id: number
         }
         Insert: {
@@ -220,7 +220,7 @@ export type Database = {
           id?: number
           question_image_url?: string | null
           question_text: string
-          question_type?: string | null
+          question_type?: string
           quiz_id: number
         }
         Update: {
@@ -228,7 +228,7 @@ export type Database = {
           id?: number
           question_image_url?: string | null
           question_text?: string
-          question_type?: string | null
+          question_type?: string
           quiz_id?: number
         }
         Relationships: [

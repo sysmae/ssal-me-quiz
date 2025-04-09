@@ -80,10 +80,12 @@ const QuizEditPage = ({ params }: { params: Promise<{ id: string }> }) => {
     questionId: number,
     questionData: QuestionUpdateData
   ) => {
+    console.log('Updating question:', questionId, questionData)
     try {
       updateQuestion({ questionId, updates: questionData })
     } catch (error) {
       setErrorMessage('질문 업데이트 중 오류가 발생했습니다.')
+      console.error('Error updating question:', error)
     }
   }
 

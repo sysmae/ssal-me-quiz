@@ -35,9 +35,9 @@ const QuestionManager: React.FC<QuestionManagerProps> = ({
   const [editingStates, setEditingStates] = useState<Record<number, boolean>>(
     {}
   )
-  const [newQuestionType, setNewQuestionType] = useState<
-    QuizQuestionType.SUBJECTIVE | QuizQuestionType.MULTIPLE_CHOICE
-  >(QuizQuestionType.SUBJECTIVE)
+  const [newQuestionType, setNewQuestionType] = useState<QuizQuestionType>(
+    QuizQuestionType.SUBJECTIVE
+  )
 
   const toggleEditMode = (question: QuestionData) => {
     setEditingStates((prev) => ({
@@ -56,16 +56,16 @@ const QuestionManager: React.FC<QuestionManagerProps> = ({
             <Tabs
               value={newQuestionType}
               onValueChange={(value) =>
-                setNewQuestionType(
-                  value as
-                    | QuizQuestionType.SUBJECTIVE
-                    | QuizQuestionType.MULTIPLE_CHOICE
-                )
+                setNewQuestionType(value as QuizQuestionType)
               }
             >
               <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="subjective">주관식</TabsTrigger>
-                <TabsTrigger value="multiple_choice">객관식</TabsTrigger>
+                <TabsTrigger value={QuizQuestionType.SUBJECTIVE}>
+                  주관식
+                </TabsTrigger>
+                <TabsTrigger value={QuizQuestionType.MULTIPLE_CHOICE}>
+                  객관식
+                </TabsTrigger>
               </TabsList>
             </Tabs>
 
