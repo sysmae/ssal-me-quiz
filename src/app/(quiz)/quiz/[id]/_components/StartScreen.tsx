@@ -5,10 +5,10 @@ import { QuizWithQuestions } from '@/types/quiz'
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
+  CardDescription,
 } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Eye, MessageSquare, BookCheck } from 'lucide-react'
@@ -17,28 +17,36 @@ import QuizComment from './QuizComment'
 import { useQuizCommentCount } from '@/hooks/useCommentQueries'
 import RecommendedQuizzes from '../../_components/RecommendedQuizzes'
 import ShareButton from '../../_components/ShareButton'
+import QuizModeSelector from './QuizModeSelector'
+import { QuizQuestionType } from '@/constants'
 
 type StartScreenProps = {
   quiz: QuizWithQuestions
-  onStart: (questionCount: number) => void // 문제 갯수를 전달하도록 수정
+  onStart: (questionCount: number, mode: QuizQuestionType) => void
+  quizMode: QuizQuestionType
+  setQuizMode: (mode: QuizQuestionType) => void
 }
 
-export default function StartScreen({ quiz, onStart }: StartScreenProps) {
+export default function StartScreen({
+  quiz,
+  onStart,
+  quizMode,
+  setQuizMode,
+}: StartScreenProps) {
   const { data: commentCount } = useQuizCommentCount(quiz.id)
   const [selectedCount, setSelectedCount] = useState<number>(
     quiz.questions.length
-  ) // 기본값은 전체 문제
+  )
 
   // 선택 가능한 문제 갯수 옵션 계산
   const questionCountOptions = [5, 10, 20, 30]
     .filter((count) => count <= quiz.questions.length)
     .concat(quiz.questions.length)
     .sort((a, b) => a - b)
-    .filter((value, index, self) => self.indexOf(value) === index) // 중복 제거
+    .filter((value, index, self) => self.indexOf(value) === index)
 
   return (
     <div className="container mx-auto p-4 max-w-7xl">
-      {/* 기존 코드 유지 */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div className="md:col-span-2">
           <Card className="overflow-hidden dark:bg-gray-800 dark:border-gray-700">
@@ -63,7 +71,7 @@ export default function StartScreen({ quiz, onStart }: StartScreenProps) {
                   </h3>
                 </div>
               )}
-            </div>{' '}
+            </div>
             <CardHeader>
               <div className="flex justify-between items-center">
                 <CardTitle className="text-2xl font-bold dark:text-white">
@@ -75,9 +83,14 @@ export default function StartScreen({ quiz, onStart }: StartScreenProps) {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              {/* 문제 갯수 선택 UI 추가 */}
+              {/* 퀴즈 모드 선택기 추가 */}
+              <QuizModeSelector quizMode={quizMode} setQuizMode={setQuizMode} />
+
+              {/* 문제 갯수 선택 UI */}
               <div className="mb-4">
-                <h3 className="text-lg font-semibold mb-2">문제 갯수 선택</h3>
+                <h3 className="text-lg font-semibold mb-2 dark:text-white">
+                  문제 갯수 선택
+                </h3>
                 <div className="flex flex-wrap gap-2">
                   {questionCountOptions.map((count) => (
                     <Button
@@ -115,7 +128,7 @@ export default function StartScreen({ quiz, onStart }: StartScreenProps) {
                 </div>
                 <div className="flex gap-2">
                   <Button
-                    onClick={() => onStart(selectedCount)}
+                    onClick={() => onStart(selectedCount, quizMode)}
                     className="bg-primary hover:bg-primary/90 dark:bg-primary/80 dark:hover:bg-primary/70"
                   >
                     퀴즈 시작하기
@@ -128,13 +141,11 @@ export default function StartScreen({ quiz, onStart }: StartScreenProps) {
           </Card>
         </div>
 
-        {/* 오른쪽 추천 퀴즈들 */}
         <div className="md:col-span-1">
           <RecommendedQuizzes />
         </div>
       </div>
 
-      {/* 댓글 섹션 */}
       <div>
         <QuizComment quizId={quiz.id} />
       </div>

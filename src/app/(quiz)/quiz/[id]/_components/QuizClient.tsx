@@ -10,6 +10,8 @@ import ResultScreen from './ResultScreen'
 import { createClient } from '@/utils/supabase/client'
 import { User } from '@supabase/supabase-js'
 import { useQuizAttemptsQueries } from '@/hooks/useQuizAttemptsQueries'
+import { QuizQuestionType } from '@/constants'
+import MultipleChoiceQuizScreen from './MultipleChoiceQuizScreen'
 
 export default function QuizClient({ id }: { id: string }) {
   const [state, dispatch] = useReducer(quizReducer, initialState)
@@ -21,7 +23,10 @@ export default function QuizClient({ id }: { id: string }) {
 
   // 선택된 문제들을 저장할 상태 추가
   const [selectedQuestions, setSelectedQuestions] = useState<number[]>([])
-
+  // 퀴즈 모드 상태 추가 - QuizQuestionType 타입 사용
+  const [quizMode, setQuizMode] = useState<QuizQuestionType>(
+    QuizQuestionType.SUBJECTIVE
+  )
   // 기존 코드 유지
   useEffect(() => {
     const fetchUser = async () => {
@@ -70,6 +75,15 @@ export default function QuizClient({ id }: { id: string }) {
       ;[indices[i], indices[j]] = [indices[j], indices[i]]
     }
     return indices.slice(0, selectCount)
+  }
+
+  // 현재 문제의 타입 확인
+  const getCurrentQuestionType = () => {
+    if (!quiz || selectedQuestions.length === 0) return null
+
+    const actualQuestionIndex = selectedQuestions[state.currentQuestionIndex]
+    const currentQuestion = quiz.questions[actualQuestionIndex]
+    return currentQuestion.question_type
   }
 
   // 퀴즈 시작 핸들러 수정
@@ -171,23 +185,48 @@ export default function QuizClient({ id }: { id: string }) {
     <div>
       <div className="container mx-auto p-4">
         {state.status === 'start' && (
-          <StartScreen quiz={quiz} onStart={handleStartQuiz} />
+          <StartScreen
+            quiz={quiz}
+            onStart={handleStartQuiz}
+            quizMode={quizMode}
+            setQuizMode={setQuizMode}
+          />
         )}
 
         {state.status === 'quiz' && (
-          <QuizScreen
-            quiz={quiz}
-            currentQuestionIndex={state.currentQuestionIndex}
-            selectedQuestions={selectedQuestions} // 선택된 문제 인덱스 전달
-            onSubmit={handleAnswer}
-          />
+          <>
+            {quizMode === QuizQuestionType.SUBJECTIVE ? (
+              // 주관식 모드: 모든 문제를 주관식으로 표시
+              <QuizScreen
+                quiz={quiz}
+                currentQuestionIndex={state.currentQuestionIndex}
+                selectedQuestions={selectedQuestions}
+                onSubmit={handleAnswer}
+              />
+            ) : // 혼합 모드: 문제 타입에 따라 다른 컴포넌트 표시
+            getCurrentQuestionType() === QuizQuestionType.MULTIPLE_CHOICE ? (
+              <MultipleChoiceQuizScreen
+                quiz={quiz}
+                currentQuestionIndex={state.currentQuestionIndex}
+                selectedQuestions={selectedQuestions}
+                onSubmit={handleAnswer}
+              />
+            ) : (
+              <QuizScreen
+                quiz={quiz}
+                currentQuestionIndex={state.currentQuestionIndex}
+                selectedQuestions={selectedQuestions}
+                onSubmit={handleAnswer}
+              />
+            )}
+          </>
         )}
 
         {state.status === 'feedback' && (
           <FeedbackScreen
             quiz={quiz}
             currentQuestionIndex={state.currentQuestionIndex}
-            selectedQuestions={selectedQuestions} // 선택된 문제 인덱스 전달
+            selectedQuestions={selectedQuestions}
             currentAnswer={state.currentAnswer}
             onNext={handleNextQuestion}
           />
@@ -198,7 +237,7 @@ export default function QuizClient({ id }: { id: string }) {
             quiz={quiz}
             onRestart={handleRestartQuiz}
             saveQuizResults={saveQuizResults}
-            selectedCount={selectedQuestions.length} // 선택한 문제 갯수 전달
+            selectedCount={selectedQuestions.length}
           />
         )}
       </div>
