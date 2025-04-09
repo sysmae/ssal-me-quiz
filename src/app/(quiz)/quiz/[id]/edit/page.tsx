@@ -114,7 +114,9 @@ const QuizEditPage = ({ params }: { params: Promise<{ id: string }> }) => {
       <div className="min-h-screen bg-indigo-900 flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
           <CardContent className="pt-6">
-            <p className="text-center">잘못된 퀴즈 ID입니다.</p>
+            <p className="text-center">
+              퀴즈 내용을 불러오는 중입니다. 잠시만 기다려 주세요...
+            </p>
             <Button
               className="w-full mt-4"
               onClick={() => router.push('/quiz')}

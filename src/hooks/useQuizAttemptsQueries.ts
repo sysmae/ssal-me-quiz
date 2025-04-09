@@ -39,7 +39,6 @@ export const useQuizAttemptsQueries = () => {
     return useQuery({
       queryKey: ['quiz_total_attempts_count', quizId],
       queryFn: () => quizAttempts.useQuizTotalAttemptCount(quizId),
-      staleTime: 1000 * 60 * 5, // 5분 동안 캐시 유지
     })
   }
 

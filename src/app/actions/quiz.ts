@@ -4,9 +4,6 @@ import { createClient } from '@/utils/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { QuizUpdateData } from '@/types/quiz'
 
-// 전역 변수 제거
-// const supabase = createClient() <- 이 부분 제거
-
 // 퀴즈 업데이트
 export async function updateQuiz(id: number, updates: QuizUpdateData) {
   // 함수 내부에서 클라이언트 생성
