@@ -32,23 +32,20 @@ export async function generateMetadata({
     }
 
     // 퀴즈 질문 최대 3개 가져오기
-    const quizQuestions =
-      quiz.questions?.slice(0, 3).map((question) => question.question_text) ||
-      []
-    const questionsText =
-      quizQuestions.length > 0
-        ? ` 예를 들어, "${quizQuestions.join('", "')}" 같은 질문들이 있습니다.`
-        : ''
+    // const quizQuestions =
+    //   quiz.questions?.slice(0, 3).map((question) => question.question_text) ||
+    //   []
+    // const questionsText =
+    //   quizQuestions.length > 0
+    //     ? ` 예를 들어, "${quizQuestions.join('", "')}" 같은 질문들이 있습니다.`
+    //     : ''
 
     // Canonical URL 및 메타데이터 설정
     const canonicalUrl = `${siteUrl}/quiz/${resolvedParams.id}`
 
     return {
       title: `쌀미 퀴즈 | ${quiz.title}`,
-      description: `퀴즈 설명: ${quiz.description?.substring(
-        0,
-        160
-      )}${questionsText}`,
+      description: `퀴즈 설명: ${quiz.description?.substring(0, 160)}`,
       alternates: {
         canonical: canonicalUrl,
       },
@@ -74,7 +71,7 @@ export async function generateMetadata({
         description: `쌀미 퀴즈에서 이런 퀴즈를 풀어보세요: ${quiz.description?.substring(
           0,
           160
-        )}${questionsText}`,
+        )}`,
         images: quiz.thumbnail_url ? [quiz.thumbnail_url] : [],
       },
     }
