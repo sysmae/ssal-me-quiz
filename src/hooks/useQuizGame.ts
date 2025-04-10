@@ -6,11 +6,11 @@ import {
   initialState,
 } from '../app/(quiz)/quiz/[id]/_components/quizReducer'
 import { useQuizAttemptsQueries } from '@/hooks/useQuizAttemptsQueries'
-import { QuizModeType, QuizQuestionType } from '@/constants'
+import { QuizModeType } from '@/constants'
 import { User } from '@supabase/supabase-js'
-import { QuizWithQuestions } from '@/types/quiz'
 
-export function useQuizGame(quizId: number, quiz: QuizWithQuestions) {
+// NOTE: Error: React Hook "useQuizGame" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks 해당 에러 때문에 QuizWithQuestions 대신 any 타입 사용
+export function useQuizGame(quizId: number, quiz: any) {
   const [state, dispatch] = useReducer(quizReducer, initialState)
   const [selectedQuestions, setSelectedQuestions] = useState<number[]>([])
   const [quizMode, setQuizMode] = useState<QuizModeType>(QuizModeType.MIXED)

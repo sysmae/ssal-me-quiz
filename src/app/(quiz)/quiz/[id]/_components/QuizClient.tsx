@@ -12,7 +12,6 @@ import { useQuizView } from '@/hooks/useQuizView'
 
 export default function QuizClient({ id }: { id: string }) {
   const { quiz } = useQuizQueries(Number(id))
-  if (!quiz) return null
   const { incrementViewCount } = useQuizView(id, quiz)
 
   const {
