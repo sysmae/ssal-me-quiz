@@ -46,6 +46,9 @@ const QuestionManager: React.FC<QuestionManagerProps> = ({
     }))
   }
 
+  // 정렬된 질문 배열 생성 (ID 기준 오름차순)
+  const sortedQuestions = [...questions].sort((a, b) => a.id - b.id)
+
   return (
     <div>
       {/* 새 질문 추가 섹션 */}
@@ -86,7 +89,7 @@ const QuestionManager: React.FC<QuestionManagerProps> = ({
 
       {/* 기존 질문 목록 */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {questions.map((question) => (
+        {sortedQuestions.map((question) => (
           <Card key={question.id}>
             <CardContent className="p-4">
               {editingStates[question.id] ? (
@@ -130,24 +133,37 @@ const QuestionManager: React.FC<QuestionManagerProps> = ({
                       <p className="font-medium">{question.correct_answer}</p>
                     </div>
                   )}
-                  {question.options && (
-                    <div className="mb-4">
-                      <h4 className="font-medium text-sm text-gray-500 mb-1">
-                        선택지
+                  {question.question_type ===
+                    QuizQuestionType.MULTIPLE_CHOICE &&
+                    question.options && (
+                      <div className="mb-4">
+                        <h4 className="font-medium text-sm text-gray-500 mb-1">
+                          선택지
+                        </h4>
+                        <ul className="space-y-1">
+                          {question.options.map((opt, idx) => (
+                            <li
+                              key={idx}
+                              className={`pl-2 ${
+                                opt.is_correct ? 'font-bold text-green-600' : ''
+                              }`}
+                            >
+                              {opt.is_correct && '✓ '}
+                              {opt.option_text}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  {/* 해설 표시 추가 */}
+                  {question.explanation && (
+                    <div className="mb-4 mt-2 p-3 bg-blue-50 rounded-md">
+                      <h4 className="font-medium text-sm text-blue-700 mb-1">
+                        해설
                       </h4>
-                      <ul className="space-y-1">
-                        {question.options.map((opt, idx) => (
-                          <li
-                            key={idx}
-                            className={`pl-2 ${
-                              opt.is_correct ? 'font-bold text-green-600' : ''
-                            }`}
-                          >
-                            {opt.is_correct && '✓ '}
-                            {opt.option_text}
-                          </li>
-                        ))}
-                      </ul>
+                      <p className="text-sm text-blue-900">
+                        {question.explanation}
+                      </p>
                     </div>
                   )}
                   <div className="flex justify-end space-x-2">

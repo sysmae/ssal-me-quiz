@@ -13,6 +13,7 @@ import {
 } from '@/types/quiz'
 import { QuizQuestionType } from '@/constants'
 import { Card, CardContent } from '@/components/ui/card'
+import ExplanationField from './ExplanationField'
 
 interface MultipleChoiceManagerProps {
   quizId: number
@@ -59,6 +60,9 @@ const MultipleChoiceManager: React.FC<MultipleChoiceManagerProps> = ({
   const [questionText, setQuestionText] = useState(
     existingQuestion?.question_text || ''
   )
+  const [explanation, setExplanation] = useState<string | null>(
+    existingQuestion?.explanation || null
+  )
 
   // 선택지 추가
   const handleAddOption = () => {
@@ -98,6 +102,7 @@ const MultipleChoiceManager: React.FC<MultipleChoiceManagerProps> = ({
   const resetForm = () => {
     setOptions(defaultOptions)
     setQuestionText('')
+    setExplanation(null)
   }
 
   // 저장 처리
@@ -131,6 +136,7 @@ const MultipleChoiceManager: React.FC<MultipleChoiceManagerProps> = ({
         correct_answer:
           validOptions.find((opt) => opt.is_correct)?.option_text || '',
         options: validOptions,
+        explanation: explanation,
       })
       if (onCancelEdit) onCancelEdit()
     } else if (onCreateQuestion) {
@@ -142,6 +148,7 @@ const MultipleChoiceManager: React.FC<MultipleChoiceManagerProps> = ({
         correct_answer:
           options.find((opt) => opt.is_correct)?.option_text || '',
         options: options,
+        explanation: explanation,
       })
       // 폼 초기화
       resetForm()
@@ -202,6 +209,9 @@ const MultipleChoiceManager: React.FC<MultipleChoiceManagerProps> = ({
           선택지 추가
         </Button>
       </div>
+
+      {/* 해설 필드 추가 */}
+      <ExplanationField explanation={explanation} onChange={setExplanation} />
 
       {/* 저장/취소 버튼 */}
       <div className="flex justify-end space-x-2">

@@ -1,6 +1,6 @@
 // types/quiz_attempt.ts
 
-import { Database } from '@/utils/supabase/types'
+import { Database } from '@/database.types'
 
 export type QuizAttempt = Database['public']['Tables']['quiz_attempts']['Row']
 export type QuizAttemptQuestion =

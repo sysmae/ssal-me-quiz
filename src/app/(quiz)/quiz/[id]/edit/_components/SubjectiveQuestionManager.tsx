@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Save, X, PlusCircle } from 'lucide-react'
 import { QuizQuestionType } from '@/constants/index'
+import ExplanationField from './ExplanationField'
 
 interface SubjectiveQuestionManagerProps {
   quizId: number
@@ -37,6 +38,9 @@ const SubjectiveQuestionManager: React.FC<SubjectiveQuestionManagerProps> = ({
   const [correctAnswer, setCorrectAnswer] = useState(
     existingQuestion?.correct_answer || ''
   )
+  const [explanation, setExplanation] = useState<string | null>(
+    existingQuestion?.explanation || null
+  )
 
   const handleSave = () => {
     if (!questionText.trim() || !correctAnswer.trim()) {
@@ -49,6 +53,7 @@ const SubjectiveQuestionManager: React.FC<SubjectiveQuestionManagerProps> = ({
         ...existingQuestion,
         question_text: questionText,
         correct_answer: correctAnswer,
+        explanation: explanation,
       })
       if (onCancelEdit) onCancelEdit()
     } else if (onCreateQuestion) {
@@ -57,9 +62,11 @@ const SubjectiveQuestionManager: React.FC<SubjectiveQuestionManagerProps> = ({
         question_text: questionText,
         correct_answer: correctAnswer,
         question_type: QuizQuestionType.SUBJECTIVE,
+        explanation: explanation,
       })
       setQuestionText('')
       setCorrectAnswer('')
+      setExplanation('')
     }
   }
 
@@ -87,6 +94,13 @@ const SubjectiveQuestionManager: React.FC<SubjectiveQuestionManagerProps> = ({
               className="mt-1"
             />
           </div>
+
+          {/* 해설 필드 추가 */}
+          <ExplanationField
+            explanation={explanation}
+            onChange={setExplanation}
+          />
+
           <div className="flex justify-end space-x-2">
             {editingState && onCancelEdit && (
               <Button variant="outline" onClick={onCancelEdit}>

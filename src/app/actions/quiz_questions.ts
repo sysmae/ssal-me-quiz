@@ -23,6 +23,7 @@ export const createQuestion = async (questionData: QuestionInsertData) => {
             ? questionData.options?.find((opt) => opt.is_correct)
                 ?.option_text || ''
             : questionData.correct_answer,
+        explanation: questionData.explanation || null,
       })
       .select()
       .single()
@@ -57,14 +58,21 @@ export const updateQuestion = async (
 ) => {
   const supabase = await createClient()
   try {
-    // options 필드를 제외한 업데이트 데이터 생성
-    const { options, ...questionUpdates } = updates
+    // options 필드를 제외한 업데이트 데이터 생성 (기본값 빈 배열 설정)
+    const { options = [], ...questionUpdates } = updates
 
-    // 정답 텍스트 설정
+    // 정답 텍스트 설정 (SUBJECTIVE를 MULTIPLE_CHOICE로 수정)
     const correctAnswer =
-      updates.question_type === 'multiple_choice' && options
+      updates.question_type === QuizQuestionType.MULTIPLE_CHOICE &&
+      options.length > 0
         ? options.find((opt) => opt.is_correct)?.option_text || ''
-        : updates.correct_answer
+        : updates.correct_answer || ''
+
+    console.log('업데이트할 질문 데이터:', {
+      ...questionUpdates,
+      correct_answer: correctAnswer,
+      explanation: updates.explanation,
+    })
 
     // 질문 업데이트
     const { data: updatedQuestion, error: questionError } = await supabase
@@ -72,6 +80,7 @@ export const updateQuestion = async (
       .update({
         ...questionUpdates,
         correct_answer: correctAnswer,
+        explanation: updates.explanation,
       })
       .eq('id', questionId)
       .select()
@@ -79,8 +88,10 @@ export const updateQuestion = async (
 
     if (questionError) throw questionError
 
-    // 객관식 문제이고 옵션이 있는 경우
-    if (updates.question_type === 'multiple_choice' && options) {
+    // 객관식 문제이고 옵션이 있는 경우 (SUBJECTIVE를 MULTIPLE_CHOICE로 수정)
+    if (updates.question_type === QuizQuestionType.MULTIPLE_CHOICE && options) {
+      console.log('객관식 옵션 처리 시작:', options)
+
       // 기존 옵션과 새 옵션 분리 (타입 안전하게)
       const existingOptions = options.filter(
         (opt): opt is typeof opt & { id: number } =>
@@ -89,6 +100,9 @@ export const updateQuestion = async (
       const newOptions = options.filter(
         (opt) => !('id' in opt) || typeof opt.id !== 'number'
       )
+
+      console.log('기존 옵션:', existingOptions)
+      console.log('새 옵션:', newOptions)
 
       // 1. 기존 옵션 중 유지할 옵션의 ID 목록
       const keepOptionIds = existingOptions.map((opt) => opt.id)
@@ -102,11 +116,14 @@ export const updateQuestion = async (
           .eq('question_id', questionId)
           .not('id', 'in', `(${keepOptionIds.join(',')})`)
 
-        if (deleteError) throw deleteError
+        if (deleteError) {
+          console.error('옵션 삭제 오류:', deleteError)
+          throw deleteError
+        }
 
         // 기존 옵션 업데이트
         for (const option of existingOptions) {
-          // 타입 가드를 통해 id가 존재하는지 확인 (이미 existingOptions 필터에서 확인했지만 TypeScript를 위해 다시 확인)
+          // 타입 가드를 통해 id가 존재하는지 확인
           if (typeof option.id === 'number') {
             const { error: updateError } = await supabase
               .from('quiz_options')
@@ -116,7 +133,10 @@ export const updateQuestion = async (
               })
               .eq('id', option.id)
 
-            if (updateError) throw updateError
+            if (updateError) {
+              console.error('옵션 업데이트 오류:', updateError)
+              throw updateError
+            }
           }
         }
       } else {
@@ -126,7 +146,10 @@ export const updateQuestion = async (
           .delete()
           .eq('question_id', questionId)
 
-        if (deleteAllError) throw deleteAllError
+        if (deleteAllError) {
+          console.error('모든 옵션 삭제 오류:', deleteAllError)
+          throw deleteAllError
+        }
       }
 
       // 3. 새 옵션 추가
@@ -137,12 +160,25 @@ export const updateQuestion = async (
           is_correct: opt.is_correct || false,
         }))
 
+        console.log('추가할 새 옵션:', newOptionsData)
+
         const { error: insertError } = await supabase
           .from('quiz_options')
           .insert(newOptionsData)
 
-        if (insertError) throw insertError
+        if (insertError) {
+          console.error('새 옵션 추가 오류:', insertError)
+          throw insertError
+        }
       }
+    } else if (updates.question_type === QuizQuestionType.MULTIPLE_CHOICE) {
+      // 객관식이지만 옵션이 없는 경우, 기존 옵션 모두 삭제
+      const { error: deleteAllError } = await supabase
+        .from('quiz_options')
+        .delete()
+        .eq('question_id', questionId)
+
+      if (deleteAllError) throw deleteAllError
     }
 
     // 캐시 무효화

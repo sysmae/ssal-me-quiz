@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "gen": "supabase gen types typescript --project-id ojttkweczzpdvnpaesyn --schema public > src/utils/supabase/types.ts"
+    "gen": "supabase gen types typescript --project-id ojttkweczzpdvnpaesyn --schema public > src/database.types.ts"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",

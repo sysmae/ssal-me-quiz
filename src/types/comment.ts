@@ -1,4 +1,4 @@
-import { Database } from '@/utils/supabase/types'
+import { Database } from '@/database.types'
 
 // 기본 타입 정의
 export type CommentUpdateData =
