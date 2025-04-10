@@ -8,8 +8,9 @@ import {
 import { useQuizAttemptsQueries } from '@/hooks/useQuizAttemptsQueries'
 import { QuizModeType, QuizQuestionType } from '@/constants'
 import { User } from '@supabase/supabase-js'
+import { QuizWithQuestions } from '@/types/quiz'
 
-export function useQuizGame(quizId: number, quiz: any) {
+export function useQuizGame(quizId: number, quiz: QuizWithQuestions) {
   const [state, dispatch] = useReducer(quizReducer, initialState)
   const [selectedQuestions, setSelectedQuestions] = useState<number[]>([])
   const [quizMode, setQuizMode] = useState<QuizModeType>(QuizModeType.MIXED)

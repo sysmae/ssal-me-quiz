@@ -145,6 +145,10 @@ export default function FeedbackScreen({
             </AnimatePresence>
 
             <Tabs defaultValue="answer" className="w-full">
+              <TabsList className="grid grid-cols-2 mb-4">
+                <TabsTrigger value="answer">답변 확인</TabsTrigger>
+                <TabsTrigger value="explanation">문제 해설</TabsTrigger>
+              </TabsList>
               <TabsContent value="answer" className="pt-2">
                 <div className="p-5 rounded-lg mb-6 max-h-[400px] overflow-y-auto dark:bg-gray-700/20">
                   <h3 className="text-lg font-semibold mb-2 dark:text-gray-200">
@@ -205,6 +209,29 @@ export default function FeedbackScreen({
                     )}
                   </div>
                 </div>
+              </TabsContent>
+              <TabsContent value="explanation" className="pt-2">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4, duration: 0.5 }}
+                  className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700"
+                >
+                  <h3 className="text-lg font-semibold mb-2 dark:text-gray-200">
+                    문제 해설
+                  </h3>
+                  {currentQuestion.explanation ? (
+                    <div className="prose dark:prose-invert max-w-none">
+                      <p className="text-lg dark:text-white">
+                        {currentQuestion.explanation}
+                      </p>
+                    </div>
+                  ) : (
+                    <p className="text-lg text-gray-500 dark:text-gray-400">
+                      이 문제에 대한 해설이 없습니다.
+                    </p>
+                  )}
+                </motion.div>
               </TabsContent>
             </Tabs>
           </CardContent>
