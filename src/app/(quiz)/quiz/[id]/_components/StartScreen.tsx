@@ -18,13 +18,13 @@ import { useQuizCommentCount } from '@/hooks/useCommentQueries'
 import RecommendedQuizzes from '../../_components/RecommendedQuizzes'
 import ShareButton from '../../_components/ShareButton'
 import QuizModeSelector from './QuizModeSelector'
-import { QuizQuestionType } from '@/constants'
+import { QuizModeType } from '@/constants'
 
 type StartScreenProps = {
   quiz: QuizWithQuestions
-  onStart: (questionCount: number, mode: QuizQuestionType) => void
-  quizMode: QuizQuestionType
-  setQuizMode: (mode: QuizQuestionType) => void
+  onStart: (questionCount: number, mode: QuizModeType) => void
+  quizMode: QuizModeType
+  setQuizMode: (mode: QuizModeType) => void
 }
 
 export default function StartScreen({
