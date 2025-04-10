@@ -161,7 +161,12 @@ export default function MultipleChoiceQuizScreen({
                 {options.map((option) => (
                   <div
                     key={option.id}
-                    className="flex items-center space-x-3 border-2 border-gray-200 rounded-lg p-4 hover:border-indigo-300 transition-all dark:border-gray-700 dark:hover:border-indigo-600"
+                    className={`flex items-center space-x-3 border-2 ${
+                      selectedOption === option.option_text
+                        ? 'border-indigo-500 bg-indigo-50 dark:border-indigo-600 dark:bg-indigo-900/30'
+                        : 'border-gray-200 dark:border-gray-700'
+                    } rounded-lg p-4 hover:border-indigo-300 transition-all dark:hover:border-indigo-600 cursor-pointer`}
+                    onClick={() => setSelectedOption(option.option_text)}
                   >
                     <RadioGroupItem
                       value={option.option_text}
