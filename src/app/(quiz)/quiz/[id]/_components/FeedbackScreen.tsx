@@ -214,7 +214,7 @@ export default function FeedbackScreen({
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4, duration: 0.5 }}
+                  transition={{ delay: 0.1, duration: 0.3 }}
                   className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700"
                 >
                   <h3 className="text-lg font-semibold mb-2 dark:text-gray-200">

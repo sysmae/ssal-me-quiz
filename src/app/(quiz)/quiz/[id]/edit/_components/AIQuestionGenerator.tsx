@@ -50,7 +50,7 @@ export default function AIQuestionGenerator({
   }
 
   return (
-    <div className="w-full p-4 bg-white rounded-lg shadow-sm">
+    <div className="w-full p-4 rounded-lg shadow-sm">
       <h2 className="text-xl font-bold mb-4">AI로 문제 추가하기</h2>
 
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -75,7 +75,7 @@ export default function AIQuestionGenerator({
               value={questionType}
               onValueChange={(value) =>
                 setQuestionType(value as QuizQuestionType)
-              } // 타입 단언 추가
+              }
             >
               <SelectTrigger>
                 <SelectValue placeholder="문제 유형 선택" />
@@ -97,10 +97,10 @@ export default function AIQuestionGenerator({
               type="number"
               min={1}
               max={10}
-              value={numQuestions === 0 ? '' : numQuestions} // 0일 때 빈 문자열로 표시
+              value={numQuestions === 0 ? '' : numQuestions}
               onChange={(e) => {
                 const value = e.target.value
-                setNumQuestions(value === '' ? 0 : Number(value)) // 빈 문자열 처리
+                setNumQuestions(value === '' ? 0 : Number(value))
               }}
             />
           </div>
@@ -127,12 +127,10 @@ export default function AIQuestionGenerator({
       )}
 
       {isSuccess && (
-        <Alert className="mt-4 bg-green-50 border-green-200">
-          <CheckCircle2 className="h-4 w-4 text-green-600" />
-          <AlertTitle className="text-green-800">성공</AlertTitle>
-          <AlertDescription className="text-green-700">
-            문제가 성공적으로 추가되었습니다.
-          </AlertDescription>
+        <Alert className="mt-4">
+          <CheckCircle2 className="h-4 w-4" />
+          <AlertTitle>성공</AlertTitle>
+          <AlertDescription>문제가 성공적으로 추가되었습니다.</AlertDescription>
         </Alert>
       )}
     </div>
