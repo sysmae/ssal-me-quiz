@@ -11,15 +11,21 @@ export type QuestionUpdateData =
 export type QuizInsertData = Database['public']['Tables']['quizzes']['Insert']
 export type QuestionInsertData =
   Database['public']['Tables']['quiz_questions']['Insert'] & {
-    options?: OptionInsertData[]
+    options?: Omit<
+      Database['public']['Tables']['quiz_options']['Insert'],
+      'question_id'
+    >[]
   }
 
 export type QuizData = Database['public']['Tables']['quizzes']['Row']
 
 // 옵션 타입 추가
 export type OptionData = Database['public']['Tables']['quiz_options']['Row']
-export type OptionInsertData =
-  Database['public']['Tables']['quiz_options']['Insert']
+export type OptionInsertData = Omit<
+  Database['public']['Tables']['quiz_options']['Insert'],
+  'question_id'
+>
+
 export type OptionUpdateData =
   Database['public']['Tables']['quiz_options']['Update']
 

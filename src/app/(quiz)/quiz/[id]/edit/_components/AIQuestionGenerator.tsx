@@ -1,7 +1,8 @@
 // components/AIQuestionGenerator.tsx
+// components/AIQuestionGenerator.tsx
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useGenerateQuizQuestions } from '@/hooks/useGenerateQuizQuestions'
 import { useQuizQueries } from '@/hooks/useQuizQueries'
 import { Button } from '@/components/ui/button'
@@ -34,6 +35,32 @@ export default function AIQuestionGenerator({
 
   const { generateAndAddQuestions, isLoading, error, isSuccess } =
     useGenerateQuizQuestions(quizId)
+
+  // beforeunload 이벤트 리스너 추가
+  useEffect(() => {
+    // 생성 중일 때만 경고창 표시
+    if (isLoading) {
+      window.addEventListener('beforeunload', handleBeforeUnload)
+    } else {
+      window.removeEventListener('beforeunload', handleBeforeUnload)
+    }
+
+    // 컴포넌트 언마운트 시 이벤트 리스너 제거
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload)
+    }
+  }, [isLoading])
+
+  // beforeunload 이벤트 핸들러
+  const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+    // 표준 방식으로 경고창 트리거
+    e.preventDefault()
+
+    // 레거시 브라우저 지원을 위한 returnValue 설정
+    e.returnValue = ''
+
+    return ''
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -117,6 +144,16 @@ export default function AIQuestionGenerator({
           )}
         </Button>
       </form>
+
+      {isLoading && (
+        <Alert className="mt-4">
+          <Loader2 className="h-4 w-4 animate-spin" />
+          <AlertTitle>생성 중</AlertTitle>
+          <AlertDescription>
+            문제를 생성하는 중입니다. 페이지를 떠나면 작업이 중단됩니다.
+          </AlertDescription>
+        </Alert>
+      )}
 
       {error && (
         <Alert variant="destructive" className="mt-4">
