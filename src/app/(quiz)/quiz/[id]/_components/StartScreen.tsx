@@ -1,6 +1,7 @@
 'use client'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Image from 'next/image'
+import Link from 'next/link' // Link 추가
 import { QuizWithQuestions } from '@/types/quiz'
 import {
   Card,
@@ -11,7 +12,7 @@ import {
   CardDescription,
 } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Eye, MessageSquare, BookCheck } from 'lucide-react'
+import { Eye, MessageSquare, BookCheck, Edit } from 'lucide-react' // Edit 아이콘 추가
 import LikeButton from './../../_components/LikeCount'
 import QuizComment from './QuizComment'
 import { useQuizCommentCount } from '@/hooks/useCommentQueries'
@@ -19,6 +20,7 @@ import RecommendedQuizzes from '../../_components/RecommendedQuizzes'
 import ShareButton from '../../_components/ShareButton'
 import QuizModeSelector from './QuizModeSelector'
 import { QuizModeType } from '@/constants'
+import { createClient } from '@/utils/supabase/client' // Supabase 클라이언트 추가
 
 type StartScreenProps = {
   quiz: QuizWithQuestions
@@ -37,6 +39,20 @@ export default function StartScreen({
   const [selectedCount, setSelectedCount] = useState<number>(
     quiz.questions.length
   )
+  const [isOwner, setIsOwner] = useState(false) // 소유자 여부 상태 추가
+  const supabase = createClient()
+
+  // 현재 사용자가 퀴즈 소유자인지 확인
+  useEffect(() => {
+    const checkOwnership = async () => {
+      const { data } = await supabase.auth.getUser()
+      if (data.user && quiz.user_id === data.user.id) {
+        setIsOwner(true)
+      }
+    }
+
+    checkOwnership()
+  }, [quiz.user_id])
 
   // 선택 가능한 문제 갯수 옵션 계산
   const questionCountOptions = [5, 10, 20, 30]
@@ -77,6 +93,15 @@ export default function StartScreen({
                 <CardTitle className="text-2xl font-bold dark:text-white">
                   {quiz.title}
                 </CardTitle>
+                {/* 소유자인 경우 수정 버튼 표시 */}
+                {isOwner && (
+                  <Button variant="outline" asChild>
+                    <Link href={`/quiz/${quiz.id}/edit`}>
+                      <Edit className="mr-2 h-4 w-4" />
+                      퀴즈 수정
+                    </Link>
+                  </Button>
+                )}
               </div>
               <CardDescription className="mt-2 dark:text-gray-300">
                 {quiz.description}

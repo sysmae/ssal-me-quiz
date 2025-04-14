@@ -39,9 +39,19 @@ const Page = () => {
         <Button
           onClick={handleCreateQuiz}
           className="bg-indigo-500 hover:bg-indigo-600"
+          disabled={createQuizMutation.isPending}
         >
-          <PlusCircle className="mr-2 h-4 w-4" />
-          퀴즈 생성
+          {createQuizMutation.isPending ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              생성 중...
+            </>
+          ) : (
+            <>
+              <PlusCircle className="mr-2 h-4 w-4" />
+              퀴즈 생성
+            </>
+          )}
         </Button>
       </div>
 
