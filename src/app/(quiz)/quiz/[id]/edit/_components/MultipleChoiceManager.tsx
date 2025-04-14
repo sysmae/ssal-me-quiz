@@ -39,12 +39,10 @@ const MultipleChoiceManager: React.FC<MultipleChoiceManagerProps> = ({
     {
       option_text: '',
       is_correct: false,
-      question_id: existingQuestion?.id || 0, // 기본값 0 설정
     },
     {
       option_text: '',
       is_correct: false,
-      question_id: existingQuestion?.id || 0, // 기본값 0 설정
     },
   ]
 
@@ -53,7 +51,6 @@ const MultipleChoiceManager: React.FC<MultipleChoiceManagerProps> = ({
       ? existingQuestion.options.map((opt) => ({
           ...opt,
           option_text: opt.option_text || '', // 기본값 설정
-          question_id: opt.question_id ?? existingQuestion.id, // 기본값 설정
         }))
       : defaultOptions
   )
@@ -71,7 +68,6 @@ const MultipleChoiceManager: React.FC<MultipleChoiceManagerProps> = ({
       {
         option_text: '',
         is_correct: false,
-        question_id: existingQuestion?.id || 0,
       },
     ])
   }
