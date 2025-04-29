@@ -98,7 +98,7 @@ JSON 형식으로 응답해주세요:
   const quizChain = new LLMChain({ llm: model, prompt })
 
   // 6. 청크별 순차 호출 및 문제 수집
-  let allQuestions: QuestionInsertData[] = []
+  const allQuestions: QuestionInsertData[] = []
   for (let i = 0; i < docChunks.length; i++) {
     const chunkText = docChunks[i].pageContent
     const input = await prompt.format({

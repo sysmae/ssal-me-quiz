@@ -5,6 +5,8 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { motion, AnimatePresence } from 'framer-motion'
 import { PenLine, ArrowRight, Brain } from 'lucide-react'
+import TextWithCodeBlock from './TextWithCodeBlock'
+
 import Image from 'next/image'
 
 interface QuizScreenProps {
@@ -121,14 +123,22 @@ export default function QuizScreen({
                   <Brain className="w-16 h-16 text-indigo-500" />
                 </motion.div>
 
-                <motion.h2
+                {/* <motion.h2
                   initial={{ y: -10, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.2 }}
                   className="text-2xl md:text-3xl font-bold mb-6 text-center"
                 >
                   {currentQuestion.question_text}
-                </motion.h2>
+                </motion.h2> */}
+                <motion.div
+                  initial={{ y: -10, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.2 }}
+                  className="text-2xl md:text-3xl font-bold mb-6 text-center "
+                >
+                  <TextWithCodeBlock content={currentQuestion.question_text} />
+                </motion.div>
               </motion.div>
             </AnimatePresence>
 
