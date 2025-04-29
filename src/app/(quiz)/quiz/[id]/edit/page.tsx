@@ -31,6 +31,7 @@ import QuizBasicInfo from './_components/QuizBasicInfo'
 import QuestionManager from './_components/QuestionManager'
 import AIQuestionGenerator from './_components/AIQuestionGenerator'
 import AIQuestionGeneratorByText from './_components/AIQuestionGeneratorByText'
+import AIQuestionGeneratorByPdf from './_components/AIQuestionGeneratorByPdf'
 
 const QuizEditPage = ({ params }: { params: Promise<{ id: string }> }) => {
   const router = useRouter()
@@ -201,6 +202,9 @@ const QuizEditPage = ({ params }: { params: Promise<{ id: string }> }) => {
             <div className="mt-8">
               <h3 className="text-lg font-medium mb-4 mt-8">AI 문제 생성</h3>
               <AIQuestionGenerator quizId={quizId} />
+            </div>
+            <div>
+              <AIQuestionGeneratorByPdf quizId={quizId} />
             </div>
             <div>
               <h3 className="text-lg font-medium mb-4">질문 관리</h3>

@@ -33,13 +33,8 @@ export default function AIQuestionGeneratorByText({
   // const [numQuestions, setNumQuestions] = useState(5)
   const [quizText, setQuizText] = useState('')
 
-  const {
-    generateAndAddQuestions,
-    generateAndAddQuestionsByText,
-    isLoading,
-    error,
-    isSuccess,
-  } = useGenerateQuizQuestions(quizId)
+  const { generateAndAddQuestionsByText, isLoading, error, isSuccess } =
+    useGenerateQuizQuestions(quizId)
 
   // beforeunload 이벤트 리스너 추가
   useEffect(() => {
