@@ -93,6 +93,7 @@ export const useGenerateQuizQuestions = (quizId: number) => {
       setIsLoading(false)
     }
   }
+
   return {
     generateAndAddQuestions,
     generateAndAddQuestionsByText,
