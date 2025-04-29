@@ -78,7 +78,9 @@ export default function AIQuestionGenerator({
 
   return (
     <div className="w-full p-4 rounded-lg shadow-sm">
-      <h2 className="text-xl font-bold mb-4">AI로 문제 추가하기</h2>
+      <h2 className="text-xl font-bold mb-4">
+        퀴즈 제목과 설명 기반으로 문제 추가하기
+      </h2>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-3 gap-4">
@@ -133,7 +135,11 @@ export default function AIQuestionGenerator({
           </div>
         </div>
 
-        <Button type="submit" className="w-full" disabled={isLoading || !quiz}>
+        <Button
+          type="submit"
+          className="w-full bg-indigo-600 hover:bg-indigo-700 text-white"
+          disabled={isLoading || !quiz}
+        >
           {isLoading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />

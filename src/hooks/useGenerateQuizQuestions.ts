@@ -94,7 +94,6 @@ export const useGenerateQuizQuestions = (quizId: number) => {
       setIsLoading(false)
     }
   }
-
   // PDF로 퀴즈 정보 받아서 문제 생성
   const generateAndAddQuestionsByPdf = async (params: {
     quizTitle: string
@@ -124,6 +123,7 @@ export const useGenerateQuizQuestions = (quizId: number) => {
       setIsLoading(false)
     }
   }
+
   return {
     generateAndAddQuestions,
     generateAndAddQuestionsByText,
