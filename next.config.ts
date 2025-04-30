@@ -15,6 +15,9 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  serverActions: {
+    bodySizeLimit: '30mb', // PDF 업로드 용량 제한 상향 (필요시 더 늘릴 수 있음)
+  },
 }
 
 export default nextConfig

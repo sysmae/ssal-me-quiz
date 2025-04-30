@@ -203,6 +203,10 @@ const QuizEditPage = ({ params }: { params: Promise<{ id: string }> }) => {
             </div>
 
             <div>
+              <AIQuestionGeneratorByPdf quizId={quizId} />
+            </div>
+
+            <div>
               <h3 className="text-lg font-medium mb-4">질문 관리</h3>
               {questionsData ? (
                 <QuestionManager
