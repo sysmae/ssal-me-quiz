@@ -1,10 +1,6 @@
 'use client'
 import React from 'react'
-import { useRouter } from 'next/navigation'
-import {
-  useCreateEmptyQuizMutation,
-  useGetUserQuizzes,
-} from '@/hooks/useQuizQueries'
+import { useGetUserQuizzes } from '@/hooks/useQuizQueries'
 import Link from 'next/link'
 import {
   Card,
@@ -15,44 +11,18 @@ import {
   CardDescription,
 } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { PlusCircle, Eye, Edit, Loader2 } from 'lucide-react'
+import { PlusCircle, Eye, Edit } from 'lucide-react'
 import { Skeleton } from '@/components/ui/skeleton'
+import CreateQuizButton from '../_components/CreateQuizButton'
 
 const Page = () => {
-  const router = useRouter()
-  const createQuizMutation = useCreateEmptyQuizMutation()
   const { data: myQuizzes, isLoading } = useGetUserQuizzes()
-
-  const handleCreateQuiz = async () => {
-    try {
-      const quizId = await createQuizMutation.mutateAsync()
-      router.push(`/quiz/${quizId}/edit`)
-    } catch (error) {
-      alert('퀴즈 생성 중 오류가 발생했습니다.')
-    }
-  }
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-3xl font-bold">내 퀴즈</h1>
-        <Button
-          onClick={handleCreateQuiz}
-          className="bg-indigo-500 hover:bg-indigo-600"
-          disabled={createQuizMutation.isPending}
-        >
-          {createQuizMutation.isPending ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              생성 중...
-            </>
-          ) : (
-            <>
-              <PlusCircle className="mr-2 h-4 w-4" />
-              퀴즈 생성
-            </>
-          )}
-        </Button>
+        <CreateQuizButton />
       </div>
 
       {isLoading ? (
@@ -124,22 +94,7 @@ const Page = () => {
           <CardDescription className="mb-6">
             첫 번째 퀴즈를 만들어보세요!
           </CardDescription>
-          <Button
-            onClick={handleCreateQuiz}
-            className="bg-indigo-500 hover:bg-indigo-600"
-          >
-            {createQuizMutation.isPending ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                생성 중...
-              </>
-            ) : (
-              <>
-                <PlusCircle className="mr-2 h-4 w-4" />
-                퀴즈 생성
-              </>
-            )}
-          </Button>
+          <CreateQuizButton />
         </Card>
       )}
     </div>

@@ -2,6 +2,7 @@
 import { Button } from '@/components/ui/button'
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
+import CreateQuizButton from './CreateQuizButton'
 
 interface SearchAndSortProps {
   onSearch: (term: string) => void
@@ -26,8 +27,8 @@ export default function SearchAndSort({
   }
 
   return (
-    <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-      <form onSubmit={handleSubmit} className="w-full md:w-auto">
+    <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between w-full">
+      <form onSubmit={handleSubmit} className="w-full md:w-auto flex-1">
         <div className="relative">
           <input
             type="text"
@@ -47,43 +48,49 @@ export default function SearchAndSort({
         </div>
       </form>
 
-      <div className="flex gap-2">
-        <Button
-          onClick={() => handleSort('like_count')}
-          variant="outline"
-          className={cn(
-            'px-4 py-2 rounded-lg border transition-colors',
-            activeSort === 'like_count'
-              ? 'bg-indigo-500 text-white hover:bg-indigo-600'
-              : 'bg-white text-gray-700 hover:bg-indigo-100 hover:text-indigo-700 hover:border-indigo-300'
-          )}
-        >
-          인기순
-        </Button>
-        <Button
-          onClick={() => handleSort('view_count')}
-          variant="outline"
-          className={cn(
-            'px-4 py-2 rounded-lg border transition-colors',
-            activeSort === 'view_count'
-              ? 'bg-indigo-500 text-white hover:bg-indigo-600'
-              : 'bg-white text-gray-700 hover:bg-indigo-100 hover:text-indigo-700 hover:border-indigo-300'
-          )}
-        >
-          조회수순
-        </Button>
-        <Button
-          onClick={() => handleSort('newest')}
-          variant="outline"
-          className={cn(
-            'px-4 py-2 rounded-lg border transition-colors',
-            activeSort === 'newest'
-              ? 'bg-indigo-500 text-white hover:bg-indigo-600'
-              : 'bg-white text-gray-700 hover:bg-indigo-100 hover:text-indigo-700 hover:border-indigo-300'
-          )}
-        >
-          최신순
-        </Button>
+      {/* 버튼 그룹: 한 줄 유지, 공간 부족하면 한 번에 다음 줄로 */}
+      <div className="w-full md:w-auto">
+        <div className="flex flex-nowrap justify-center md:justify-end items-center gap-2 overflow-x-auto">
+          <Button
+            onClick={() => handleSort('like_count')}
+            variant="outline"
+            className={cn(
+              'px-4 py-2 rounded-lg border transition-colors whitespace-nowrap',
+              activeSort === 'like_count'
+                ? 'bg-indigo-500 text-white hover:bg-indigo-600'
+                : 'bg-white text-gray-700 hover:bg-indigo-100 hover:text-indigo-700 hover:border-indigo-300'
+            )}
+          >
+            인기순
+          </Button>
+          <Button
+            onClick={() => handleSort('view_count')}
+            variant="outline"
+            className={cn(
+              'px-4 py-2 rounded-lg border transition-colors whitespace-nowrap',
+              activeSort === 'view_count'
+                ? 'bg-indigo-500 text-white hover:bg-indigo-600'
+                : 'bg-white text-gray-700 hover:bg-indigo-100 hover:text-indigo-700 hover:border-indigo-300'
+            )}
+          >
+            조회수순
+          </Button>
+          <Button
+            onClick={() => handleSort('newest')}
+            variant="outline"
+            className={cn(
+              'px-4 py-2 rounded-lg border transition-colors whitespace-nowrap',
+              activeSort === 'newest'
+                ? 'bg-indigo-500 text-white hover:bg-indigo-600'
+                : 'bg-white text-gray-700 hover:bg-indigo-100 hover:text-indigo-700 hover:border-indigo-300'
+            )}
+          >
+            최신순
+          </Button>
+          <div className="whitespace-nowrap">
+            <CreateQuizButton />
+          </div>
+        </div>
       </div>
     </div>
   )

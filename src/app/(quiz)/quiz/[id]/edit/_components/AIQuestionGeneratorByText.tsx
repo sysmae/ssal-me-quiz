@@ -109,7 +109,7 @@ export default function AIQuestionGeneratorByText({
         <Button
           type="submit"
           className="w-full bg-indigo-600 hover:bg-indigo-700 text-white"
-          disabled={isLoading || !quiz}
+          disabled={isLoading || !quiz || !quizText}
         >
           {isLoading ? (
             <>

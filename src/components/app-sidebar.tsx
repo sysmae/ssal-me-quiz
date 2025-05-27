@@ -5,19 +5,22 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import {
   BookOpen,
-  Command,
-  LifeBuoy,
-  Frame,
-  PieChart,
-  Map,
-  Send,
+  Zap,
+  LayoutDashboard,
+  Layers,
+  History,
+  FileText,
+  Search,
+  ChevronRight,
+  HelpCircle,
+  Heart,
 } from 'lucide-react'
 
 import { createClient } from '@/utils/supabase/client'
-import { auth } from '@/utils/auth'
 import { Button } from './ui/button'
 import ThemeChanger from '@/components/DarkSwitch'
 import Logo from '@/components/authentication/Logo'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
 import { NavMain } from '@/components/nav-main'
 import { NavProjects } from '@/components/nav-projects'
@@ -87,44 +90,61 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     }
 
     checkUser()
-  }, [supabase.auth])
+  }, [supabase])
 
-  const data = {
-    navMain: [
-      {
-        title: '퀴즈 목록',
-        url: '/quiz',
-        icon: BookOpen,
-      },
-      {
-        title: '내 퀴즈',
-        url: '/quiz/my',
-        icon: BookOpen,
-        requiresAuth: true,
-      },
-    ],
-  }
+  // 메뉴 항목을 예시 코드 스타일로 확장
+  const navItems = [
+    {
+      title: '대시보드', // 로그인 안되어 있으면 랜딩페이지, 로그인 되어있으면 대시보드
+      url: '/',
+      icon: LayoutDashboard,
+    },
+    {
+      title: '퀴즈 찾기',
+      url: '/quiz',
+      icon: Search,
+    },
+    {
+      title: '내 퀴즈',
+      url: '/quiz/my',
+      icon: FileText,
+    },
 
-  const filteredNavMain = data.navMain.filter(
-    (item) => !item.requiresAuth || isLoggedIn
-  )
+    {
+      title: '찜한 퀴즈',
+      url: '/quiz/favorite',
+      icon: Heart,
+    },
+  ]
 
   return (
     <Sidebar variant="inset" {...props}>
-      <SidebarHeader className="pb-2 border-b border-border">
-        <div className="flex flex-col gap-2 px-4 pt-4">
-          <div className="flex items-center justify-between">
-            <Logo />
+      <SidebarHeader className="p-4 border-b flex items-center gap-2">
+        <Link href="/" className="flex justify-between items-center">
+          <div className="w-8 h-8 bg-purple-500 rounded-md flex items-center justify-center">
+            <HelpCircle className="w-5 h-5 text-white" />
           </div>
-        </div>
+          <span className="font-bold text-xl">쌀미 퀴즈</span>
+        </Link>
       </SidebarHeader>
-      <SidebarContent className="pr-2 flex flex-col flex-1">
-        <NavMain items={filteredNavMain} />
-        <div className="mt-auto">
+      <SidebarContent className="flex flex-col flex-1 py-4 bg-white dark:bg-zinc-950">
+        <nav className="space-y-2 px-2">
+          {navItems.map((item) => (
+            <Link
+              key={item.title}
+              href={item.url}
+              className="flex items-center gap-3 px-3 py-2 rounded-md text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-zinc-900"
+            >
+              <item.icon className="w-5 h-5" />
+              <span className="text-sm font-medium">{item.title}</span>
+            </Link>
+          ))}
+        </nav>
+        <div className="mt-auto pt-4">
           <ThemeChanger />
         </div>
       </SidebarContent>
-      <SidebarFooter>
+      <SidebarFooter className="p-2 border-t mt-auto">
         <NavUser user={user} loading={loading} />
       </SidebarFooter>
     </Sidebar>

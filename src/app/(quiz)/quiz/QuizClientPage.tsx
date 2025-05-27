@@ -6,6 +6,7 @@ import QuizCard from './_components/QuizCard'
 import SearchAndSort from './_components/SearchAndSort'
 import { useInfiniteQuizzes } from '@/hooks/useQuizQueries'
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll'
+import CreateQuizButton from './_components/CreateQuizButton'
 
 export default function QuizClientPage() {
   const [sortBy, setSortBy] = useState('like_count')
@@ -31,8 +32,9 @@ export default function QuizClientPage() {
 
   return (
     <div className="container mx-auto p-4">
-      <SearchAndSort onSearch={setSearchTerm} onSort={setSortBy} />
-
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+        <SearchAndSort onSearch={setSearchTerm} onSort={setSortBy} />
+      </div>
       {isLoading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
           {[...Array(6)].map((_, i) => (

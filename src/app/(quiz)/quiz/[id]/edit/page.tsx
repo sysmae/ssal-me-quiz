@@ -136,7 +136,7 @@ const QuizEditPage = ({ params }: { params: Promise<{ id: string }> }) => {
 
   if (!quiz)
     return (
-      <div className="min-h-screen bg-indigo-900 flex items-center justify-center p-4">
+      <div className="min-h-screen  flex items-center justify-center p-4">
         <Card className="w-full max-w-3xl">
           <CardHeader>
             <Skeleton className="h-8 w-48" />
@@ -151,7 +151,7 @@ const QuizEditPage = ({ params }: { params: Promise<{ id: string }> }) => {
     )
 
   return (
-    <div className="min-h-screen bg-indigo-900 flex flex-col items-center p-4 pt-8">
+    <div className="min-h-screen flex flex-col items-center p-4 pt-8">
       <div className="w-full max-w-4xl">
         {/* 페이지 헤더 */}
         <Card className="mb-6">
@@ -195,16 +195,16 @@ const QuizEditPage = ({ params }: { params: Promise<{ id: string }> }) => {
             <div className="mb-8">
               {quiz && <QuizBasicInfo quizId={quizId} quiz={quiz} />}
             </div>
-            <div className="mt-8">
+            {/* <div className="mt-8">
               <AIQuestionGenerator quizId={quizId} />
-            </div>
+            </div> */}
             <div>
               <AIQuestionGeneratorByText quizId={quizId} />
             </div>
 
-            <div>
+            {/* <div>
               <AIQuestionGeneratorByPdf quizId={quizId} />
-            </div>
+            </div> */}
 
             <div>
               <h3 className="text-lg font-medium mb-4">질문 관리</h3>

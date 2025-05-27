@@ -1,5 +1,5 @@
 import { QuizWithQuestions } from '@/types/quiz'
-import { FormEvent, useRef, useEffect, useState } from 'react'
+import { useState, useRef, useEffect, FormEvent } from 'react'
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -8,6 +8,13 @@ import { PenLine, ArrowRight, Brain } from 'lucide-react'
 import TextWithCodeBlock from './TextWithCodeBlock'
 
 import Image from 'next/image'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogClose,
+} from '@/components/ui/dialog'
 
 interface QuizScreenProps {
   quiz: QuizWithQuestions
@@ -64,6 +71,7 @@ export default function QuizScreen({
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-start p-4 pt-8 sm:pt-16">
+      {/* 기존 퀴즈 카드 */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -123,14 +131,6 @@ export default function QuizScreen({
                   <Brain className="w-16 h-16 text-indigo-500" />
                 </motion.div>
 
-                {/* <motion.h2
-                  initial={{ y: -10, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.2 }}
-                  className="text-2xl md:text-3xl font-bold mb-6 text-center"
-                >
-                  {currentQuestion.question_text}
-                </motion.h2> */}
                 <motion.div
                   initial={{ y: -10, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}

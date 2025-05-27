@@ -120,6 +120,31 @@ export const quizzes = {
       if (error) throw error
       return data
     },
+
+    // 좋아요 누른 퀴즈만 가져오는 함수 추가
+    getLikedQuizzes: async () => {
+      const userId = (await supabase.auth.getUser()).data.user?.id
+      if (!userId) throw new Error('User not found')
+
+      // quiz_likes 테이블에서 좋아요 누른 퀴즈 id 목록 조회
+      const { data: liked, error: likeError } = await supabase
+        .from('quiz_likes')
+        .select('quiz_id')
+        .eq('user_id', userId)
+
+      if (likeError) throw likeError
+      const quizIds = liked?.map((l: { quiz_id: number }) => l.quiz_id) || []
+      if (quizIds.length === 0) return []
+
+      // 해당 id의 퀴즈 정보 조회
+      const { data, error } = await supabase
+        .from('quizzes')
+        .select('*, questions:quiz_questions(*)')
+        .in('id', quizIds)
+
+      if (error) throw error
+      return data
+    },
   },
 
   // 퀴즈 상세 관련 기능

@@ -114,6 +114,15 @@ export const useGetUserQuizzes = () => {
   })
 }
 
+// 사용자가 좋아요 누른 퀴즈 가져오기 - 개별 훅으로 분리
+export const useGetLikedQuizzes = () => {
+  return useQuery({
+    queryKey: ['quizzes', 'liked'],
+    queryFn: () => quizzes.list.getLikedQuizzes(),
+    staleTime: 60 * 60 * 1000, // 1시간 동안 신선한 상태 유지
+  })
+}
+
 // 퀴즈 생성 관련 뮤테이션 훅
 export const useCreateEmptyQuizMutation = () => {
   const queryClient = useQueryClient()

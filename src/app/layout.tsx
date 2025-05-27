@@ -41,7 +41,7 @@ export default function RootLayout({
           <SidebarProvider>
             <div className="flex flex-1 w-full">
               <AppSidebar />
-              <main className="flex-1 container mx-auto max-w-4xl px-4 w-full relative">
+              <main className="flex-1 container mx-auto max-w-6xl px-4 w-full relative">
                 <SidebarTriggerWhenClosed />
                 {children}
                 <Analytics />

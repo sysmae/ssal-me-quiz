@@ -1,6 +1,6 @@
 'use client'
 import { QuizWithQuestions } from '@/types/quiz'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -29,14 +29,8 @@ export default function MultipleChoiceQuizScreen({
   const [options, setOptions] = useState<any[]>([])
   const supabase = createClient()
 
-  // 문제가 바뀌면 선택 초기화 및 옵션 가져오기
-  useEffect(() => {
-    setSelectedOption(null)
-    fetchOptions()
-  }, [currentQuestionIndex, currentQuestion.id])
-
   // 객관식 옵션 가져오기
-  const fetchOptions = async () => {
+  const fetchOptions = useCallback(async () => {
     const { data, error } = await supabase
       .from('quiz_options')
       .select('*')
@@ -48,7 +42,13 @@ export default function MultipleChoiceQuizScreen({
     }
 
     setOptions(data || [])
-  }
+  }, [supabase, currentQuestion.id])
+
+  // 문제가 바뀌면 선택 초기화 및 옵션 가져오기
+  useEffect(() => {
+    setSelectedOption(null)
+    fetchOptions()
+  }, [currentQuestionIndex, currentQuestion.id, fetchOptions])
 
   const handleSubmit = () => {
     if (selectedOption) {
