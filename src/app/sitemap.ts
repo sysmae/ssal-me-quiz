@@ -3,7 +3,7 @@ import { MetadataRoute } from 'next'
 import { quizzes } from '@/utils/quiz'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const siteUrl = 'https://ssal.me'
+  const siteUrl = 'https://quiz.ssal.me'
 
   try {
     // 모든 퀴즈 데이터를 가져옴

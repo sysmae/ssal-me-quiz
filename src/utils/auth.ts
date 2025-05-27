@@ -6,7 +6,7 @@ const supabase = createClient()
 // 환경에 따라 BASE_URL 설정
 const getBaseUrl = () => {
   if (process.env.NODE_ENV === 'production') {
-    return 'https://ssal.me'
+    return 'https://quiz.ssal.me'
   }
 
   // 개발 환경에서는 현재 origin 사용

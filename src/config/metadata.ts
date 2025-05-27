@@ -1,7 +1,7 @@
 // config/metadata.ts
 import type { Metadata } from 'next'
 
-const siteUrl = 'https://ssal.me'
+const siteUrl = 'https://quiz.ssal.me'
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),

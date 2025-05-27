@@ -15,7 +15,7 @@ export async function generateMetadata({
   params: Promise<{ id: string }>
 }): Promise<Metadata> {
   const resolvedParams = await params // 비동기 처리로 params 접근
-  const siteUrl = 'https://ssal.me'
+  const siteUrl = 'https://quiz.ssal.me'
   const quizId = Number(resolvedParams.id)
 
   try {

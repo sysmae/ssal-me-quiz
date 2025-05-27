@@ -2,7 +2,7 @@ import { Metadata } from 'next'
 import QuizClientPage from './QuizClientPage'
 
 export async function generateMetadata(): Promise<Metadata> {
-  const siteUrl = 'https://ssal.me'
+  const siteUrl = 'https://quiz.ssal.me'
 
   return {
     title:
