@@ -51,6 +51,9 @@ function FlashcardComponent({
   onNext,
   showPrev,
   showNext,
+  cardIndex,
+  flipped,
+  setFlipped,
 }: {
   front: string
   back: string
@@ -58,8 +61,14 @@ function FlashcardComponent({
   onNext?: () => void
   showPrev?: boolean
   showNext?: boolean
+  cardIndex?: number
+  flipped: boolean
+  setFlipped: (v: boolean) => void
 }) {
-  const [flipped, setFlipped] = useState(false)
+  // 카드 인덱스가 바뀔 때마다 앞면으로 초기화
+  useEffect(() => {
+    setFlipped(false)
+  }, [cardIndex, setFlipped])
 
   // 좌우 방향키로 카드 이동
   useEffect(() => {
@@ -70,16 +79,16 @@ function FlashcardComponent({
       if (e.key === 'ArrowRight' && showNext && onNext) {
         onNext()
       }
-      if (e.key === ' ' || e.key === 'Enter') setFlipped((f) => !f)
+      if (e.key === ' ' || e.key === 'Enter') setFlipped(!flipped)
     }
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [onPrev, onNext, showPrev, showNext])
+  }, [onPrev, onNext, showPrev, showNext, setFlipped])
 
   return (
     <div
       className="w-96 h-56 perspective-1000 cursor-pointer select-none mx-auto relative"
-      onClick={() => setFlipped((f) => !f)}
+      onClick={() => setFlipped(!flipped)}
       tabIndex={0}
       role="button"
       aria-pressed={flipped}
@@ -163,6 +172,7 @@ export default function StartScreen({
   const [isOwner, setIsOwner] = useState(false) // 소유자 여부 상태 추가
   const [showFlashcardPreview, setShowFlashcardPreview] = useState(false)
   const [flashcardIndex, setFlashcardIndex] = useState(0)
+  const [flashcardFlipped, setFlashcardFlipped] = useState(false)
   const supabase = createClient()
 
   // 현재 사용자가 퀴즈 소유자인지 확인
@@ -183,6 +193,36 @@ export default function StartScreen({
     .concat(quiz.questions.length)
     .sort((a, b) => a - b)
     .filter((value, index, self) => self.indexOf(value) === index)
+
+  // 플래시카드 인덱스 변경 시 항상 앞면으로
+  const handlePrev = () => {
+    if (flashcardFlipped) {
+      setFlashcardFlipped(false)
+      setTimeout(() => {
+        setFlashcardIndex((i) => Math.max(0, i - 1))
+      }, 500) // transition duration과 동일하게
+    } else {
+      setFlashcardIndex((i) => Math.max(0, i - 1))
+    }
+  }
+  const handleNext = () => {
+    if (flashcardFlipped) {
+      setFlashcardFlipped(false)
+      setTimeout(() => {
+        setFlashcardIndex((i) => Math.min(quiz.questions.length - 1, i + 1))
+      }, 500)
+    } else {
+      setFlashcardIndex((i) => Math.min(quiz.questions.length - 1, i + 1))
+    }
+  }
+
+  // 모달 열릴 때 항상 첫 카드 앞면으로
+  useEffect(() => {
+    if (showFlashcardPreview) {
+      setFlashcardIndex(0)
+      setFlashcardFlipped(false)
+    }
+  }, [showFlashcardPreview])
 
   return (
     <div className="container mx-auto p-4 max-w-7xl">
@@ -293,16 +333,13 @@ export default function StartScreen({
                         quiz.questions[flashcardIndex]?.correct_answer ||
                         '정답 없음'
                       }
-                      onPrev={() =>
-                        setFlashcardIndex((i) => Math.max(0, i - 1))
-                      }
-                      onNext={() =>
-                        setFlashcardIndex((i) =>
-                          Math.min(quiz.questions.length - 1, i + 1)
-                        )
-                      }
+                      onPrev={handlePrev}
+                      onNext={handleNext}
                       showPrev={flashcardIndex > 0}
                       showNext={flashcardIndex < quiz.questions.length - 1}
+                      cardIndex={flashcardIndex}
+                      flipped={flashcardFlipped}
+                      setFlipped={setFlashcardFlipped}
                     />
                     <div className="flex items-center gap-3 mt-2">
                       <span className="text-base font-medium text-indigo-700">

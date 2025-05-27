@@ -119,12 +119,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   return (
     <Sidebar variant="inset" {...props}>
-      <SidebarHeader className="p-4 border-b flex items-center gap-2">
-        <Link href="/" className="flex justify-between items-center">
+      <SidebarHeader className="p-4 border-b">
+        <Link href="/" className="flex items-center gap-3">
           <div className="w-8 h-8 bg-purple-500 rounded-md flex items-center justify-center">
             <HelpCircle className="w-5 h-5 text-white" />
           </div>
-          <span className="font-bold text-xl">쌀미 퀴즈</span>
+          <span className="font-bold text-xl whitespace-nowrap">쌀미 퀴즈</span>
         </Link>
       </SidebarHeader>
       <SidebarContent className="flex flex-col flex-1 py-4 bg-white dark:bg-zinc-950">
