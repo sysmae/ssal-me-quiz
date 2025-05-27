@@ -71,7 +71,7 @@ export function NavUser({ user, loading }: NavUserProps) {
         <SidebarMenuItem>
           <div className="flex gap-2 w-full px-2 py-2">
             <Link
-              href="/signup"
+              href="/create-account"
               className="flex-1 text-center rounded-md bg-primary text-primary-foreground px-3 py-1.5 text-sm font-medium hover:bg-primary/90 transition"
             >
               회원가입
